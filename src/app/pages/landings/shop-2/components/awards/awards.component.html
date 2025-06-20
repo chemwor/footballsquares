@@ -1,0 +1,31 @@
+<section class="container py-5 my-md-2 my-lg-4 my-xl-5">
+  <ngx-simplebar class="overflow-auto">
+    <div class="row row-cols-4 g-0 py-3 my-sm-3" style="min-width: 600px">
+      @for (item of awardsData; track $index) {
+        <div class="col">
+          @if (item.darkModeSrc) {
+            <img
+              class="d-block d-dark-mode-none mx-auto"
+              [src]="item.src"
+              width="226"
+              alt="Award"
+            />
+            <img
+              class="d-none d-dark-mode-block mx-auto"
+              [src]="item.darkModeSrc"
+              width="226"
+              alt="Award"
+            />
+          } @else {
+            <img
+              class="d-block mx-auto"
+              [src]="item.src"
+              width="226"
+              alt="Award"
+            />
+          }
+        </div>
+      }
+    </div>
+  </ngx-simplebar>
+</section>

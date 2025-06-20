@@ -1,0 +1,67 @@
+<section class="bg-secondary py-sm-2 py-lg-3 py-xl-4 py-xxl-5">
+  <div class="container py-5">
+    <h2 class="h1 text-center pt-1 pt-sm-2 pt-lg-3 pb-3 pb-lg-4">
+      Testimonials
+    </h2>
+
+    <div class="swiper pb-2 pb-sm-3 pb-lg-4">
+      <swiper-container
+        class="swiper-wrapper"
+        [config]="swiperConfig"
+        init="false"
+      >
+        @for (item of servicesTestimonial; track $index) {
+          <swiper-slide class="swiper-slide">
+            @for (item of item; track $index) {
+              @if (item.isSecond) {
+                <div class="card border-0 mb-4">
+                  <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                      <img
+                        class="rounded-circle"
+                        [src]="item.avatar"
+                        width="60"
+                        alt="Jane Cooper"
+                      />
+                      <div class="ps-3">
+                        <div class="h6 mb-1">{{ item.name }}</div>
+                        <div class="fs-sm text-body-secondary">
+                          {{ item.avatar }}
+                        </div>
+                      </div>
+                    </div>
+                    <p class="card-text">{{ item.description }}</p>
+                  </div>
+                </div>
+              } @else {
+                <div class="card border-0">
+                  <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                      <img
+                        class="rounded-circle"
+                        [src]="item.avatar"
+                        width="60"
+                        alt="Cameron Williamson"
+                      />
+                      <div class="ps-3">
+                        <div class="h6 mb-1">{{ item.name }}</div>
+                        <div class="fs-sm text-body-secondary">
+                          {{ item.position }}
+                        </div>
+                      </div>
+                    </div>
+                    <p class="card-text">{{ item.description }}</p>
+                  </div>
+                </div>
+              }
+            }
+          </swiper-slide>
+        }
+      </swiper-container>
+
+      <div
+        class="swiper-pagination position-relative bottom-0 mt-2 mt-md-3 mt-lg-4 pt-4"
+      ></div>
+    </div>
+  </div>
+</section>

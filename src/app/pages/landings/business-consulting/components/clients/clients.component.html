@@ -1,0 +1,62 @@
+<section class="pb-5 pt-2 pt-sm-3 pt-md-4 pt-lg-5 my-xl-3 my-xxl-5">
+  <div class="container pb-4 mb-2 mb-lg-3">
+    <h2 class="h1 text-center">Our clients</h2>
+    <p class="text-center mb-0">
+      More than 2,000 clients using Around to analyze data
+    </p>
+  </div>
+  <div class="swiper pb-4">
+    <swiper-container
+      [config]="firstSwiper"
+      init="false"
+      class="swiper-wrapper"
+      style="transition-timing-function: linear !important"
+    >
+      @for (item of allClientData; track $index) {
+        <swiper-slide class="swiper-slide">
+          <div class="bg-gray rounded-4">
+            <img
+              class="d-block d-dark-mode-none mx-auto"
+              src="{{ item.image.dark }}"
+              width="196"
+              alt="Logo"
+            />
+            <img
+              class="d-none d-dark-mode-block mx-auto"
+              src="{{ item.image.light }}"
+              width="196"
+              alt="Logo"
+            />
+          </div>
+        </swiper-slide>
+      }
+    </swiper-container>
+  </div>
+  <div class="swiper" dir="rtl">
+    <swiper-container
+      [config]="secondSwiper"
+      init="false"
+      class="swiper-wrapper"
+      style="transition-timing-function: linear !important"
+    >
+      @for (item of allClientData; track $index) {
+        <swiper-slide class="swiper-slide">
+          <div class="bg-gray rounded-4">
+            <img
+              class="d-block d-dark-mode-none mx-auto"
+              [src]="item.image.dark"
+              width="196"
+              alt="Logo"
+            />
+            <img
+              class="d-none d-dark-mode-block mx-auto"
+              [src]="item.image.light"
+              width="196"
+              alt="Logo"
+            />
+          </div>
+        </swiper-slide>
+      }
+    </swiper-container>
+  </div>
+</section>

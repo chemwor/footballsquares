@@ -1,0 +1,91 @@
+<section class="container pt-xl-2 pb-5 mb-md-2 mb-lg-4 mb-xl-5" id="comments">
+  <div class="row justify-content-center">
+    <div class="col-lg-9 col-xl-8">
+      <div class="border-top border-bottom">
+        <div
+          class="collapse"
+          id="commentsCollapse"
+          #collapse="ngbCollapse"
+          [(ngbCollapse)]="isCollapsed"
+        >
+          @for (item of postComment; track $index; let last = $last) {
+            <div
+              [ngClass]="{
+                ' py-4 mt-2 mb-4': !item.reply,
+                'pt-2 pb-4': item.reply,
+                'border-bottom': !last,
+              }"
+            >
+              <div class="d-flex align-items-center pb-1 mb-3">
+                <img
+                  class="rounded-circle"
+                  [src]="item.avatar"
+                  width="48"
+                  alt="Comment author"
+                />
+                <div class="ps-3">
+                  <h6 class="mb-0">{{ item.author }}</h6>
+                  <span class="fs-sm text-body-secondary">{{
+                    item.timestamp
+                  }}</span>
+                </div>
+              </div>
+              <p class="pb-2 mb-0">{{ item.content }}</p>
+              <button
+                class="nav-link fs-sm fw-semibold px-0 py-2"
+                type="button"
+              >
+                Reply
+                <i class="ai-redo fs-xl ms-2"></i>
+              </button>
+              @if (item.reply) {
+                <div class="card card-body border-0 bg-secondary mt-4">
+                  <div class="d-flex align-items-center pb-1 mb-3">
+                    <img
+                      class="rounded-circle"
+                      [src]="item.reply.avatar"
+                      width="48"
+                      alt="Comment author"
+                    />
+                    <div class="ps-3">
+                      <h6 class="mb-0">{{ item.reply.author }}</h6>
+                      <span class="fs-sm text-body-secondary">{{
+                        item.reply.timestamp
+                      }}</span>
+                    </div>
+                  </div>
+                  <p class="mb-0">
+                    <a
+                      class="fw-bold text-decoration-none"
+                      href="javascript:void(0);"
+                      >{{ item.reply.name }}</a
+                    >
+                    {{ item.reply.content }}
+                  </p>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="nav">
+          <button
+            (click)="collapse.toggle()"
+            [attr.aria-expanded]="!isCollapsed"
+            class="btn-more nav-link collapsed w-100 justify-content-center p-3"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#commentsCollapse"
+            aria-expanded="false"
+            aria-controls="commentsCollapse"
+            data-show-label="Show all comments"
+            data-hide-label="Hide all comments"
+            aria-label="Show / hide comments"
+          >
+            <span class="fw-normal opacity-70 ms-1">(4)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

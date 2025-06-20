@@ -1,0 +1,63 @@
+<section class="container py-5 my-md-2 my-lg-3 my-xl-4 my-xxl-5">
+  <div class="row align-items-center py-1 py-sm-3 py-md-4 my-lg-2">
+    <div class="col-lg-4 offset-xl-1">
+      <h2 class="h1 text-center text-lg-start pb-3 pb-lg-1">Our servises</h2>
+
+      <ul class="list-unstyled d-none d-lg-block pb-3 mb-3 mb-lg-4">
+        @for (item of agencyServiceist; track $index) {
+          <li class="d-flex pt-2">
+            <i class="ai-check-alt fs-4 text-primary mt-n1 me-2"></i>
+            {{ item }}
+          </li>
+        }
+      </ul>
+      <a
+        class="btn btn-primary d-none d-lg-inline-flex"
+        href="javascript:void(0);"
+        >See all servises</a
+      >
+    </div>
+
+    <div class="col-lg-8 col-xl-7 col-xxl-6">
+      <div class="row row-cols-1 row-cols-sm-2">
+        @for (item of marketingAgecyData; track $index; let last = $last) {
+          <div class="col" [ngClass]="last ? 'pt-lg-3' : ''">
+            @for (
+              data of item;
+              track $index;
+              let first = $first;
+              let iconlast = $last
+            ) {
+              <div
+                class="card border-0 bg-{{ data.color }} bg-opacity-10"
+                [ngClass]="
+                  last && first
+                    ? 'mt-4 mt-sm-0 mt-lg-4'
+                    : first
+                      ? ''
+                      : 'mt-4 mt-lg-4'
+                "
+              >
+                <div class="card-body">
+                  <i
+                    class="{{ data.icon }} text-{{ data.color }} d-block mb-3"
+                    [ngClass]="last && iconlast ? 'fs-2' : 'fs-1'"
+                  ></i>
+                  <h3 class="h4">{{ data.title }}</h3>
+                  <p class="fs-sm">
+                    {{ data.description }}
+                  </p>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+      <div class="d-lg-none text-center pt-3 mt-3 mt-sm-4">
+        <a class="btn btn-primary" href="javascript:void(0);"
+          >See all servises</a
+        >
+      </div>
+    </div>
+  </div>
+</section>

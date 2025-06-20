@@ -1,0 +1,51 @@
+<div class="d-flex align-items-center pb-3 mb-3 mb-lg-4">
+  <h2 class="h1 mb-0">More case studies</h2>
+  <div class="d-flex ms-auto">
+    <button
+      class="btn btn-sm btn-icon btn-outline-primary rounded-circle ms-3"
+      type="button"
+      id="prev-project"
+      aria-label="Prev"
+    >
+      <i class="ai-arrow-left"></i>
+    </button>
+    <button
+      class="btn btn-sm btn-icon btn-outline-primary rounded-circle ms-3"
+      type="button"
+      id="next-project"
+      aria-label="Next"
+    >
+      <i class="ai-arrow-right"></i>
+    </button>
+  </div>
+</div>
+<div class="swiper pb-md-4 pb-xl-5">
+  <swiper-container [config]="swiperConfig" init="false" class="swiper-wrapper">
+    @for (item of portfolioProject; track $index) {
+      <swiper-slide class="swiper-slide">
+        <a class="d-block position-relative" href="javascript:void(0);">
+          <div
+            class="rounded-5 position-absolute top-0 start-0 w-100 h-100"
+            [style.background-color]="item.backgroundColor"
+          ></div>
+          <img
+            class="d-block position-relative z-2 mx-auto"
+            [src]="item.imageSrc"
+            width="636"
+            alt="Image"
+          />
+        </a>
+        <div class="pt-4 mt-sm-2">
+          <h4>
+            <a href="javascript:void(0);">
+              {{ item.title }}
+            </a>
+          </h4>
+          <p class="mb-0">
+            {{ item.description }}
+          </p>
+        </div>
+      </swiper-slide>
+    }
+  </swiper-container>
+</div>

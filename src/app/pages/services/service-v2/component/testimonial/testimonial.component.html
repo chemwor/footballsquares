@@ -1,0 +1,63 @@
+<div class="row pb-2 pb-sm-3 pb-md-4 pb-xl-5 mb-md-2">
+  <div class="col-md-9 col-lg-7 order-md-2">
+    <div class="swiper" #serviceTestimonial binded-content="true">
+      <div class="swiper-wrapper">
+        @for (item of testimonialSwiper; track $index) {
+          <div class="swiper-slide" [attr.data-swiper-binded]="item.id">
+            <div class="d-flex d-md-none pt-3 mb-3">
+              <i class="ai-quotes d-md-none text-primary display-3 mt-n2"></i>
+              <div class="ps-3">
+                <h3 class="h5 mb-0">{{ item.name }}</h3>
+                <p class="text-body-secondary mb-0">{{ item.position }}</p>
+              </div>
+            </div>
+            <h2 class="mb-lg-4">{{ item.testimonial }}</h2>
+            <p class="lead mb-0">{{ item.details }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 offset-lg-1 order-md-1 mt-n3">
+    <i
+      class="ai-quotes d-none d-md-block text-primary ms-n2 mb-1"
+      style="font-size: 150px"
+    ></i>
+
+    <div class="binded-content h-auto d-none d-md-block">
+      @for (item of contentBinded; track $index) {
+        <div
+          class="binded-item h-auto"
+          [id]="item.id"
+          [ngClass]="$index === 0 ? 'active' : ''"
+        >
+          <h3 class="h5 mb-1">{{ item.name }}</h3>
+          <p class="text-body-secondary mb-0">{{ item.position }}</p>
+        </div>
+      }
+    </div>
+
+    <div class="d-flex align-items-center pb-2 pb-md-0 pt-4 mt-3">
+      <button
+        class="btn btn-icon btn-sm btn-outline-primary rounded-circle me-3"
+        type="button"
+        id="prev-testimonial"
+        aria-label="Prev"
+      >
+        <i class="ai-arrow-left"></i>
+      </button>
+      <div
+        class="testimonials-count fw-medium flex-shrink-0 text-center"
+        style="width: 2.5rem"
+      ></div>
+      <button
+        class="btn btn-icon btn-sm btn-outline-primary rounded-circle ms-3"
+        type="button"
+        id="next-testimonial"
+        aria-label="Next"
+      >
+        <i class="ai-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+</div>

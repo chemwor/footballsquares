@@ -1,0 +1,108 @@
+<section class="bg-secondary pt-5 pb-4">
+  <div class="container py-lg-2 py-xl-4 py-xxl-5">
+    <div class="row mt-1 pt-sm-2 pt-md-3 pt-lg-4">
+      <div class="col-lg-5 mb-5 mb-lg-0">
+        <h2 class="h1">Benefits of working with us</h2>
+        <p class="pb-1 pb-md-0 mb-4 mb-md-5">
+          Morbi et massa fames ac scelerisque sit commodo dignissim faucibus vel
+          quisque proin lectus.
+        </p>
+        <h3 class="mb-4">Send your request!</h3>
+
+        <form
+          [formGroup]="contactForm"
+          (ngSubmit)="submitForm()"
+          class="needs-validation row g-4"
+          novalidate
+        >
+          <div class="col-lg-10">
+            <label class="form-label fs-base" for="name">Name</label>
+            <input
+              class="form-control form-control-lg"
+              type="text"
+              placeholder="Your name"
+              formControlName="name"
+              [ngClass]="{ 'is-invalid': submit && Form['name'].errors }"
+              required
+              id="name"
+            />
+            <div class="invalid-feedback">Please enter your name!</div>
+          </div>
+          <div class="col-lg-10">
+            <label class="form-label fs-base" for="email">Email</label>
+            <input
+              class="form-control form-control-lg"
+              type="email"
+              placeholder="Email address"
+              formControlName="email"
+              [ngClass]="{ 'is-invalid': submit && Form['email'].errors }"
+              required
+              id="email"
+            />
+            <div class="invalid-feedback">
+              Please provide a valid email address!
+            </div>
+          </div>
+          <div class="col-lg-10">
+            <label class="form-label fs-base" for="message">Message</label>
+            <textarea
+              class="form-control form-control-lg"
+              placeholder="Your message"
+              rows="4"
+              formControlName="message"
+              [ngClass]="{ 'is-invalid': submit && Form['message'].errors }"
+              required
+              id="message"
+            ></textarea>
+            <div class="invalid-feedback">Please write your message!</div>
+          </div>
+          <div class="col-lg-10">
+            <button class="btn btn-lg btn-dark rounded-pill mt-2" type="submit">
+              Send request
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-lg-7 col-xl-6 offset-xl-1">
+        <div class="row row-cols-1 row-cols-sm-2">
+          @for (item of webStudioContactData; track $index; let last = $last) {
+            <div
+              class="col"
+              [ngClass]="last ? 'd-flex flex-column pt-4 mt-sm-3' : ''"
+            >
+              @for (data of item; track $index; let first = $first) {
+                <div
+                  class="card border-0"
+                  [ngClass]="
+                    last && first
+                      ? 'order-sm-2 mb-4 mb-sm-0'
+                      : (first ? 'mb-4' : 'bg-primary') +
+                        (last && last ? ' bg-primary order-sm-1 mb-sm-4' : '')
+                  "
+                >
+                  <div class="card-body">
+                    <div [innerHTML]="data.sanitizedIcon"></div>
+                    <h3
+                      class="h4"
+                      style="max-width: 180px"
+                      [ngClass]="last && first ? '' : first ? '' : 'text-white'"
+                    >
+                      {{ data.title }}
+                    </h3>
+                    <p
+                      class="card-text fs-sm"
+                      [ngClass]="last && first ? '' : first ? '' : 'text-white'"
+                    >
+                      {{ data.description }}
+                    </p>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

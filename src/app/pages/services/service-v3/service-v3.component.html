@@ -1,0 +1,40 @@
+<main class="page-wrapper">
+  <component-navigation-bar-2 />
+
+  <section
+    class="jarallax bg-dark py-5"
+    ngJarallax
+    [config]="jarallaxConfig"
+    data-jarallax
+    data-speed="0.6"
+    data-bs-theme="dark"
+  >
+    <div
+      class="position-absolute top-0 start-0 w-100 h-100 bg-black opacity-60"
+    ></div>
+    <div
+      class="jarallax-img"
+      style="
+        background-image: url(assets/img/services/v3/hero-bg.jpg);
+        background-size: cover;
+      "
+    ></div>
+    <div
+      class="container position-relative z-2 pt-5 pb-md-2 pb-lg-3 pb-xl-4 pb-xxl-5"
+    >
+      <nav aria-label="breadcrumb">
+        <ol class="pt-lg-3 mb-0 breadcrumb">
+          <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            Services v.3
+          </li>
+        </ol>
+      </nav>
+      <single-v3-hero />
+    </div>
+  </section>
+  <service-v3-service />
+  <service-v3-partner />
+  <service-v3-skills />
+</main>
+<service-v3-footer />

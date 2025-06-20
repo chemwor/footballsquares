@@ -1,0 +1,51 @@
+<section class="container pt-5 mt-lg-3 mt-xl-4 mt-xxl-5">
+  <div class="row pt-2 pt-md-4 pt-lg-3 pt-xl-4 g-4 g-sm-3 g-md-4">
+    <div class="col-lg-8 order-lg-2">
+      <div
+        class="d-md-flex h-100 bg-primary rounded-5 overflow-hidden px-4 px-sm-5 pt-5"
+      >
+        <div class="d-md-flex px-2 px-sm-0 px-xl-2 px-xxl-4 pt-xl-3">
+          <div
+            class="text-center text-md-start pe-md-5 pb-3 pb-md-0 me-xxl-3 mb-4 md-0"
+          >
+            <h2 class="h1 text-white pb-2 pb-md-3 mb-lg-4">
+              How Does It Work?
+            </h2>
+            <a
+              class="btn btn-icon btn-xl btn-warning rounded-circle"
+              (click)="open(0)"
+              data-bs-toggle="video"
+              aria-label="Play video"
+            >
+              <i class="ai-play-filled"></i>
+            </a>
+          </div>
+          <div class="w-100 flex-md-shrink-0 mx-auto" style="max-width: 472px">
+            <img
+              class="d-dark-mode-none"
+              src="assets/img/landing/saas-1/features/01-light.png"
+              alt="Image"
+            />
+            <img
+              class="d-none d-dark-mode-block"
+              src="assets/img/landing/saas-1/features/01-dark.png"
+              alt="Image"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    @for (item of saasFeatureData; track $index) {
+      <div class="col-sm-6 col-lg-4 order-lg-{{ item.order }}">
+        <div class="card border-0 bg-secondary h-100 py-lg-2 py-xl-4">
+          <div class="card-body">
+            <h3>{{ item.title }}</h3>
+            <p class="mb-0">
+              {{ item.description }}
+            </p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</section>

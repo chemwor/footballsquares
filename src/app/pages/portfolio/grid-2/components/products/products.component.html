@@ -1,0 +1,92 @@
+<div class="masonry-filterable">
+  <div class="row pb-lg-4 mb-2 mb-sm-3">
+    <div class="col-xxl-3 col-lg-4 text-center text-lg-start">
+      <h1>Our Projects</h1>
+      <p class="mb-4 mb-lg-0">
+        We will put our industry expertise for creativity to work for your
+        project
+      </p>
+    </div>
+
+    <div class="col-xxl-9 col-lg-8 d-flex">
+      <ul
+        class="masonry-filters nav nav-pills fs-sm flex-nowrap overflow-auto text-nowrap w-100 mx-auto me-lg-0 pb-3"
+        style="max-width: 456px"
+      >
+        <li class="nav-item mb-0">
+          <a
+            class="nav-link border active"
+            [ngClass]="{ active: type == 'All' }"
+            data-group="all"
+            (click)="filterType('All')"
+            >All</a
+          >
+        </li>
+        <li class="nav-item mb-0">
+          <a
+            class="nav-link border"
+            [ngClass]="{ active: type == 'Branding' }"
+            data-group="branding"
+            (click)="filterType('Branding')"
+            >Branding</a
+          >
+        </li>
+        <li class="nav-item mb-0">
+          <a
+            class="nav-link border"
+            [ngClass]="{ active: type == 'Stationery' }"
+            data-group="stationery"
+            (click)="filterType('Stationery')"
+            >Stationery</a
+          >
+        </li>
+        <li class="nav-item mb-0">
+          <a
+            class="nav-link border"
+            [ngClass]="{ active: type == 'Web design' }"
+            data-group="web"
+            (click)="filterType('Web design')"
+            >Web</a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <ngx-masonry class="masonry-grid" data-columns="2">
+    <article
+      ngxMasonryItem
+      *ngFor="let data of projectList"
+      class="masonry-grid-item pb-5 mb-md-2 mb-lg-4 mb-xl-5"
+      data-groups='["branding"]'
+    >
+      <div
+        class="zoom-effect position-relative border-bottom pb-3"
+        style="max-width: 512px"
+      >
+        <div class="zoom-effect-wrapper">
+          <div class="zoom-effect-img">
+            <img src="{{ data.img }}" alt="Image" />
+          </div>
+        </div>
+        <div class="pt-4 mt-lg-2">
+          <h2 class="h4 mb-2">
+            <a class="stretched-link" routerLink="/portfolio/single-2">{{
+              data.label
+            }}</a>
+          </h2>
+          <div class="d-flex justify-content-between fs-lg text-body-secondary">
+            <span>{{ data.type }}</span>
+            <span>{{ data.year }}</span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </ngx-masonry>
+
+  <div class="text-center pb-sm-2 pb-md-4 mt-n1 mt-lg-n2">
+    <button class="btn btn-lg btn-outline-dark rounded-0" type="button">
+      Load more projects
+    </button>
+  </div>
+</div>

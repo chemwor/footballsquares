@@ -1,0 +1,63 @@
+<section class="position-relative min-vh-100 py-5" data-bs-theme="light">
+  <div
+    class="swiper swiper-scale-effect position-absolute top-0 start-0 w-100 h-100"
+  >
+    <swiper-container
+      class="swiper-wrapper"
+      [config]="swiperConfig"
+      init="false"
+    >
+      <swiper-slide class="swiper-slide">
+        <div
+          class="swiper-slide-cover bg-position-top-center"
+          style="
+            background-image: url(assets/img/landing/yoga-studio/hero/01.jpg);
+          "
+        ></div>
+      </swiper-slide>
+      <swiper-slide>
+        <div
+          class="swiper-slide-cover bg-position-top-center"
+          style="
+            background-image: url(assets/img/landing/yoga-studio/hero/02.jpg);
+          "
+        ></div>
+      </swiper-slide>
+      <swiper-slide>
+        <div
+          class="swiper-slide-cover bg-position-top-center"
+          style="
+            background-image: url(assets/img/landing/yoga-studio/hero/03.jpg);
+          "
+        ></div>
+      </swiper-slide>
+    </swiper-container>
+    <div class="swiper-pagination mb-4" id="swiper-pagination"></div>
+  </div>
+
+  <div class="container position-relative z-2 py-lg-3 py-xl-5 my-5">
+    <div class="row pt-md-3 py-xxl-5 my-5">
+      <div class="col py-5 mb-md-4 mb-lg-5">
+        <h1 class="display-1 text-uppercase mb-4">Yoga Studio</h1>
+        <p
+          class="d-block text-body fs-xl pb-2 mb-4 mb-md-5"
+          style="max-width: 500px"
+        >
+          The best yoga and meditation practices, adapted at a high level to the
+          needs of the modern pace of life.
+        </p>
+        <div class="position-relative d-inline-flex align-items-center">
+          <a
+            class="btn btn-icon btn-lg btn-primary rounded-circle stretched-link"
+            (click)="open(0)"
+            data-bs-toggle="video"
+            aria-label="Play video"
+          >
+            <i class="ai-play-filled"></i>
+          </a>
+          <span class="text-body fs-lg fw-semibold ms-3">Watch Video</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

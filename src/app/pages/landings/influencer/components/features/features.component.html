@@ -1,0 +1,47 @@
+<section
+  class="container py-5 my-lg-3 my-xl-4 my-xxl-5"
+  data-aos="fade-up"
+  data-aos-duration="600"
+  data-aos-offset="280"
+  data-disable-parallax-down="md"
+>
+  <div class="row align-items-xl-center py-2 py-sm-3 my-md-3 mb-lg-4 mb-xl-5">
+    <div class="col-md-6 pb-4 pb-md-0 mb-3 mb-md-0">
+      <img
+        class="rounded-4"
+        src="assets/img/landing/influencer/features.jpg"
+        alt="Influencer"
+      />
+    </div>
+    <div
+      class="col-md-6 col-xl-5 offset-xl-1"
+      data-aos="fade-up"
+      data-aos-duration="850"
+      data-aos-offset="180"
+      data-disable-parallax-down="md"
+    >
+      <div class="ps-md-4 ps-xl-0">
+        <h2 class="h1 pb-3 mb-2 mb-md-3 mb-xl-4">Why training with me?</h2>
+        <ul class="list-unstyled pb-1 pb-xl-2">
+          @for (item of featuresInfluencesData; track $index) {
+            <li class="d-flex fs-lg pb-1 mb-3">
+              <i class="{{ item.icon }} text-primary fs-4 mt-n1 me-3"></i>
+              {{ item.title }}
+            </li>
+          }
+        </ul>
+        <h3 class="h5 text-body mb-lg-4">My achievements:</h3>
+        <img
+          class="d-dark-mode-none"
+          src="assets/img/landing/influencer/achievements-dark.svg"
+          alt="Achievements"
+        />
+        <img
+          class="d-none d-dark-mode-block"
+          src="assets/img/landing/influencer/achievements-light.svg"
+          alt="Achievements"
+        />
+      </div>
+    </div>
+  </div>
+</section>

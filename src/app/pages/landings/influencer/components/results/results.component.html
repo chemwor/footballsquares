@@ -1,0 +1,88 @@
+<section class="container py-5 my-lg-3 my-xl-4 my-xxl-5">
+  <div class="row py-2 py-sm-3 my-md-3">
+    <div
+      class="col-lg-5 col-xl-4 pb-2 pb-sm-0 mb-4 mb-sm-5 mb-lg-0"
+      data-aos="fade-up"
+      data-aos-duration="600"
+      data-aos-offset="280"
+      data-disable-parallax-down="md"
+    >
+      <h2 class="h1 pb-3 mb-lg-4">Results after taking the guide</h2>
+      <div class="d-flex align-items-center">
+        <div class="d-flex me-3">
+          <div
+            class="bg-light flex-shrink-0 rounded-circle position-relative z-4"
+            style="padding: 3px"
+          >
+            <img
+              class="rounded-circle"
+              src="assets/img/avatar/07.jpg"
+              width="48"
+              alt="Avatar"
+            />
+          </div>
+          <div
+            class="bg-light flex-shrink-0 rounded-circle position-relative z-3 ms-n3"
+            style="padding: 3px"
+          >
+            <img
+              class="rounded-circle"
+              src="assets/img/avatar/09.jpg"
+              width="48"
+              alt="Avatar"
+            />
+          </div>
+          <div
+            class="bg-light flex-shrink-0 rounded-circle position-relative z-2 ms-n3"
+            style="padding: 3px"
+          >
+            <img
+              class="rounded-circle"
+              src="assets/img/avatar/05.jpg"
+              width="48"
+              alt="Avatar"
+            />
+          </div>
+          <div
+            class="bg-light flex-shrink-0 rounded-circle position-relative z-1 ms-n3"
+            style="padding: 3px"
+          >
+            <img
+              class="rounded-circle"
+              src="assets/img/avatar/11.jpg"
+              width="48"
+              alt="Avatar"
+            />
+          </div>
+        </div>
+        <p class="mb-0">
+          <strong class="text-dark">400+</strong> got the result
+        </p>
+      </div>
+    </div>
+    <div class="col-lg-7 col-xxl-6 offset-xl-1 offset-xxl-2">
+      <div class="row row-cols-1 row-cols-sm-2 gy-4 gy-lg-5">
+        @for (item of allInfluenceResult; track $index) {
+          <div
+            class="col"
+            data-aos="fade-up"
+            [attr.data-aos-offset]="item.aos.offset"
+            [attr.data-disable-parallax-down]="item.aos.disable_parallax_down"
+          >
+            <div class="pe-sm-2 pe-md-4 me-xl-3">
+              <div
+                class="d-inline-block bg-primary text-light rounded p-3 mb-3 mb-md-4"
+              >
+                <i class="{{ item.icon_class }} fs-1"></i>
+              </div>
+              <h3 class="h5 fw-bold mb-2">{{ item.title }}</h3>
+              <p class="fs-lg mb-2">
+                {{ item.description }}
+              </p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

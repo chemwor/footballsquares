@@ -1,0 +1,62 @@
+<section class="container pt-5 mt-xl-3 mt-xxl-5">
+  <div class="row pt-1 pt-sm-3 pt-md-4 pt-lg-5 mt-xl-2">
+    <div class="col-lg-4">
+      <h2 class="h1 pb-1 pb-sm-2 mb-4">Who may attend Conference?</h2>
+    </div>
+    <div class="col-lg-8 col-xl-7 offset-xl-1">
+      <div class="ps-lg-4 ps-xl-0">
+        <ngx-simplebar>
+          <ul
+            ngbNav
+            #nav="ngbNav"
+            class="nav nav-tabs flex-nowrap mb-2"
+            role="tablist"
+          >
+            @for (item of allTargetData; track $index) {
+              <li ngbNavItem class="nav-item">
+                <a
+                  ngbNavLink
+                  class="nav-link text-nowrap px-4 px-lg-3 px-xl-4"
+                  data-bs-toggle="tab"
+                  role="tab"
+                  >{{ item.category }}</a
+                >
+                <ng-template ngbNavContent>
+                  <div
+                    class="tab-pane fade show active"
+                    id="{{ item.content.id }}"
+                    role="tabpanel"
+                  >
+                    <p class="fs-xl mb-4">
+                      {{ item.content.list }}
+                    </p>
+                    <ul class="fs-xl mb-0">
+                      @for (data of item.content.list; track $index) {
+                        <li class="mb-1">
+                          {{ data }}
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                </ng-template>
+              </li>
+            }
+          </ul>
+        </ngx-simplebar>
+        <div
+          [ngbNavOutlet]="nav"
+          class="tab-content py-2 pb-md-0 pt-sm-3 pt-lg-4 mb-4 mb-md-5"
+        ></div>
+        <a
+          class="btn btn-lg btn-primary w-100 w-sm-auto"
+          href="#tickets"
+          data-scroll
+          data-scroll-offset="120"
+        >
+          Buy access pass
+          <i class="ai-arrow-down ms-2 me-n2"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

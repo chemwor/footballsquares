@@ -1,0 +1,157 @@
+<section class="container mt-2 mt-md-0 pb-5 mb-md-2 mb-lg-3 mb-xl-4 mb-xxl-5">
+  <div class="row align-items-center">
+    <div class="col-sm-8 col-lg-4 col-xl-3 offset-xl-1 order-sm-2 mb-3 mb-sm-0">
+      <div class="position-relative mb-lg-2">
+        <i
+          class="ai-search fs-lg position-absolute top-50 start-0 translate-middle-y ms-3"
+        ></i>
+        <input
+          class="form-control rounded-pill ps-5"
+          type="search"
+          placeholder="Enter keywords.."
+        />
+      </div>
+    </div>
+    <div class="col-sm-4 col-lg-8 order-sm-1">
+      <div class="d-none d-lg-flex flex-wrap align-items-center">
+        <h3 class="h6 mb-2 me-4">Topics:</h3>
+        <a
+          class="btn btn-outline-secondary px-4 rounded-pill mb-2 me-3"
+          href="javascript:void(0);"
+          >Nature</a
+        >
+        <a
+          class="btn btn-outline-secondary px-4 rounded-pill mb-2 me-3"
+          href="javascript:void(0);"
+          >Design</a
+        >
+        <a
+          class="btn btn-outline-secondary px-4 rounded-pill mb-2 me-3"
+          href="javascript:void(0);"
+          >Books</a
+        >
+        <a
+          class="btn btn-outline-secondary px-4 rounded-pill mb-2 me-3"
+          href="javascript:void(0);"
+          >Fashion</a
+        >
+        <a
+          class="btn btn-outline-secondary px-4 rounded-pill mb-2 me-3"
+          href="javascript:void(0);"
+          >Inspiration</a
+        >
+        <a
+          class="btn btn-outline-secondary px-4 rounded-pill mb-2"
+          href="javascript:void(0);"
+          >Psychology</a
+        >
+      </div>
+
+      <div class="dropdown d-lg-none" ngbDropdown>
+        <button
+          ngbDropdownToggle
+          class="btn btn-outline-secondary dropdown-toggle rounded-pill w-100"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          Topics
+        </button>
+        <div class="dropdown-menu my-1" ngbDropdownMenu>
+          <a class="dropdown-item" href="javascript:void(0);">Nature</a>
+          <a class="dropdown-item" href="javascript:void(0);">Design</a>
+          <a class="dropdown-item" href="javascript:void(0);">Books</a>
+          <a class="dropdown-item" href="javascript:void(0);">Fashion</a>
+          <a class="dropdown-item" href="javascript:void(0);">Inspiration</a>
+          <a class="dropdown-item" href="javascript:void(0);">Psychology</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-sm-2 mt-lg-0 pt-4 pt-lg-5 pb-md-4">
+    <div class="col-md-7 pb-2 pb-md-0 mb-4 mb-md-0">
+      @for (item of featurePost; track $index) {
+        <article class="pb-5 pt-sm-1 mb-lg-3 mb-xl-4">
+          <a routerLink="/blog/post-1">
+            <img class="rounded-5" [src]="item.image" alt="Image" />
+          </a>
+          <h2 class="h3 pt-3 mt-2 mt-md-3">
+            <a routerLink="/blog/post-1">{{ item.title }}</a>
+          </h2>
+          <p>
+            {{ item.content }}
+          </p>
+          <div class="d-flex flex-wrap align-items-center pt-1 mt-n2">
+            <a
+              class="nav-link text-body-secondary fs-sm fw-normal p-0 mt-2 me-3"
+              href="javascript:void(0);"
+            >
+              {{ item.shares }}
+              <i class="ai-share fs-lg ms-1"></i>
+            </a>
+            <a
+              class="nav-link text-body-secondary fs-sm fw-normal d-flex align-items-end p-0 mt-2"
+              href="javascript:void(0);"
+            >
+              {{ item.comments }}
+              <i class="ai-message fs-lg ms-1"></i>
+            </a>
+            <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+            <span class="fs-sm text-body-secondary mt-2">{{ item.date }}</span>
+            <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+            <a
+              class="badge text-nav fs-xs border mt-2"
+              href="javascript:void(0);"
+              >{{ item.category }}</a
+            >
+          </div>
+        </article>
+      }
+
+      <a
+        class="btn btn-primary mt-n2 mt-sm-n1 mt-md-0"
+        routerLink="/blog/list-sidebar"
+        >Read all articles</a
+      >
+    </div>
+
+    <aside class="col-md-5 col-xl-4 offset-xl-1" style="margin-top: -115px">
+      <div
+        class="position-sticky top-0 ps-md-4 ps-xl-0"
+        style="padding-top: 125px"
+      >
+        <h2 class="h4">Relevant articles</h2>
+
+        @for (item of relavantArticle; track $index) {
+          <article class="my-1 my-lg-0 py-2 py-lg-3">
+            <h3 class="h6 mb-2 mb-lg-3">
+              <a routerLink="/blog/post-1">{{ item.title }}</a>
+            </h3>
+            <div class="d-flex flex-wrap align-items-center mt-n2">
+              <a
+                class="nav-link text-body-secondary fs-sm fw-normal p-0 mt-2 me-3"
+                href="javascript:void(0);"
+              >
+                {{ item.shares }}
+                <i class="ai-share fs-lg ms-1"></i>
+              </a>
+              <a
+                class="nav-link text-body-secondary fs-sm fw-normal d-flex align-items-end p-0 mt-2"
+                href="javascript:void(0);"
+              >
+                {{ item.comments }}
+                <i class="ai-message fs-lg ms-1"></i>
+              </a>
+              <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+              <span class="fs-sm text-body-secondary mt-2">{{
+                item.date
+              }}</span>
+            </div>
+          </article>
+        }
+      </div>
+    </aside>
+  </div>
+</section>

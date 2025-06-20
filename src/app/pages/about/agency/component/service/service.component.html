@@ -1,0 +1,30 @@
+<section class="bg-secondary py-5">
+  <div class="container py-3 py-sm-4 py-lg-5 my-md-2 my-lg-3 my-xl-4 my-xxl-5">
+    <div class="fs-sm text-uppercase mb-3 mt-xl-2 mt-xxl-3">Work with us</div>
+    <h2 class="h1 pb-3 mb-lg-4">Our services</h2>
+    <div
+      class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 pb-xl-2 pb-xxl-3"
+    >
+      @for (item of serviceData; track $index) {
+        <div class="col">
+          <div class="card h-100 border-0 rounded-5">
+            <div class="card-body pb-3">
+              <div [innerHTML]="item.sanitizedIcon"></div>
+              <h3 class="h4">{{ item.title }}</h3>
+              <p class="mb-0">{{ item.description }}</p>
+            </div>
+            <div class="card-footer border-0 pt-3 mb-3">
+              <a
+                class="btn btn-icon btn-lg btn-outline-primary rounded-circle stretched-link"
+                href="javascript:void(0);"
+                aria-label="Learn more"
+              >
+                <i class="ai-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,44 @@
+<section class="container mt-n3 mt-sm-n2 pb-5 mb-md-2 mb-lg-3 mb-xl-4 mb-xxl-5">
+  <h2 class="h1 text-center pb-3 pb-lg-4">Testimonials</h2>
+
+  <div class="swiper pb-1 pb-md-2 pb-lg-3 pb-xl-4">
+    <swiper-container
+      [config]="swiperConfig"
+      init="false"
+      class="swiper-wrapper"
+    >
+      @for (item of testimonial; track $index) {
+        <swiper-slide class="swiper-slide">
+          @for (data of item; track $index) {
+            <div class="card border-0 mb-4">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <img
+                    class="rounded-circle"
+                    [src]="data.image"
+                    width="60"
+                    alt="Jane Cooper"
+                  />
+                  <div class="ps-3">
+                    <div class="h6 mb-1">{{ data.title }}</div>
+                    <div class="fs-sm text-body-secondary">
+                      {{ data.subtitle }}
+                    </div>
+                  </div>
+                </div>
+                <p class="card-text">
+                  {{ data.text }}
+                </p>
+              </div>
+            </div>
+          }
+        </swiper-slide>
+      }
+    </swiper-container>
+
+    <div
+      id="swiper-pagination"
+      class="swiper-pagination position-relative bottom-0 mt-2 mt-md-3 mt-lg-4 pt-4"
+    ></div>
+  </div>
+</section>

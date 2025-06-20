@@ -1,0 +1,85 @@
+<section class="container py-5 my-md-3 my-lg-2 my-xl-4 my-xxl-5">
+  <div
+    class="d-md-flex align-items-center pb-3 mb-md-3 mb-lg-4 mt-2 mt-sm-3 pt-2 pt-sm-4 pt-lg-5"
+  >
+    <h2 class="h1 text-center text-md-start mb-4 mb-md-0 me-md-4">
+      Resources for you
+    </h2>
+
+    <ul
+      class="nav nav-pills flex-nowrap fs-sm text-nowrap overflow-auto w-100 mx-auto me-md-0 mb-0 pb-3 pb-md-0"
+      style="max-width: 408px"
+    >
+      <li class="nav-item mb-0">
+        <a class="nav-link border" href="javascript:void(0);">Articles</a>
+      </li>
+      <li class="nav-item mb-0">
+        <a class="nav-link border active" href="javascript:void(0);"
+          >Case studies</a
+        >
+      </li>
+      <li class="nav-item mb-0">
+        <a class="nav-link border" href="javascript:void(0);">Tutorrials</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="swiper">
+    <swiper-container
+      [config]="swiperConfig"
+      class="swiper-wrapper"
+      init="false"
+    >
+      @for (item of resourseData; track $index) {
+        <swiper-slide class="swiper-slide">
+          <a href="javascript:void(0);">
+            <img class="rounded-5" src="{{ item.image }}" alt="Image" />
+          </a>
+          <h3 class="h4 pt-4">
+            <a href="javascript:void(0);">{{ item.title }}</a>
+          </h3>
+          <p>
+            {{ item.description }}
+          </p>
+          <div class="d-flex flex-wrap align-items-center pt-1 mt-n2">
+            <a
+              class="nav-link text-body-secondary fs-sm fw-normal p-0 mt-2 me-3"
+              href="javascript:void(0);"
+            >
+              {{ item.shares }}
+              <i class="ai-share fs-lg ms-1"></i>
+            </a>
+            <a
+              class="nav-link text-body-secondary fs-sm fw-normal d-flex align-items-end p-0 mt-2"
+              href="javascript:void(0);"
+            >
+              {{ item.comments }}
+              <i class="ai-message fs-lg ms-1"></i>
+            </a>
+            <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+            <span class="fs-sm text-body-secondary mt-2">{{
+              item.timestamp
+            }}</span>
+            <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+            <a
+              class="badge bg-primary bg-opacity-10 text-primary fs-xs mt-2"
+              href="javascript:void(0);"
+              >{{ item.category }}</a
+            >
+          </div>
+        </swiper-slide>
+      }
+    </swiper-container>
+
+    <div
+      id="resources-pagination"
+      class="swiper-pagination position-relative bottom-0 mt-2 pt-4 d-lg-none"
+    ></div>
+  </div>
+
+  <div class="text-center pt-4 my-2 mt-lg-0 pt-lg-5 pb-sm-2 pb-md-4">
+    <a class="btn btn-outline-primary rounded-pill" href="javascript:void(0);"
+      >Read all case studies</a
+    >
+  </div>
+</section>

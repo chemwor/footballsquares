@@ -1,0 +1,78 @@
+<section class="container pt-2 pt-sm-3 pt-md-4 pt-lg-5">
+  <h2 class="text-center pt-5 pb-3 mb-lg-4 mt-lg-3 mt-xl-4 mt-xxl-5">
+    More than 2,000 clients using Around to analyze data
+  </h2>
+
+  <div class="overflow-auto pb-3 pb-xl-4 mb-3 mb-lg-4">
+    <ul
+      class="nav nav-tabs justify-content-between flex-nowrap text-nowrap p-0 m-0"
+      role="tablist"
+      style="min-width: 1000px"
+    >
+      @for (item of clientReviewData; track $index) {
+        <li class="nav-item mb-0">
+          <a
+            class="nav-link"
+            (click)="setActiveTab($index)"
+            [class.active]="$index === activeTabIndex"
+            href="javascript:void(0);"
+            data-bs-toggle="tab"
+            role="tab"
+          >
+            <div class="swap-image">
+              <img
+                class="swap-to"
+                [src]="item.images.color"
+                width="{{ item.width }}"
+                alt=" {{ item.name }}"
+              />
+              <div class="swap-from">
+                <img
+                  class="d-dark-mode-none"
+                  [src]="item.images.gray"
+                  width="{{ item.width }}"
+                  alt="{{ item.name }}"
+                />
+                <img
+                  class="d-none d-dark-mode-block"
+                  [src]="item.images.light"
+                  width="{{ item.width }}"
+                  alt="{{ item.name }}"
+                />
+              </div>
+            </div>
+          </a>
+        </li>
+      }
+    </ul>
+  </div>
+
+  <div class="card border-0 bg-secondary">
+    <div class="tab-content card-body px-lg-0 py-lg-5">
+      @for (item of clientDataTabPane; track $index) {
+        <div
+          class="tab-pane fade"
+          [ngClass]="{ 'show active': $index === activeTabIndex }"
+          [id]="item.id"
+          role="tabpanel"
+        >
+          <div class="row py-2 py-sm-1 py-md-3 py-lg-4 py-xl-5">
+            <div class="col-md-4 col-lg-3 offset-lg-1 mb-3 mb-md-0">
+              <img
+                class="d-block rounded-circle mb-3"
+                [src]="item.image"
+                width="86"
+                alt="Lilianna Bocouse"
+              />
+              <h4 class="mb-0">{{ item.name }}</h4>
+              <p class="fs-lg text-body-secondary mb-0">{{ item.role }}</p>
+            </div>
+            <div class="col-md-8 col-lg-7">
+              <p class="text-dark lead mb-0">{{ item.testimonial }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

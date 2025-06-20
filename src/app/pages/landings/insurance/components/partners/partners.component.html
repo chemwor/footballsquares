@@ -1,0 +1,30 @@
+<section class="container py-5 my-lg-3 my-xl-4 my-xxl-5">
+  <ngx-simplebar
+    class="overflow-auto pb-sm-4 pb-md-5 pt-sm-2 pt-md-3 mt-n2 mt-sm-0 mt-md-1 mt-lg-3 mb-lg-2"
+  >
+    <div class="row row-cols-5 g-0 pb-2" style="min-width: 768px">
+      @for (item of partnersData; track $index) {
+        <div class="col d-flex justify-content-center">
+          @if (item.darkModeSrc !== null) {
+            <img
+              class="d-none d-dark-mode-block"
+              [src]="item.darkModeSrc"
+              width="196"
+              alt="{{ item.name }}"
+            />
+          }
+          @if (item.darkModeSrc === null) {
+            <img src="{{ item.lightModeSrc }}" width="196" alt="Airbnb" />
+          } @else {
+            <img
+              class="d-dark-mode-none"
+              [src]="item.lightModeSrc"
+              width="196"
+              alt="{{ item.name }}"
+            />
+          }
+        </div>
+      }
+    </div>
+  </ngx-simplebar>
+</section>

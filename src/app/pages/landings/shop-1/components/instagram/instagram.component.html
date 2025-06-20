@@ -1,0 +1,81 @@
+<section class="position-relative">
+  <div class="container position-relative z-2">
+    <div class="row align-items-center g-3 g-lg-4 mb-3 mb-lg-4">
+      <div class="col-sm-6 text-center order-sm-2">
+        <div class="ai-instagram fs-2 text-primary mb-2 mb-md-3 mb-lg-4"></div>
+        <h2 class="h1 mb-2 mb-sm-0">
+          Follow us<br /><a
+            href="javascript:void(0);"
+            class="text-primary text-decoration-none"
+            >#aroundecor</a
+          >
+        </h2>
+      </div>
+      @for (item of allShopInstagramFollow; track $index; let last = $last) {
+        <div
+          class="col-6 col-sm-3"
+          [ngClass]="last ? 'order-sm-3' : 'order-sm-1'"
+        >
+          <a class="d-block card-hover zoom-effect" href="javascript:void(0);">
+            <div
+              class="d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100 rounded-1 overflow-hidden z-2 opacity-0"
+            >
+              <i class="ai-instagram lead text-white position-relative z-2"></i>
+              <div
+                class="position-absolute top-0 start-0 w-100 h-100 bg-black opacity-25"
+              ></div>
+            </div>
+            <div class="zoom-effect-wrapper rounded-1">
+              <img
+                class="zoom-effect-img"
+                [src]="item.imageUrl"
+                alt="Instagram image"
+              />
+            </div>
+          </a>
+        </div>
+      }
+    </div>
+    <div class="row g-3 g-lg-4">
+      @for (data of allShopInstagramView; track $index) {
+        <div class="col-6 col-sm-3">
+          <a class="d-block card-hover zoom-effect" href="javascript:void(0);">
+            <div
+              class="d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100 rounded-1 overflow-hidden z-2 opacity-0"
+            >
+              <i class="ai-instagram lead text-white position-relative z-2"></i>
+              <div
+                class="position-absolute top-0 start-0 w-100 h-100 bg-black opacity-25"
+              ></div>
+            </div>
+            <div class="zoom-effect-wrapper rounded-1">
+              <img
+                class="zoom-effect-img"
+                [src]="data.image"
+                alt="Instagram image"
+              />
+            </div>
+          </a>
+        </div>
+      }
+    </div>
+  </div>
+  <div
+    class="d-none d-lg-block bg-dark position-absolute start-0 bottom-0 w-100"
+    style="height: 155px"
+  >
+    <div
+      class="d-none d-dark-mode-block position-absolute top-0 start-0 w-100 h-100"
+      style="background-color: rgba(255, 255, 255, 0.03)"
+    ></div>
+  </div>
+  <div
+    class="d-lg-none bg-dark position-absolute start-0 bottom-0 w-100"
+    style="height: 80px"
+  >
+    <div
+      class="d-none d-dark-mode-block position-absolute top-0 start-0 w-100 h-100"
+      style="background-color: rgba(255, 255, 255, 0.03)"
+    ></div>
+  </div>
+</section>

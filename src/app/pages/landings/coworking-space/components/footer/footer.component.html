@@ -1,0 +1,54 @@
+<footer class="footer py-5">
+  <div class="container pt-lg-3 mt-xl-3">
+    <div class="border-bottom text-center pb-4">
+      <ul class="nav justify-content-center py-1 pb-sm-2">
+        @for (item of footerFeature; track $index) {
+          <li class="nav-item">
+            <a class="nav-link py-2 px-3 mx-1" href="javascript:void(0);">{{
+              item
+            }}</a>
+          </li>
+        }
+      </ul>
+    </div>
+    <div
+      class="d-sm-flex align-items-center justify-content-between pt-4 mt-2 mt-sm-0"
+    >
+      <div class="d-flex justify-content-center order-sm-2 mb-4 mb-sm-0">
+        <a
+          class="btn btn-icon btn-sm btn-secondary btn-instagram rounded-circle me-3"
+          href="javascript:void(0);"
+          aria-label="Instagram"
+        >
+          <i class="ai-instagram"></i>
+        </a>
+        <a
+          class="btn btn-icon btn-sm btn-secondary btn-facebook rounded-circle me-3"
+          href="javascript:void(0);"
+          aria-label="Facebook"
+        >
+          <i class="ai-facebook"></i>
+        </a>
+        <a
+          class="btn btn-icon btn-sm btn-secondary btn-youtube rounded-circle"
+          href="javascript:void(0);"
+          aria-label="YouTube"
+        >
+          <i class="ai-youtube"></i>
+        </a>
+      </div>
+      <p class="nav fs-sm order-sm-1 text-center mb-0">
+        <span class="text-body-secondary"
+          >&copy; All rights reserved. Made by</span
+        >
+        <a
+          class="nav-link fw-normal p-0 ms-1"
+          href="{{ developBy }}"
+          target="_blank"
+          rel="noopener"
+          >{{ author }}</a
+        >
+      </p>
+    </div>
+  </div>
+</footer>

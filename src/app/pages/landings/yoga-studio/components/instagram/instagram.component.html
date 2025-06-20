@@ -1,0 +1,71 @@
+<section class="position-relative pt-5 mt-lg-3 mt-xl-4 mt-xxl-5">
+  <div
+    class="bg-secondary position-absolute start-0 bottom-0 w-100 d-none d-sm-block"
+    style="height: 110px"
+  ></div>
+  <div
+    class="bg-secondary position-absolute start-0 bottom-0 w-100 d-sm-none"
+    style="height: 80px"
+  ></div>
+  <div
+    class="container position-relative z-2 pt-2 pt-sm-4 pt-lg-5 mt-md-2 mt-lg-0"
+  >
+    <h2 class="h1 text-center pb-3 mb-3 mb-lg-4">
+      See more photos on
+      <a href="javascript:void(0);" class="text-primary text-decoration-none"
+        >Instagram</a
+      >
+    </h2>
+    <div class="row g-4">
+      <div class="col-md-8">
+        <div class="row g-3 g-sm-4">
+          @for (item of allInstagramUpload; track $index) {
+            <div class="col-{{ item.col_span }}">
+              <a
+                class="d-block card-hover zoom-effect"
+                href="javascript:void(0);"
+              >
+                <div
+                  class="d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100 rounded-5 overflow-hidden z-2 opacity-0"
+                >
+                  <i
+                    class="ai-instagram lead text-white position-relative z-2"
+                  ></i>
+                  <div
+                    class="position-absolute top-0 start-0 w-100 h-100 bg-black opacity-25"
+                  ></div>
+                </div>
+                <div class="zoom-effect-wrapper rounded-5">
+                  <img
+                    class="zoom-effect-img"
+                    [src]="item.image_src"
+                    alt="Instagram image"
+                  />
+                </div>
+              </a>
+            </div>
+          }
+        </div>
+      </div>
+      <div class="col-md-4 d-none d-md-block">
+        <a class="d-block card-hover zoom-effect" href="javascript:void(0);">
+          <div
+            class="d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100 rounded-5 overflow-hidden z-2 opacity-0"
+          >
+            <i class="ai-instagram lead text-white position-relative z-2"></i>
+            <div
+              class="position-absolute top-0 start-0 w-100 h-100 bg-black opacity-20"
+            ></div>
+          </div>
+          <div class="zoom-effect-wrapper rounded-5">
+            <img
+              class="zoom-effect-img"
+              src="assets/img/landing/yoga-studio/instagram/03.jpg"
+              alt="Instagram image"
+            />
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

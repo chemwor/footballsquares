@@ -1,0 +1,117 @@
+<section class="pt-5 mt-lg-3 mt-xl-4 mt-xxl-5">
+  <h2
+    class="h1 contaier text-center pt-2 pt-sm-3 pt-md-4 pb-3 mt-md-2 mt-xxl-3 mb-lg-4"
+  >
+    What attendees say
+  </h2>
+
+  <div class="swiper pb-4">
+    <swiper-container
+      [config]="swiperConfig"
+      init="false"
+      class="swiper-wrapper"
+      style="transition-timing-function: linear !important"
+    >
+      @for (item of attendanceData; track $index) {
+        <swiper-slide class="swiper-slide h-auto">
+          <div class="card h-100 border-0 bg-secondary rounded-4">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-4">
+                <img
+                  class="rounded-circle"
+                  [src]="item.avatar"
+                  width="60"
+                  alt="Avatar"
+                />
+                <div class="ps-3">
+                  <div class="h5 mb-0">{{ item.name }}</div>
+                  <ng-template #t let-fill="fill">
+                    @if (fill > 0) {
+                      <i
+                        class="ai-star-filled text-warning me-1"
+                        [style.width.%]="fill"
+                      ></i>
+                    }
+                    @if (fill < item.rating) {
+                      <i
+                        class="ai-star text-body-secondary opacity-70"
+                        [style.width.%]="fill"
+                      ></i>
+                    }
+                  </ng-template>
+
+                  <div class="text-nowrap">
+                    <ngb-rating
+                      [(rate)]="item.rating"
+                      [starTemplate]="t"
+                      [readonly]="true"
+                      [max]="5"
+                    ></ngb-rating>
+                  </div>
+                </div>
+              </div>
+              <p class="mb-0">
+                {{ item.review }}
+              </p>
+            </div>
+          </div>
+        </swiper-slide>
+      }
+    </swiper-container>
+  </div>
+
+  <div class="swiper" dir="rtl">
+    <swiper-container
+      [config]="secondSwiper"
+      init="false"
+      class="swiper-wrapper"
+      style="transition-timing-function: linear !important"
+    >
+      @for (item of attendanceData; track $index) {
+        <swiper-slide class="swiper-slide h-auto" dir="ltr">
+          <div class="card h-100 border-0 bg-secondary rounded-4">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-4">
+                <img
+                  class="rounded-circle"
+                  [src]="item.avatar"
+                  width="60"
+                  alt="Avatar"
+                />
+                <div class="ps-3">
+                  <div class="h5 mb-0">{{ item.name }}</div>
+                  <ng-template #t let-fill="fill">
+                    @if (fill > 0) {
+                      <i
+                        class="ai-star-filled text-warning me-1"
+                        [style.width.%]="fill"
+                      ></i>
+                    }
+                    @if (fill < item.rating) {
+                      <i
+                        class="ai-star text-body-secondary opacity-70"
+                        [style.width.%]="fill"
+                      ></i>
+                    }
+                  </ng-template>
+
+                  <div class="text-nowrap">
+                    <ngb-rating
+                      [(rate)]="item.rating"
+                      [starTemplate]="t"
+                      [readonly]="true"
+                      [max]="5"
+                    ></ngb-rating>
+                  </div>
+                </div>
+              </div>
+              <p class="mb-0">
+                {{ item.review }}
+              </p>
+            </div>
+          </div>
+        </swiper-slide>
+      }
+    </swiper-container>
+  </div>
+</section>

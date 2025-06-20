@@ -1,0 +1,421 @@
+<div class="row position-relative overflow-hidden gx-2 z-1">
+  <div class="col-xl-4">
+    <div
+      class="offcanvas-xl offcanvas-start position-absolute position-xl-relative h-100 bg-light rounded-5 border border-xl-0"
+      id="contactsList"
+      data-bs-scroll="true"
+      data-bs-backdrop="false"
+    >
+      <div class="rounded-5 overflow-hidden">
+        <div class="card-header w-100 border-0 px-4 pt-4 pb-3">
+          <div class="d-flex d-xl-none justify-content-end mt-n2 mb-2">
+            <button
+              class="btn btn-outline-secondary border-0 px-3 me-n2"
+              aria-label="Close"
+              type="button"
+              data-bs-dismiss="offcanvas"
+              data-bs-target=" #contactsList"
+            >
+              <i class="ai-cross me-2"></i>
+              Close
+            </button>
+          </div>
+          <div class="position-relative">
+            <input
+              class="form-control pe-5"
+              type="text"
+              [(ngModel)]="term"
+              (keyup)="filterChat()"
+              placeholder="Search by name or email"
+            />
+            <i
+              class="ai-search fs-lg text-nav position-absolute top-50 end-0 translate-middle-y me-3"
+            ></i>
+          </div>
+        </div>
+        <ngx-simplebar
+          class="card-body px-0 pb-4 pb-xl-0 pt-1"
+          style="max-height: 700px"
+        >
+          @for (item of contactList; track $index) {
+            <a
+              class="d-flex align-items-center text-decoration-none px-4 py-3"
+              href="javascript:void(0);"
+              (click)="
+                chatContactList($index, item.name, item.image, item.avatar)
+              "
+              [ngClass]="{ 'bg-gray': activeTab === $index }"
+            >
+              @if (item.image) {
+                <div class="position-relative flex-shrink-0 my-1">
+                  <img
+                    class="rounded-circle"
+                    src="{{ item.image }}"
+                    width="48"
+                    alt="Avatar"
+                  />
+                  <span
+                    class="position-absolute bottom-0 end-0 bg-success border border-white rounded-circle me-1"
+                    style="width: 0.625rem; height: 0.625rem"
+                  ></span>
+                </div>
+                <div
+                  class="d-flex justify-content-between w-100 ps-2 ms-1 my-1"
+                >
+                  <div class="me-3">
+                    <div class="h6 mb-1">{{ item.name }}</div>
+                    <p class="text-body fs-sm mb-0">{{ item.message }}</p>
+                  </div>
+                  <div class="text-end">
+                    <span class="d-block fs-xs text-body-secondary">{{
+                      item.timestamp
+                    }}</span>
+                    <span class="badge bg-danger fs-xs lh-1 py-1 px-2">{{
+                      item.unreadMessages
+                    }}</span>
+                  </div>
+                </div>
+              } @else {
+                <div
+                  class="d-flex align-items-center justify-content-center position-relative flex-shrink-0 rounded-circle text-primary fs-lg fw-semibold my-1"
+                  style="
+                    width: 48px;
+                    height: 48px;
+                    background-color: rgba(var(--ar-primary-rgb), 0.15);
+                  "
+                >
+                  {{ item.avatar }}
+                  <span
+                    class="position-absolute bottom-0 end-0 border border-white rounded-circle me-1"
+                    style="
+                      width: 0.625rem;
+                      height: 0.625rem;
+                      background-color: #d7dde2;
+                    "
+                  ></span>
+                </div>
+                <div
+                  class="d-flex justify-content-between w-100 ps-2 ms-1 my-1"
+                >
+                  <div class="me-3">
+                    <div class="h6 mb-1">{{ item.name }}</div>
+                    <p class="text-body fs-sm mb-0">{{ item.message }}</p>
+                  </div>
+                  <div class="text-end">
+                    <span class="d-block fs-xs text-body-secondary">{{
+                      item.timestamp
+                    }}</span>
+                  </div>
+                </div>
+              }
+            </a>
+          }
+        </ngx-simplebar>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-8">
+    <div class="card h-100 border-0">
+      <div class="navbar card-header w-100 mx-0 px-4">
+        <div class="d-flex align-items-center w-100 px-sm-3">
+          <button
+            class="navbar-toggler d-xl-none me-3 me-sm-4"
+            (click)="openEnd(content)"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#contactsList"
+            aria-controls="contactsList"
+            aria-label="Toggle contacts list"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          @if (avatar) {
+            <div class="position-relative flex-shrink-0">
+              @if (avatar) {
+                <img
+                  class="rounded-circle"
+                  src="{{ avatar }}"
+                  width="48"
+                  alt="Avatar"
+                />
+              }
+              <span
+                class="position-absolute bottom-0 end-0 bg-success border border-white rounded-circle me-1"
+                style="width: 0.625rem; height: 0.625rem"
+              ></span>
+            </div>
+          } @else if (avatar2) {
+            <div
+              class="d-flex align-items-center justify-content-center position-relative flex-shrink-0 rounded-circle text-primary fs-lg fw-semibold"
+              style="
+                width: 48px;
+                height: 48px;
+                background-color: rgba(var(--ar-primary-rgb), 0.15);
+              "
+            >
+              {{ avatar2 }}
+              <span
+                class="position-absolute bottom-0 end-0 bg-success border border-white rounded-circle me-1"
+                style="width: 0.625rem; height: 0.625rem"
+              ></span>
+            </div>
+          }
+          <div class="h6 ps-2 ms-1 mb-0">{{ username }}</div>
+          <div class="dropdown ms-auto" ngbDropdown>
+            <a
+              ngbDropdownToggle
+              class="btn btn-icon btn-sm btn-outline-secondary border-0 rounded-circle me-n2"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-label="Actions"
+            >
+              <i class="ai-dots-vertical fs-4 fw-bold"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end my-1" ngbDropdownMenu>
+              <a class="dropdown-item" href="javascript:void(0);">
+                <i class="ai-user fs-base opacity-80 me-2"></i>
+                View profile
+              </a>
+              <a class="dropdown-item" href="javascript:void(0);">
+                <i class="ai-bell-off fs-base opacity-80 me-2"></i>
+                Disable notifications
+              </a>
+              <a class="dropdown-item" href="javascript:void(0);">
+                <i class="ai-edit fs-base opacity-80 me-2"></i>
+                Edit contact
+              </a>
+              <a class="dropdown-item" href="javascript:void(0);">
+                <i class="ai-trash fs-base opacity-80 me-2"></i>
+                Delete contact
+              </a>
+              <a class="dropdown-item" href="javascript:void(0);">
+                <i class="ai-logout fs-base opacity-80 me-2"></i>
+                Leave chat
+              </a>
+              <a class="dropdown-item" href="javascript:void(0);">
+                <i class="ai-circle-slash fs-base opacity-80 me-2"></i>
+                Block user
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ngx-simplebar
+        class="card-body pb-0 pt-4"
+        #scrollRef
+        style="max-height: 580px"
+      >
+        @for (item of messagesData; track $index) {
+          <div class="text-body-secondary text-center mb-4">
+            {{ item.date }}
+          </div>
+
+          @for (data of item.messages; track $index) {
+            @if (!data.isSentByCurrentUser) {
+              <div class="mb-3" style="max-width: 392px">
+                <div class="d-flex align-items-end mb-2">
+                  @if (avatar) {
+                    <div class="flex-shrink-0 pe-2 me-1">
+                      <img
+                        class="rounded-circle"
+                        src="{{ avatar }}"
+                        width="48"
+                        alt="Avatar"
+                      />
+                    </div>
+                  } @else if (avatar2) {
+                    <div
+                      class="d-flex align-items-center me-3 justify-content-center position-relative flex-shrink-0 rounded-circle text-primary fs-lg fw-semibold"
+                      style="
+                        width: 48px;
+                        height: 48px;
+                        background-color: rgba(var(--ar-primary-rgb), 0.15);
+                      "
+                    >
+                      {{ avatar2 }}
+                    </div>
+                  }
+                  <div class="message-box-start text-dark">
+                    {{ data.content }}
+                  </div>
+                </div>
+                <div class="fs-xs text-body-secondary text-end">
+                  {{ data.timestamp }}
+                </div>
+              </div>
+            } @else {
+              <div class="ms-auto mb-3" style="max-width: 392px">
+                <div class="d-flex align-items-end mb-2">
+                  <div class="message-box-end bg-primary text-white">
+                    {{ data.content }}
+                  </div>
+                  <div class="flex-shrink-0 ms-1">
+                    <img
+                      class="rounded-circle"
+                      src="{{ data.sender.avatar }}"
+                      width="48"
+                      alt="Avatar"
+                    />
+                  </div>
+                </div>
+                <div class="fs-xs text-body-secondary">
+                  <i class="ai-checks text-primary fs-xl mt-n1 me-1"></i>
+                  {{ data.timestamp }}
+                </div>
+              </div>
+            }
+          }
+        }
+      </ngx-simplebar>
+
+      <div class="card-footer w-100 border-0 mx-0 px-4">
+        <form
+          class="d-flex align-items-end border rounded-3 pb-3 pe-3 mx-sm-3"
+          [formGroup]="formData"
+        >
+          <textarea
+            class="form-control border-0"
+            formControlName="messages"
+            rows="3"
+            placeholder="Type a message"
+            style="resize: none"
+          ></textarea>
+          <div class="nav flex-nowrap align-items-center">
+            <a
+              class="nav-link text-body-secondary p-1 me-1"
+              href="javascript:void(0);"
+              aria-label="Attach"
+            >
+              <i class="ai-paperclip fs-xl"></i>
+            </a>
+            <a
+              class="nav-link text-body-secondary p-1"
+              href="javascript:void(0);"
+              aria-label="Emoji"
+            >
+              <i class="ai-emoji-smile fs-xl"></i>
+            </a>
+            <button
+              type="submit"
+              (click)="messageSave()"
+              class="btn btn-sm btn-secondary ms-3"
+            >
+              Send
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template
+  #content
+  let-offcanvas
+  class="offcanvas-xl offcanvas-start position-absolute position-xl-relative h-100 bg-light rounded-5 border border-xl-0"
+  id="contactsList"
+  data-bs-scroll="true"
+  data-bs-backdrop="false"
+>
+  <div class="rounded-5 overflow-hidden">
+    <div class="card-header w-100 border-0 px-4 pt-4 pb-3">
+      <div class="d-flex d-xl-none justify-content-end mt-n2 mb-2">
+        <button
+          class="btn btn-outline-secondary border-0 px-3 me-n2"
+          (click)="offcanvas.dismiss('Close click')"
+          type="button"
+          data-bs-dismiss="offcanvas"
+          data-bs-target=" #contactsList"
+        >
+          <i class="ai-cross me-2"></i>
+          Close
+        </button>
+      </div>
+      <div class="position-relative">
+        <input
+          class="form-control pe-5"
+          type="text"
+          [(ngModel)]="term"
+          (keyup)="filterChat()"
+          placeholder="Search by name or email"
+        />
+        <i
+          class="ai-search fs-lg text-nav position-absolute top-50 end-0 translate-middle-y me-3"
+        ></i>
+      </div>
+    </div>
+    <ngx-simplebar
+      class="card-body px-0 pb-4 pb-xl-0 pt-1"
+      style="max-height: 700px"
+    >
+      @for (item of contactList; track $index) {
+        <a
+          class="d-flex align-items-center text-decoration-none px-4 py-3"
+          href="javascript:void(0);"
+          (click)="chatContactList($index, item.name, item.image, item.avatar)"
+          [ngClass]="{ 'bg-gray': activeTab === $index }"
+        >
+          @if (item.image) {
+            <div class="position-relative flex-shrink-0 my-1">
+              <img
+                class="rounded-circle"
+                src="{{ item.image }}"
+                width="48"
+                alt="Avatar"
+              />
+              <span
+                class="position-absolute bottom-0 end-0 bg-success border border-white rounded-circle me-1"
+                style="width: 0.625rem; height: 0.625rem"
+              ></span>
+            </div>
+            <div class="d-flex justify-content-between w-100 ps-2 ms-1 my-1">
+              <div class="me-3">
+                <div class="h6 mb-1">{{ item.name }}</div>
+                <p class="text-body fs-sm mb-0">{{ item.message }}</p>
+              </div>
+              <div class="text-end">
+                <span class="d-block fs-xs text-body-secondary">{{
+                  item.timestamp
+                }}</span>
+                <span class="badge bg-danger fs-xs lh-1 py-1 px-2">{{
+                  item.unreadMessages
+                }}</span>
+              </div>
+            </div>
+          } @else {
+            <div
+              class="d-flex align-items-center justify-content-center position-relative flex-shrink-0 rounded-circle text-primary fs-lg fw-semibold my-1"
+              style="
+                width: 48px;
+                height: 48px;
+                background-color: rgba(var(--ar-primary-rgb), 0.15);
+              "
+            >
+              {{ item.avatar }}
+              <span
+                class="position-absolute bottom-0 end-0 border border-white rounded-circle me-1"
+                style="
+                  width: 0.625rem;
+                  height: 0.625rem;
+                  background-color: #d7dde2;
+                "
+              ></span>
+            </div>
+            <div class="d-flex justify-content-between w-100 ps-2 ms-1 my-1">
+              <div class="me-3">
+                <div class="h6 mb-1">{{ item.name }}</div>
+                <p class="text-body fs-sm mb-0">{{ item.message }}</p>
+              </div>
+              <div class="text-end">
+                <span class="d-block fs-xs text-body-secondary">{{
+                  item.timestamp
+                }}</span>
+              </div>
+            </div>
+          }
+        </a>
+      }
+    </ngx-simplebar>
+  </div>
+</ng-template>

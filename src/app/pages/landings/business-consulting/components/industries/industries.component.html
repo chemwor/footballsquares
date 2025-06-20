@@ -1,0 +1,46 @@
+<section class="container pb-5 pt-3 pt-sm-4 pt-lg-5 my-xl-3 my-xxl-5">
+  <h2 class="h1 text-center">Industries we work in</h2>
+  <p class="text-center pb-4 mb-2 mb-lg-3">
+    We have been helping businesses in the following industries for over a
+    decade
+  </p>
+
+  <div class="swiper">
+    <swiper-container
+      [config]="swiperConfig"
+      init="false"
+      class="swiper-wrapper"
+    >
+      @for (item of allIndustriesData; track $index) {
+        <swiper-slide class="swiper-slide h-auto">
+          <div class="card border-0 h-100">
+            <div class="card-img-top overflow-hidden">
+              <img
+                class="rounded-5 rounded-end-0"
+                src="{{ item.imageSrc }}"
+                alt="Image"
+              />
+            </div>
+            <div class="card-body">
+              <h3 class="h4 card-title">{{ item.title }}</h3>
+              <ul class="ps-4 mb-n2">
+                @for (data of item.listItems; track $index) {
+                  <li class="mb-2">{{ data }}</li>
+                }
+              </ul>
+            </div>
+          </div>
+        </swiper-slide>
+      }
+    </swiper-container>
+
+    <div
+      id="pagination"
+      class="swiper-pagination position-relative bottom-0 mt-2 pt-4 d-lg-none"
+    ></div>
+  </div>
+
+  <div class="text-center pt-4 mt-2 mt-lg-0 pt-lg-5">
+    <a class="btn btn-primary" href="javascript:void(0);">See all industries</a>
+  </div>
+</section>

@@ -1,0 +1,63 @@
+<section class="container py-5 my-lg-3 my-xl-4 my-xxl-5">
+  <div
+    class="text-center pb-3 pt-sm-3 pt-md-4 mx-auto mt-xxl-1 mb-3 mb-lg-4"
+    style="max-width: 525px"
+  >
+    <h2 class="h1">Our space</h2>
+    <p class="mb-0">
+      Morbi et massa fames ac scelerisque sit commodo dignissim faucibus vel
+      quisque proin lectus et massa.
+    </p>
+  </div>
+
+  <ul
+    class="nav nav-tabs flex-nowrap overflow-auto text-nowrap w-100 mx-auto pb-3 mb-3 mb-lg-4"
+    role="tablist"
+    style="max-width: 646px"
+  >
+    <li class="nav-item mb-0">
+      <a class="nav-link active" href="javascript:void(0);" role="tab">All</a>
+    </li>
+    <li class="nav-item mb-0">
+      <a class="nav-link" href="javascript:void(0);" role="tab">Open space</a>
+    </li>
+    <li class="nav-item mb-0">
+      <a class="nav-link" href="javascript:void(0);" role="tab">Lounge zone</a>
+    </li>
+    <li class="nav-item mb-0">
+      <a class="nav-link" href="javascript:void(0);" role="tab">Kitchen</a>
+    </li>
+    <li class="nav-item mb-0">
+      <a class="nav-link" href="javascript:void(0);" role="tab">Parking</a>
+    </li>
+  </ul>
+
+  <div
+    class="gallery row g-4 g-sm-3 g-lg-4 pb-2 pb-sm-4 pb-xl-5 mb-lg-2 mb-xl-0 mb-xxl-2"
+  >
+    @for (item of allGalary; track $index) {
+      <div class="{{ item.colClass }}">
+        <a
+          class="d-block gallery-item card-hover zoom-effect"
+          (click)="open($index)"
+        >
+          <div
+            class="d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100 rounded-5 overflow-hidden z-2 opacity-0"
+          >
+            <i class="ai-zoom-in fs-2 text-white position-relative z-2"></i>
+            <div
+              class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-40"
+            ></div>
+          </div>
+          <div class="zoom-effect-wrapper rounded-5">
+            <img
+              class="zoom-effect-img"
+              src="{{ item.thumb }}"
+              alt="{{ item.caption }}"
+            />
+          </div>
+        </a>
+      </div>
+    }
+  </div>
+</section>

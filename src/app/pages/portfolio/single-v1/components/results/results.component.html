@@ -1,0 +1,23 @@
+<div class="row mt-5 pt-sm-2 pt-lg-3 pt-xl-4 pt-xxl-5">
+  <div class="col-md-10 col-lg-8 col-xl-7 pt-md-3 pt-lg-4">
+    <h2 class="pb-sm-2">Results</h2>
+    <p class="fs-lg mb-2 mb-sm-3 mb-lg-2">
+      Facilisi morbi habitant massa euismod. Vehicula viverra vestibulum at quis
+      orci morbi nullam in. Etiam sit in platea faucibus venenatis. Morbi cursus
+      vehicula nam pellentesque lacus neque aenean non. Feugiat feugiat nullam
+      feugiat cras volutpat.
+    </p>
+  </div>
+</div>
+<div class="row pt-4 pt-lg-5">
+  <div class="col-md-9 col-lg-7 col-xl-6">
+    <div class="row row-cols-1 row-cols-sm-3">
+      @for (item of allResultCount; track $index) {
+        <div class="col mb-4 mb-sm-0">
+          <div class="h1 mb-0">{{ item.number }}</div>
+          <p class="fs-sm mb-0">{{ item.description }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>

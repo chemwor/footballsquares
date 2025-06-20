@@ -1,0 +1,66 @@
+<section class="container py-5 mb-lg-3 mb-xl-4 mt-xl-3 my-xxl-5">
+  <h2 class="h1 text-center pt-2 pt-sm-3 pt-md-4 pt-lg-5 mt-xl-2 mb-5">
+    Meet our speakers
+  </h2>
+  <ngx-simplebar class="mb-4 mb-lg-5 pb-4 px-3">
+    <div class="row row-cols-lg-4 flex-nowrap flex-lg-wrap gy-lg-5 mx-n3">
+      @for (item of speakerData; track $index) {
+        <div class="col">
+          <a
+            class="d-block text-center text-decoration-none"
+            href="javascript:void(0);"
+            style="min-width: 210px"
+          >
+            <img
+              class="rounded-circle"
+              src="{{ item.avatar }}"
+              width="120"
+              alt="Avatar"
+            />
+            <h3 class="h5 pt-4 mb-1">{{ item.name }}</h3>
+            <p class="text-body-secondary mb-0">{{ item.role }}</p>
+          </a>
+        </div>
+      }
+    </div>
+  </ngx-simplebar>
+  <div
+    class="card bg-primary overflow-hidden py-2 py-sm-3 py-md-4 mb-sm-2 mb-md-4"
+  >
+    <div
+      class="bg-dark position-absolute top-0 start-0 w-100 h-100 opacity-5"
+    ></div>
+    <div
+      class="position-absolute top-0 start-0 w-100 h-100 opacity-15"
+      style="
+        background-image: url(assets/img/landing/conference/noise.png);
+        mix-blend-mode: soft-light;
+      "
+    ></div>
+    <div
+      class="card-body position-relative d-sm-flex align-items-center justify-content-between z-2 text-center"
+    >
+      <div class="d-md-flex align-items-center pe-md-4">
+        <div class="d-none d-md-block text-warning flex-shrink-0 me-3">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 0L12.6798 4.12733C13.2879 7.81883 16.1812 10.7121 19.8727 11.3202L24 12L19.8727 12.6798C16.1812 13.2879 13.2879 16.1812 12.6798 19.8727L12 24L11.3202 19.8727C10.7121 16.1812 7.81882 13.2879 4.12733 12.6798L0 12L4.12733 11.3202C7.81883 10.7121 10.7121 7.81882 11.3202 4.12733L12 0Z"
+            ></path>
+          </svg>
+        </div>
+        <h2 class="text-light pb-1 pb-md-0 mb-md-0">
+          Do you have an experience you want to share?
+        </h2>
+      </div>
+      <a class="btn btn-lg btn-warning me-xl-4" href="javascript:void(0);"
+        >Become our speaker</a
+      >
+    </div>
+  </div>
+</section>

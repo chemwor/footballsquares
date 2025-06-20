@@ -1,0 +1,32 @@
+#thumbnails {
+  width: fit-content !important;
+  margin-left: auto;
+}
+
+.swiper-thumbnail {
+  height: 94px !important;
+  width: 94px !important;
+}
+
+@media (max-width: 425px) {
+  .swiper-thumbnail {
+    height: 65px !important;
+    width: 65px !important;
+  }
+}
+
+.thumb-swiper .swiper-wrapper .swiper-slide.swiper-slide-thumb-active img {
+  opacity: 1;
+}
+
+.thumb-swiper .swiper-wrapper .swiper-slide.swiper-slide-thumb-active {
+  border-color: #448c74;
+}
+
+.swiper-thumbnail.swiper-slide-thumb-active {
+  border-color: var(--ar-carousel-thumbnail-active-border-color);
+}
+
+.swiper-thumbnail.swiper-slide-thumb-active > img {
+  opacity: var(--ar-carousel-thumbnail-active-opacity);
+}

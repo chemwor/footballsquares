@@ -1,0 +1,85 @@
+<section class="container pt-5 mt-md-3 mt-lg-2 mt-xl-4 mt-xxl-5">
+  <div class="row align-items-center mt-2 pt-2 pt-sm-4 pt-lg-5">
+    <div class="col-md-7 col-lg-6">
+      <div class="card border-0 bg-secondary py-1 p-lg-4">
+        <div class="card-body">
+          <div class="swiper">
+            <swiper-container
+              [config]="swiperConfig"
+              init="false"
+              class="swiper-wrapper"
+            >
+              @for (item of testimonialSwiper; track $index) {
+                <swiper-slide class="swiper-slide">
+                  <p class="lead text-dark pb-3 mb-3">
+                    {{ item.quote }}
+                  </p>
+                  <div class="d-flex align-items-center">
+                    <img
+                      class="rounded-circle"
+                      src="{{ item.author.avatar }}"
+                      width="60"
+                      alt="Jenny Wilson"
+                    />
+                    <div class="ps-3">
+                      <h3 class="h4 mb-0">{{ item.author.name }}</h3>
+                      <div class="fs-lg text-body-secondary">
+                        {{ item.author.role }}
+                      </div>
+                    </div>
+                  </div>
+                </swiper-slide>
+              }
+            </swiper-container>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-center justify-content-md-end pt-4">
+        <button
+          class="btn btn-icon btn-sm btn-outline-primary rounded-circle me-3"
+          type="button"
+          id="prev-testimonial"
+          aria-label="Prev"
+        >
+          <i class="ai-arrow-left"></i>
+        </button>
+        <button
+          class="btn btn-icon btn-sm btn-outline-primary rounded-circle"
+          type="button"
+          id="next-testimonial"
+          aria-label="Next"
+        >
+          <i class="ai-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="col-md-5 col-xl-4 offset-lg-1 pt-2 pt-md-0 mt-5 mt-md-n5">
+      <div class="ps-md-4 ps-lg-0">
+        <h2 class="h1 mb-4">
+          More than 2,000 clients use Around for data analysis
+        </h2>
+        <ul class="list-unstyled pb-2 pb-lg-0 mb-4 mb-lg-5">
+          <li class="d-flex pt-1 mt-2">
+            <i class="ai-check-alt text-primary fs-4 mt-n1 me-2"></i>
+            24/7 customer support
+          </li>
+          <li class="d-flex pt-1 mt-2">
+            <i class="ai-check-alt text-primary fs-4 mt-n1 me-2"></i>
+            Lifetime update
+          </li>
+          <li class="d-flex pt-1 mt-2">
+            <i class="ai-check-alt text-primary fs-4 mt-n1 me-2"></i>
+            Forecasting and recommendations
+          </li>
+        </ul>
+        <a
+          class="btn btn-lg btn-primary rounded-pill"
+          href="javascript:void(0);"
+          >Start free 14-day trial</a
+        >
+      </div>
+    </div>
+  </div>
+</section>

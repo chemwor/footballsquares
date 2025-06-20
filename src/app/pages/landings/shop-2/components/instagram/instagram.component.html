@@ -1,0 +1,38 @@
+<section>
+  <h2 class="container h1 pb-2 pb-sm-3 pb-lg-4">Let's be social</h2>
+  <ngx-simplebar class="overflow-auto">
+    <div class="row row-cols-8 g-0" style="min-width: 1200px">
+      @for (item of instagramData; track $index) {
+        <div class="col">
+          <a
+            class="card-hover zoom-effect d-block position-relative"
+            href="javascript:void(0);"
+          >
+            <div
+              class="d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100 z-2 opacity-0"
+            >
+              <div
+                class="bg-dark position-absolute top-0 start-0 w-100 h-100 opacity-60"
+              ></div>
+              <div
+                class="d-flex align-items-center text-light position-relative z-2"
+              >
+                <i class="ai-heart me-1"></i>
+                <span class="text-light fs-sm me-3">{{ item.likes }}</span>
+                <i class="ai-message me-1"></i>
+                <span class="text-light fs-sm">{{ item.comments }}</span>
+              </div>
+            </div>
+            <div class="zoom-effect-wrapper">
+              <img
+                class="zoom-effect-img"
+                src="{{ item.imageSrc }}"
+                alt="{{ item.alt }}"
+              />
+            </div>
+          </a>
+        </div>
+      }
+    </div>
+  </ngx-simplebar>
+</section>

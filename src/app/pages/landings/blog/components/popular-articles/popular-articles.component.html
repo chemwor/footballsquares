@@ -1,0 +1,89 @@
+<section class="bg-secondary py-5">
+  <div
+    class="container d-flex align-items-center pt-lg-2 pt-xl-4 pt-xxl-5 pb-3 mt-1 mt-sm-3 mb-3 my-md-4"
+  >
+    <h2 class="h1 mb-0">Most popular</h2>
+
+    <div class="d-flex ms-auto">
+      <button
+        class="btn btn-sm btn-icon btn-outline-primary rounded-circle ms-3"
+        type="button"
+        id="prev-popular"
+        aria-label="Prev"
+      >
+        <i class="ai-arrow-left"></i>
+      </button>
+      <button
+        class="btn btn-sm btn-icon btn-outline-primary rounded-circle ms-3"
+        type="button"
+        id="next-popular"
+        aria-label="Next"
+      >
+        <i class="ai-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="container-start">
+    <div class="swiper">
+      <swiper-container
+        [config]="swiperConfig"
+        init="false"
+        class="swiper-wrapper"
+      >
+        @for (item of popularinfluence; track $index) {
+          <swiper-slide class="swiper-slide w-sm-auto h-auto">
+            <div class="card h-100 border-0 mx-auto" style="max-width: 416px">
+              <a routerLink="{{ item.href }}">
+                <img
+                  class="card-img-top"
+                  [src]="item.image_src"
+                  alt="Post image"
+                />
+              </a>
+              <div class="card-body pb-4">
+                <div class="d-flex align-items-center mb-4 mt-n1">
+                  <span class="fs-sm text-body-secondary">{{ item.date }}</span>
+                  <span class="fs-xs opacity-20 mx-3">|</span>
+                  <a
+                    class="badge text-nav fs-xs border"
+                    href="javascript:void(0);"
+                    >{{ item.category }}</a
+                  >
+                </div>
+                <h3 class="h4 card-title">
+                  <a routerLink="{{ item.href }}">{{ item.title }}</a>
+                </h3>
+                <p class="card-text">
+                  {{ item.excerpt }}
+                </p>
+              </div>
+              <div class="card-footer pt-3">
+                <a
+                  class="d-flex align-items-center text-decoration-none pb-2"
+                  href="javascript:void(0);"
+                >
+                  <img
+                    class="rounded-circle"
+                    src="{{ item.author_image }}"
+                    width="48"
+                    alt="Post author"
+                  />
+                  <h6 class="ps-3 mb-0">{{ item.author_name }}</h6>
+                </a>
+              </div>
+            </div>
+          </swiper-slide>
+        }
+      </swiper-container>
+    </div>
+  </div>
+
+  <div
+    class="container text-center pt-4 pb-1 pb-sm-3 pb-md-4 py-lg-5 mb-xl-1 mb-xxl-4 mt-2 mt-lg-0"
+  >
+    <a class="btn btn-primary mb-1" routerLink="/blog/grid-sidebar"
+      >Read all articles</a
+    >
+  </div>
+</section>

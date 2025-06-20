@@ -1,0 +1,75 @@
+<section class="container pt-5 mt-lg-3 mt-xl-4 mt-xxl-5">
+  <h2
+    class="h1 text-center pt-2 pt-sm-3 pt-md-4 pb-sm-2 pb-lg-3 mt-lg-2 mx-auto"
+    style="max-width: 740px"
+  >
+    Customers have consistently rated Around 4.7/5 stars
+  </h2>
+  <div class="swiper">
+    <swiper-container
+      [config]="swiperConfig"
+      init="false"
+      class="swiper-wrapper"
+    >
+      @for (item of saasReview; track $index) {
+        <swiper-slide class="swiper-slide">
+          <div class="text-center p-3 p-sm-4 m-lg-2">
+            <div class="d-flex justify-content-center fs-lg mb-4">
+              <ng-template #t let-fill="fill">
+                @if (fill > 0) {
+                  <i
+                    class="ai-star-filled text-warning mx-2"
+                    [style.width.%]="fill"
+                  ></i>
+                } @else {
+                  <i class="ai-star-filled text-body-secondary opacity-40 mx-2">
+                  </i>
+                }
+              </ng-template>
+
+              <ngb-rating
+                [(rate)]="item.content.stars"
+                [starTemplate]="t"
+                [readonly]="true"
+                [max]="5"
+              />
+            </div>
+
+            <p class="mb-3">
+              {{ item.content.quote }}
+            </p>
+            @if (item.content.imgLight) {
+              <img
+                class="d-inline-block d-dark-mode-none"
+                [src]="item.content.imgLight"
+                width="196"
+                alt="Clutch"
+              />
+            }
+            @if (item.content.imgDark) {
+              <img
+                class="d-none d-dark-mode-inline-block"
+                [src]="item.content.imgDark"
+                width="196"
+                alt="Clutch"
+              />
+            }
+            @if (item.content.imgSrc) {
+              <img
+                class="d-inline-block"
+                [src]="item.content.imgSrc"
+                width="196"
+                alt="Clutch"
+              />
+            }
+          </div>
+        </swiper-slide>
+      }
+    </swiper-container>
+
+    <div
+      id="reveiw-pagination"
+      class="swiper-pagination position-relative bottom-0 d-lg-none"
+    ></div>
+  </div>
+</section>

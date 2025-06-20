@@ -1,0 +1,48 @@
+<section class="pt-2 pt-sm-4 pt-md-5">
+  <div class="container pt-5 mt-1 mt-sm-0 mt-lg-2 mt-xl-4 mt-xxl-5">
+    <div class="d-flex position-relative align-items-center">
+      <a
+        class="btn btn-icon btn-primary stretched-link me-3 me-sm-4"
+        href="javascript:void(0);"
+        aria-label="Instagram"
+      >
+        <i class="ai-instagram"></i>
+      </a>
+      <h2 class="mb-0">jane_cooper</h2>
+    </div>
+  </div>
+  <ngx-simplebar class="overflow-auto">
+    <div
+      class="row row-cols-8 g-0 pt-4 pb-2 pb-xl-0 mt-2 mt-lg-3"
+      style="min-width: 1200px"
+    >
+      @for (item of instagramInfluence; track $index) {
+        <div class="col">
+          <a
+            class="card-hover zoom-effect d-block position-relative"
+            href="javascript:void(0);"
+          >
+            <div
+              class="d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100 z-2 opacity-0"
+            >
+              <div
+                class="bg-dark position-absolute top-0 start-0 w-100 h-100 opacity-60"
+              ></div>
+              <div
+                class="d-flex align-items-center text-light position-relative z-2"
+              >
+                <i class="ai-heart me-1"></i>
+                <span class="text-light fs-sm me-3">{{ item.likes }}</span>
+                <i class="ai-message me-1"></i>
+                <span class="text-light fs-sm">{{ item.comments }}</span>
+              </div>
+            </div>
+            <div class="zoom-effect-wrapper">
+              <img class="zoom-effect-img" [src]="item.image_src" alt="Image" />
+            </div>
+          </a>
+        </div>
+      }
+    </div>
+  </ngx-simplebar>
+</section>

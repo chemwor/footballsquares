@@ -1,0 +1,25 @@
+<div class="h-100 border rounded-3 p-4">
+  <h2 class="h6 text-center text-sm-start mb-4">Your top countries</h2>
+  <div class="d-flex justify-content-between text-body-secondary fs-sm">
+    <span>Country</span>
+    <span>Value</span>
+  </div>
+  @for (item of country; track $index) {
+    <div class="mt-3">
+      <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2">
+        <img src="{{ item.image }}" width="16" alt="USA" />
+        <span class="ms-2">{{ item.name }}</span>
+        <span class="ms-auto">{{ selectedCurrency }}{{ item.value }}</span>
+      </div>
+      <div class="progress" style="height: 3px">
+        <ngb-progressbar
+          [value]="48"
+          [style.width.%]="item.progress"
+          class="rounded-0"
+          style="background-color: #448c74"
+        >
+        </ngb-progressbar>
+      </div>
+    </div>
+  }
+</div>

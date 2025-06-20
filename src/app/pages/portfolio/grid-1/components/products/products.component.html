@@ -1,0 +1,106 @@
+<div class="masonry-filterable">
+  <ul
+    class="masonry-filters nav nav-pills fs-sm flex-nowrap overflow-auto text-nowrap w-100 mx-auto pb-4 mb-2 mb-sm-3"
+    style="max-width: 590px"
+  >
+    <li class="nav-item mb-0">
+      <a
+        class="nav-link border active"
+        data-group="all"
+        [ngClass]="{ active: type == 'All' }"
+        (click)="filterType('All')"
+        >All</a
+      >
+    </li>
+    <li class="nav-item mb-0">
+      <a
+        class="nav-link border"
+        data-group="branding"
+        [ngClass]="{ active: type == 'Branding' }"
+        (click)="filterType('Branding')"
+        >Branding</a
+      >
+    </li>
+    <li class="nav-item mb-0">
+      <a
+        class="nav-link border"
+        data-group="ebook"
+        [ngClass]="{ active: type == 'Cover design' }"
+        (click)="filterType('Cover design')"
+        >E-books</a
+      >
+    </li>
+    <li class="nav-item mb-0">
+      <a
+        class="nav-link border"
+        data-group="identity"
+        [ngClass]="{ active: type == 'Identity design' }"
+        (click)="filterType('Identity design')"
+        >Identity</a
+      >
+    </li>
+    <li class="nav-item mb-0">
+      <a
+        class="nav-link border"
+        data-group="product"
+        [ngClass]="{ active: type == 'Product design' }"
+        (click)="filterType('Product design')"
+        >Product</a
+      >
+    </li>
+  </ul>
+
+  <ngx-masonry [options]="options" class="masonry-grid" data-columns="2">
+    <article
+      ngxMasonryItem
+      *ngFor="let data of projectList"
+      class="masonry-grid-item pb-lg-5 mb-3 mb-lg-0 mb-xl-2"
+      data-groups='["branding"]'
+    >
+      <div class="card-hover zoom-effect mx-auto" style="max-width: 620px">
+        <div class="zoom-effect-wrapper rounded-5">
+          <div class="zoom-effect-img">
+            <img src="{{ data.img }}" alt="Image" />
+          </div>
+        </div>
+        <div class="pt-4 mt-lg-2">
+          <h2 class="h5 mb-2">
+            <a
+              class="stretched-link text-nav"
+              routerLink="/portfolio/single-1"
+              >{{ data.label }}</a
+            >
+          </h2>
+          <span class="fs-sm text-body-secondary opacity-0 d-none d-sm-block">{{
+            data.type
+          }}</span>
+          <span class="fs-sm text-body-secondary d-sm-none">{{
+            data.type
+          }}</span>
+        </div>
+      </div>
+    </article>
+  </ngx-masonry>
+</div>
+
+<nav class="mt-n1 mb-md-2 mb-lg-3 mb-xl-4" aria-label="Portfolio pagination">
+  <ul class="pagination justify-content-center">
+    <li class="page-item active" aria-current="page">
+      <span class="page-link"
+        >1<span class="visually-hidden">(current)</span></span
+      >
+    </li>
+    <li class="page-item">
+      <a class="page-link" href="javascript:void(0);">2</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" href="javascript:void(0);">3</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" href="javascript:void(0);">4</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" href="javascript:void(0);">5</a>
+    </li>
+  </ul>
+</nav>

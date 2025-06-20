@@ -1,0 +1,84 @@
+<section class="pt-2 py-md-4 py-lg-5 mt-2 mt-xl-4 mt-xxl-5">
+  <div
+    class="container d-flex align-items-center justify-content-between pb-4 mb-sm-2 mb-md-3"
+  >
+    <h2 class="h1 mb-0">Our skills</h2>
+
+    <div class="d-flex">
+      <button
+        class="btn btn-sm btn-icon btn-outline-primary rounded-circle"
+        type="button"
+        id="prev-skill"
+        aria-label="Prev"
+      >
+        <i class="ai-arrow-left"></i>
+      </button>
+      <button
+        class="btn btn-sm btn-icon btn-outline-primary rounded-circle ms-3"
+        type="button"
+        id="next-skill"
+        aria-label="Next"
+      >
+        <i class="ai-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="container-start">
+    <div class="swiper">
+      <swiper-container
+        [config]="swiperConfig"
+        init="false"
+        class="swiper-wrapper text-center"
+      >
+        @for (item of webSkill; track $index) {
+          <swiper-slide class="swiper-slide w-sm-auto h-auto">
+            @if (item.type === 'card-flip') {
+              <div
+                class="card card-flip card-hover border-0 w-sm-auto h-100 bg-secondary rounded-5"
+              >
+                <div class="card-flip-inner mx-auto" style="max-width: 306px">
+                  <div class="card-flip-front p-0">
+                    <div
+                      class="card-body d-flex flex-column justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100 opacity-100"
+                    >
+                      <img
+                        src="{{ item.front?.image }}"
+                        width="72"
+                        alt="Figma"
+                      />
+                    </div>
+                  </div>
+                  <div class="card-flip-back p-0 bg-transparent">
+                    <div
+                      class="card-body d-flex flex-column justify-content-center align-items-center h-100"
+                    >
+                      <img
+                        src="{{ item.front?.image }}"
+                        width="52"
+                        alt="Figma"
+                      />
+                      <p class="fs-sm pt-3 mb-0">
+                        {{ item.front?.description }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+            @if (item.type === 'card') {
+              <div class="card border-0 bg-secondary h-100">
+                <div class="card-body mx-auto" style="max-width: 416px">
+                  <p class="fs-lg mb-1">
+                    {{ item.content }}
+                  </p>
+                  <img src="{{ item.image }}" width="150" alt="Foster" />
+                </div>
+              </div>
+            }
+          </swiper-slide>
+        }
+      </swiper-container>
+    </div>
+  </div>
+</section>

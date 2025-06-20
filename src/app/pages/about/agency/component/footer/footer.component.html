@@ -1,0 +1,64 @@
+<footer
+  class="footer bg-dark position-relative py-4 py-md-5"
+  data-bs-theme="dark"
+>
+  <div class="container position-relative z-2 pt-4 pt-md-2 pt-xl-4 pt-xxl-5">
+    <div class="row py-md-3 mb-4 mb-md-5">
+      <div class="col-md-7 col-lg-6 col-xxl-5 mb-sm-4 mb-md-0">
+        <h2 class="display-4 mb-4 mb-md-5">
+          Let's start building brand together
+        </h2>
+        <div class="d-sm-flex align-items-center">
+          <a
+            class="btn btn-lg btn-primary me-sm-3 me-lg-4"
+            href="javascript:void(0);"
+            >Let's work together</a
+          >
+          <p class="text-body fs-sm py-3 py-sm-0 ps-sm-2 mb-0">
+            Managers will contact you to discuss the project and select the best
+            team
+          </p>
+        </div>
+      </div>
+      <div class="col-md-5 offset-lg-1 offset-xxl-2 d-flex flex-column">
+        <div class="nav mx-n2 mx-lg-n4 mb-2 mb-sm-3">
+          <a
+            class="nav-link text-primary px-2 px-lg-4"
+            href="mailto:example@email.com"
+            >example&#64;email.com</a
+          >
+          <a class="nav-link px-3 px-lg-4" href="javascript:void(0);"
+            >Privay policy</a
+          >
+        </div>
+        <div class="nav flex-column mb-3 mb-sm-4">
+          <a class="nav-link py-1 px-0" href="tel:+15262200444"
+            >+&nbsp;1&nbsp;526&nbsp;220&nbsp;0444</a
+          >
+          <a class="nav-link py-1 px-0" href="tel:+15262200000"
+            >+&nbsp;1&nbsp;526&nbsp;220&nbsp;0000</a
+          >
+        </div>
+        <div class="nav mx-n2 mt-auto">
+          @for (data of socialIcon; track $index) {
+            <a class="nav-link py-1 px-2 me-2" href="javascript:void(0);">{{
+              data
+            }}</a>
+          }
+        </div>
+      </div>
+    </div>
+    <p class="nav fs-sm pt-3 pb-2 pb-lg-0 mb-0">
+      <span class="text-body-secondary"
+        >&copy; All rights reserved. Made by</span
+      >
+      <a
+        class="nav-link d-inline fw-normal p-0 ms-1"
+        href="{{ developBy }}"
+        target="_blank"
+        rel="noopener"
+        >{{ author }}</a
+      >
+    </p>
+  </div>
+</footer>

@@ -1,0 +1,12 @@
+<div class="border rounded-3 p-4">
+  <h2 class="h6 mb-4">Purchases from devices, %</h2>
+  <div class="px-sm-4 my-n4 my-sm-n5">
+    <canvas
+      baseChart
+      [datasets]="PieChart.datasets"
+      [labels]="PieChart.labels"
+      [options]="PieChart.options"
+      type="pie"
+    ></canvas>
+  </div>
+</div>

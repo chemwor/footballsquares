@@ -1,0 +1,41 @@
+<section class="container pb-5 mb-lg-3 mb-xl-4 mb-xxl-5">
+  <h2 class="h1 pb-3 pb-md-4">Our blog</h2>
+  <div class="swiper">
+    <swiper-container
+      [config]="swiperConfig"
+      init="false"
+      class="swiper-wrapper"
+    >
+      @for (item of allBlogData; track $index) {
+        <swiper-slide class="swiper-slide">
+          <div class="position-relative">
+            <img class="rounded-1" src="{{ item.image }}" alt="Post image" />
+            <div class="pt-3 mt-3">
+              <h3 class="h4 mb-3">
+                <a class="stretched-link" href="javascript:void(0);">{{
+                  item.title
+                }}</a>
+              </h3>
+              <p class="mb-0">
+                {{ item.description }}
+              </p>
+            </div>
+          </div>
+        </swiper-slide>
+      }
+    </swiper-container>
+
+    <div
+      id="swiper-pagination"
+      class="swiper-pagination position-relative bottom-0 pt-1 mt-4 d-lg-none"
+    ></div>
+  </div>
+
+  <div class="text-center mt-2 mb-sm-1 mt-lg-0 pt-4 pt-lg-5 pb-2 pb-md-4">
+    <a
+      class="btn btn-outline-primary w-100 w-sm-auto"
+      href="javascript:void(0);"
+      >More articles</a
+    >
+  </div>
+</section>

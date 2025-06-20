@@ -1,0 +1,224 @@
+<div>
+  <div class="d-flex align-items-start justify-content-between mb-4">
+    <div class="me-3">
+      <div class="nav d-md-none">
+        <a
+          class="nav-link dropdown-toggle fs-sm p-0 mb-2"
+          href="#activeFilters"
+          data-bs-toggle="collapse"
+          >Active filters</a
+        >
+      </div>
+      <div class="collapse d-md-block" id="activeFilters">
+        <div class="pt-2 pt-md-0">
+          <a
+            class="d-inline-block border rounded-pill fs-xs fw-medium text-body text-decoration-none py-1 px-2 me-2 mb-2"
+            href="javascript:void(0);"
+          >
+            <span class="d-inline-flex align-items-center text-nowrap px-1">
+              Vases<i class="ai-circle-x fs-base ms-1"></i>
+            </span>
+          </a>
+          <a
+            class="d-inline-block border rounded-pill fs-xs fw-medium text-body text-decoration-none py-1 px-2 me-2 mb-2"
+            href="javascript:void(0);"
+          >
+            <span class="d-inline-flex align-items-center text-nowrap px-1">
+              Clocks<i class="ai-circle-x fs-base ms-1"></i>
+            </span>
+          </a>
+          <a
+            class="d-inline-block border rounded-pill fs-xs fw-medium text-body text-decoration-none py-1 px-2 me-2 mb-2"
+            href="javascript:void(0);"
+          >
+            <span class="d-inline-flex align-items-center text-nowrap px-1">
+              Tither Room<i class="ai-circle-x fs-base ms-1"></i>
+            </span>
+          </a>
+          <a
+            class="d-inline-block border rounded-pill fs-xs fw-medium text-body text-decoration-none py-1 px-2 me-2 mb-2"
+            href="javascript:void(0);"
+          >
+            <span class="d-inline-flex align-items-center text-nowrap px-1">
+              {{ selectedCurrency }}10 - {{ selectedCurrency }}50<i
+                class="ai-circle-x fs-base ms-1"
+              ></i>
+            </span>
+          </a>
+          <button
+            class="btn btn-sm btn-secondary rounded-pill fw-medium py-1 px-2"
+            type="button"
+          >
+            <span class="px-1">Remove all filters</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex align-items-center flex-shrink-0 mb-2">
+      <span class="text-body-secondary text-nowrap fs-sm">Sort by:</span>
+      <select class="form-select form-select-flush py-0">
+        <option value="popular">Most popular</option>
+        <option value="low-high">Low-High price</option>
+        <option value="high-low">High-Low price</option>
+        <option value="rating">Average rating</option>
+        <option value="az">A-Z order</option>
+        <option value="za">Z-A order</option>
+      </select>
+    </div>
+  </div>
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+    @for (data of productList; track $index) {
+      <div class="col pb-2 pb-sm-3">
+        <div
+          class="card-hover position-relative bg-secondary rounded-1 p-3 mb-4"
+        >
+          @if (data.tag) {
+            <span
+              class="badge bg-opacity-10 position-absolute top-0 start-0 mt-3 ms-3"
+              [ngClass]="{
+                'bg-danger text-danger': data.tag == 'Sale',
+                'bg-primary text-primary': data.tag == 'New',
+              }"
+              >{{ data.tag }}</span
+            >
+          }
+          <button
+            class="btn btn-icon btn-sm btn-light bg-light border-0 rounded-circle position-absolute top-0 end-0 mt-3 me-3 z-5 opacity-0"
+            type="button"
+            aria-label="Add to Favorites"
+          >
+            <i class="ai-heart fs-xl text-nav"></i>
+          </button>
+          <div
+            class="swiper swiper-nav-onhover"
+            data-swiper-options='{"loop": true, "navigation": {"prevEl": ".btn-prev", "nextEl": ".btn-next"}}'
+          >
+            <a class="swiper-wrapper" routerLink="/shop/product">
+              <div class="swiper-slide p-2 p-xl-4">
+                <img
+                  class="d-block mx-auto"
+                  src="{{ data.image }}"
+                  width="226"
+                  alt="Product"
+                />
+              </div>
+            </a>
+            <button
+              class="btn btn-prev btn-icon btn-sm btn-light bg-light border-0 rounded-circle start-0"
+              type="button"
+              aria-label="Prev"
+            >
+              <i class="ai-chevron-left fs-xl text-nav"></i>
+            </button>
+            <button
+              class="btn btn-next btn-icon btn-sm btn-light bg-light border-0 rounded-circle end-0"
+              type="button"
+              aria-label="Next"
+            >
+              <i class="ai-chevron-right fs-xl text-nav"></i>
+            </button>
+          </div>
+        </div>
+        <div class="d-flex mb-1">
+          <h3 class="h6 mb-0">
+            <a routerLink="/shop/product">{{ data.name }}</a>
+          </h3>
+          <div class="d-flex ps-2 mt-n1 ms-auto">
+            @if (data.color) {
+              @for (color of data.color; track $index) {
+                <div class="ms-1">
+                  <input
+                    class="btn-check"
+                    type="radio"
+                    name="color{{ data.id }}"
+                    value="Dark gray"
+                    checked
+                    id="color{{ data.id }}-{{ color.id }}"
+                  />
+                  <label
+                    class="btn btn-icon btn-xs btn-outline-secondary rounded-circle"
+                    for="color{{ data.id }}-{{ color.id }}"
+                  >
+                    <span
+                      class="d-block rounded-circle"
+                      [style.backgroundColor]="color.code"
+                      [style.backgroundImage]="'url(' + color.image + ')'"
+                      style="width: 0.625rem; height: 0.625rem"
+                    ></span>
+                  </label>
+                </div>
+              }
+            }
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <span class="me-2">${{ data.price }}</span>
+          @if (data.mrp) {
+            <del class="fs-sm text-body-secondary">${{ data.mrp }}</del>
+          }
+          <div
+            class="nav ms-auto"
+            data-bs-toggle="tooltip"
+            placement="left"
+            tooltipClass="tooltip fs-xs tooltip-inner bg-light text-body-secondary p-0"
+            [ngbTooltip]="'Add to cart'"
+          >
+            <a
+              class="nav-link fs-lg py-2 px-1"
+              href="javascript:void(0);"
+              aria-label="Add to Cart"
+            >
+              <i class="ai-cart"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="row gy-3 align-items-center pt-3 pt-sm-4 mt-md-2">
+    <div class="col col-md-4 col-6 order-md-1 order-1">
+      <div class="d-flex align-items-center">
+        <span class="text-body-secondary fs-sm">Show</span>
+        <select class="form-select form-select-flush w-auto">
+          <option value="12">12</option>
+          <option value="18">18</option>
+          <option value="24">24</option>
+          <option value="30">30</option>
+        </select>
+      </div>
+    </div>
+    <div class="col col-md-4 col-12 order-md-2 order-3 text-center">
+      <button class="btn btn-primary w-md-auto w-100" type="button">
+        Load more products
+      </button>
+    </div>
+    <div class="col col-md-4 col-6 order-md-3 order-2">
+      <nav aria-label="Page navigation">
+        <ngb-pagination
+          [collectionSize]="50"
+          [directionLinks]="false"
+          class="pagination pagination-sm justify-content-end"
+        >
+          <ng-template class="page-item active" aria-current="page">
+            <span class="page-link"
+              >1<span class="visually-hidden">(current)</span></span
+            >
+          </ng-template>
+          <ng-template class="page-item">
+            <a class="page-link" href="javascript:void(0);">2</a>
+          </ng-template>
+          <ng-template class="page-item">
+            <a class="page-link" href="javascript:void(0);">3</a>
+          </ng-template>
+          <ng-template class="page-item">
+            <a class="page-link" href="javascript:void(0);">4</a>
+          </ng-template>
+          <ng-template class="page-item">
+            <a class="page-link" href="javascript:void(0);">5</a>
+          </ng-template>
+        </ngb-pagination>
+      </nav>
+    </div>
+  </div>
+</div>

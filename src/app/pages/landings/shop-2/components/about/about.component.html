@@ -1,0 +1,36 @@
+<section class="container pt-5 mt-lg-3 mt-xl-4 mt-xxl-5">
+  <div class="row g-4 pt-2 pt-sm-3 pt-md-4 pt-xl-5 mt-sm-2 mt-md-3 mt-xl-0">
+    <div class="col-sm-6 col-lg-4">
+      <h2 class="display-2">About us</h2>
+      <p class="fs-xl mb-0">
+        These unique macarons have their roots in a love for baking, creative
+        craftsmanship, and a quest for perfection.
+      </p>
+    </div>
+    @for (item of aboutImage; track $index) {
+      <div class="col-sm-6 col-lg-4">
+        <img class="rounded-5" [src]="item" alt="Image" />
+      </div>
+    }
+    <div class="col-sm-6 col-lg-4 d-flex align-items-center">
+      <p class="fs-xl text-center mb-0">
+        In recent years, we've dedicated ourselves to perfecting macarons,
+        creating surprising flavors. Our macarons are made with love to provide
+        an exceptional experience.
+      </p>
+    </div>
+    @for (item of aboutImage2; track $index) {
+      <div class="col-sm-6 col-lg-4">
+        <img class="rounded-5" [src]="item" alt="Image" />
+      </div>
+    }
+    <div class="col-lg-4 d-flex justify-content-center align-items-center">
+      <div class="text-center px-xl-3 px-xxl-5">
+        <h3 class="h2 mb-4">All of our Macarons are gluten-free.</h3>
+        <a class="btn btn-dark rounded-pill" href="javascript:void(0);"
+          >Explore our collection</a
+        >
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,52 @@
+<section class="overflow-hidden">
+  <div class="container pt-5 pb-sm-3 mt-5 mb-2 mb-md-3 mb-lg-4 mb-xxl-5">
+    <app-breadcrumb-1 [title]="'Home'" [pageTitle]="'Portfolio list v.1'" />
+
+    <h1 class="text-center pb-3 pb-md-4 pb-lg-5 mb-lg-0 mb-xl-2 mb-xxl-4">
+      Case studies
+    </h1>
+
+    @for (item of allPortfolioList; track item.id; let odd = $odd) {
+      <article
+        class="row align-items-center card-hover pb-5 mb-md-2 mb-lg-3 mb-xl-4"
+        data-aos="fade-up"
+        data-aos-duration="600"
+        data-aos-offset="280"
+      >
+        <div
+          class="col-md-7 mb-4 mb-md-0"
+          [ngClass]="{ 'order-md-2 ': odd, 'offset-xxl-1': !odd }"
+        >
+          <a routerLink="/portfolio/single-1">
+            <img class="rounded-5" [src]="item.image" width="700" alt="Image" />
+          </a>
+        </div>
+        <div
+          class="col-md-5 col-xl-4"
+          [ngClass]="{ 'offset-xxl-1 order-md-1 ': odd }"
+          data-aos="fade-up"
+          data-aos-duration="850"
+          data-aos-offset="180"
+          data-disable-parallax-down="md"
+        >
+          <div class="ms-md-4 ms-lg-5 ms-xxl-0" style="max-width: 330px">
+            <div class="text-body-secondary mb-2">{{ item.category }}</div>
+            <h2 class="mb-lg-4">
+              <a routerLink="/portfolio/single-1">{{ item.title }}</a>
+            </h2>
+            <p class="mb-0 mb-md-1 mb-lg-3">
+              {{ item.description }}
+            </p>
+            <a
+              class="btn btn-lg btn-link px-0 opacity-0 d-none d-md-inline-flex"
+              routerLink="/portfolio/single-1"
+            >
+              Read more
+              <i class="ai-arrow-right ms-2"></i>
+            </a>
+          </div>
+        </div>
+      </article>
+    }
+  </div>
+</section>

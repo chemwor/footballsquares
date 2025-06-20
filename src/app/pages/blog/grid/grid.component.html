@@ -1,0 +1,38 @@
+<main class="page-wrapper">
+  <component-navigation-bar-2 />
+
+  <div class="container pt-5 pb-lg-5 pb-md-4 pb-2 my-5">
+    <app-breadcrumb-1 [title]="'Home'" [pageTitle]="'Blog grid no sidebar'" />
+
+    <div class="row align-items-center gy-2 mb-4 pb-1 pb-sm-2 pb-lg-3">
+      <div class="col-lg-5">
+        <h1 class="mb-lg-0">Blog grid</h1>
+      </div>
+      <div class="col-xl-2 offset-xl-1 col-lg-3 col-sm-5">
+        <select class="form-select">
+          <option>All categories</option>
+          <option>Inspiration</option>
+          <option>Brand strategy</option>
+          <option>Advertisement</option>
+          <option>Ecommerce</option>
+          <option>Travel &amp; Vacation</option>
+        </select>
+      </div>
+      <div class="col-lg-4 col-sm-7">
+        <div class="position-relative">
+          <i
+            class="ai-search position-absolute top-50 start-0 translate-middle-y ms-3"
+          ></i>
+          <input
+            class="form-control ps-5"
+            type="search"
+            placeholder="Enter keyword"
+          />
+        </div>
+      </div>
+    </div>
+    <grid-noSidebar-post />
+  </div>
+</main>
+<grid-noSidebar-subscription />
+<grid-noSidebar-footer />

@@ -1,0 +1,35 @@
+<section class="container pt-5 mt-xl-3 mt-xxl-4">
+  <h2 class="h4 text-center pb-3 pb-md-4 mb-lg-4">
+    Join 1000+ companies who's reached Around
+  </h2>
+  <div
+    class="row row-cols-3 row-cols-sm-4 row-cols-lg-5 row-cols-xl-6 justify-content-center align-items-center g-4"
+  >
+    @for (item of clientProductData; track $index) {
+      <div class="col text-center">
+        <a class="swap-image my-1 my-sm-2" href="javascript:void(0);">
+          <img
+            class="swap-to"
+            src="{{ item.swapTo }}"
+            width="145"
+            alt="{{ item.brand }}"
+          />
+          <div class="swap-from">
+            <img
+              class="d-dark-mode-none"
+              [src]="item.swapFrom.darkMode"
+              width="145"
+              alt="{{ item.brand }}"
+            />
+            <img
+              class="d-none d-dark-mode-block"
+              [src]="item.swapFrom.lightmode"
+              width="145"
+              alt="{{ item.brand }}"
+            />
+          </div>
+        </a>
+      </div>
+    }
+  </div>
+</section>

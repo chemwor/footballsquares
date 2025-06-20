@@ -1,0 +1,31 @@
+<div class="d-none d-xxl-block" style="height: 170px"></div>
+<div class="d-none d-lg-block d-xxl-none" style="height: 120px"></div>
+<div class="d-none d-md-block d-lg-none" style="height: 80px"></div>
+<div class="d-md-none" style="height: 40px"></div>
+<h1 class="display-2 mb-4">Our services</h1>
+<p class="text-body mb-0" style="max-width: 480px">
+  Web studio Around is a team that creates effective websites and applications
+  that will help you grow your business.
+</p>
+
+<div class="d-none d-xxl-block" style="height: 220px"></div>
+<div class="d-none d-lg-block d-xxl-none" style="height: 160px"></div>
+<div class="d-none d-md-block d-lg-none" style="height: 100px"></div>
+<div class="d-md-none" style="height: 50px"></div>
+<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4 pb-1 pb-md-3">
+  @for (item of servicesv3; track $index) {
+    <div class="col">
+      <div class="d-flex align-items-center">
+        <div
+          class="position-rlative flex-shrink-0 rounded-1 overflow-hidden p-2"
+        >
+          <div
+            class="bg-white opacity-40 position-absolute top-0 start-0 w-100 h-100"
+          ></div>
+          <img class="d-block m-1" [src]="item.iconSrc" width="32" alt="Icon" />
+        </div>
+        <h3 class="h5 ps-3 mb-0">{{ item.headingText }}</h3>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,52 @@
+<h1 class="display-3 mb-4">We are coming soon</h1>
+<p class="fs-lg pb-3 mb-4 mb-xl-5">
+  We can't wait to unveil what we've been working on, and we appreciate your
+  patience. Thanks for being a part of our journey!
+</p>
+
+<div
+  class="countdown d-flex flex-wrap justify-content-center justify-content-lg-start pb-3 mb-4 mb-xl-5"
+  data-countdown-date="01/01/2026 12:00:00"
+>
+  <div class="text-center mb-2">
+    <div class="bg-secondary rounded-1 p-2">
+      <div class="h3 fw-medium mb-0 mx-1" data-days>{{ countdown.days }}</div>
+    </div>
+    <span class="fs-sm">days</span>
+  </div>
+  <span class="blinking text-body-secondary fs-2 mx-2">:</span>
+  <div class="text-center mb-2">
+    <div class="bg-secondary rounded-1 p-2">
+      <div class="h3 fw-medium mb-0 mx-1" data-hours>{{ countdown.hours }}</div>
+    </div>
+    <span class="fs-sm">hours</span>
+  </div>
+  <span class="blinking text-body-secondary fs-2 mx-2">:</span>
+  <div class="text-center mb-2">
+    <div class="bg-secondary rounded-1 p-2">
+      <div class="h3 fw-medium mb-0 mx-1" data-minutes>
+        {{ countdown.minutes }}
+      </div>
+    </div>
+    <span class="fs-sm">mins</span>
+  </div>
+  <span class="blinking text-body-secondary fs-2 mx-2">:</span>
+  <div class="text-center mb-2">
+    <div class="bg-secondary rounded-1 p-2">
+      <div class="h3 fw-medium mb-0 mx-1" data-seconds>
+        {{ countdown.seconds }}
+      </div>
+    </div>
+    <span class="fs-sm">secs</span>
+  </div>
+</div>
+
+<form class="input-group">
+  <input
+    type="email"
+    class="form-control"
+    placeholder="Enter your email"
+    required
+  />
+  <button type="submit" class="btn btn-primary">Notify me</button>
+</form>

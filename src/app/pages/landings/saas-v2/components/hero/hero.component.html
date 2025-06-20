@@ -1,0 +1,85 @@
+<section
+  class="bg-dark d-flex min-vh-100 position-relative overflow-hidden py-5"
+  data-bs-theme="dark"
+>
+  <div
+    class="container d-flex flex-column justify-content-center position-relative z-2 pt-sm-3 pt-md-4 pt-xl-5 pb-1 pb-sm-3 pb-lg-4 pb-xl-5"
+  >
+    <div
+      class="row flex-lg-nowrap align-items-center pb-5 pt-2 pt-lg-4 pt-xl-0 mt-lg-4 mt-xl-0"
+    >
+      <div class="col-lg-7 order-lg-2 ms-lg-4 mb-2 mb-lg-0">
+        <div
+          class="parallax order-lg-2 mx-auto"
+          appParallax
+          [parallaxScale]="5"
+          style="max-width: 740px"
+        >
+          <div class="parallax-layer">
+            <img src="assets/img/landing/saas-2/hero/01.png" alt="Layer" />
+          </div>
+          <div class="parallax-layer" data-depth="-0.05">
+            <img
+              src="assets/img/landing/saas-2/hero/02.png"
+              style="animation: rotate-cw 100s linear infinite"
+              alt="Layer"
+            />
+          </div>
+          <div class="parallax-layer z-2" data-depth="0.3">
+            <img src="assets/img/landing/saas-2/hero/03.png" alt="Layer" />
+          </div>
+          <div class="parallax-layer z-2" data-depth="0.15">
+            <img src="assets/img/landing/saas-2/hero/04.png" alt="Layer" />
+          </div>
+          <div class="parallax-layer z-2" data-depth="0.4">
+            <img src="assets/img/landing/saas-2/hero/05.png" alt="Layer" />
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5 order-lg-1 text-center text-lg-start me-xl-5">
+        <span class="badge bg-warning bg-opacity-10 text-warning fs-sm"
+          >Take your data to the next level&nbsp; 🚀</span
+        >
+        <h1 class="display-4 py-3 my-2 mb-xl-3">
+          The platform to manage business
+        </h1>
+        <ul class="list-unstyled d-table text-start mx-auto mx-lg-0 mb-0">
+          @for (item of list; track $index) {
+            <li class="d-flex text-body pb-2 mb-1">
+              <i class="ai-check-alt text-primary lead me-2"></i>
+              {{ item }}
+            </li>
+          }
+        </ul>
+        <div
+          class="d-flex justify-content-center justify-content-lg-start pt-4 pt-xl-5"
+        >
+          <div class="text-center">
+            <a
+              class="btn btn-lg btn-primary rounded-pill w-100 w-sm-auto"
+              href="javascript:void(0);"
+              >Start free 14-day trial</a
+            >
+            <p class="text-body fs-sm pt-2 mt-sm-1 mb-0">
+              100% free to get started!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="row row-cols-3 row-cols-sm-4 row-cols-lg-5 row-cols-xl-6 justify-content-center align-items-center g-4 pt-lg-3 pt-xl-4"
+    >
+      @for (item of allBrandName; track $index) {
+        <div class="col">
+          <img
+            class="d-block my-1 mx-auto"
+            [src]="item.image_src"
+            [width]="item.width"
+            [alt]="item.name"
+          />
+        </div>
+      }
+    </div>
+  </div>
+</section>

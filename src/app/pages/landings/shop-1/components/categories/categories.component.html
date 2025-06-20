@@ -1,0 +1,86 @@
+<section
+  class="container mt-n3 mt-sm-0 pb-5 mb-1 mb-sm-2 mb-lg-3 mb-xl-4 mb-xxl-5"
+>
+  <h2 class="h1 pb-3 mb-lg-4">Categories</h2>
+  <div class="row g-4 pb-2 pb-md-4">
+    <div class="col-md-4">
+      <div
+        class="card zoom-effect h-100 border-0 rounded-1 overflow-hidden"
+        style="min-height: 320px"
+      >
+        <span
+          class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-10 z-2"
+        ></span>
+        <div
+          class="zoom-effect-wrapper rounded-1 position-absolute top-0 start-0 w-100 h-100"
+        >
+          <div
+            class="zoom-effect-img bg-size-cover bg-position-bottom-center position-absolute top-0 start-0 w-100 h-100"
+            style="background-image: url(assets/img/shop/categories/01.jpg)"
+          ></div>
+        </div>
+        <a
+          class="card-body d-flex flex-column justify-content-end align-items-start position-absolute top-0 start-0 w-100 h-100 text-decoration-none z-3"
+          routerLink="/shop/catalog"
+        >
+          <span
+            class="bg-light text-dark rounded-pill fs-sm fw-semibold lh-1 py-3 px-4"
+            >For the living room</span
+          >
+        </a>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card zoom-effect border-0 rounded-1 overflow-hidden">
+        <span
+          class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-10 z-2"
+        ></span>
+        <div class="zoom-effect-wrapper rounded-1">
+          <img
+            class="zoom-effect-img"
+            src="assets/img/shop/categories/02.jpg"
+            alt="Category image"
+          />
+        </div>
+        <a
+          class="card-body d-flex flex-column justify-content-end align-items-start position-absolute top-0 start-0 w-100 h-100 text-decoration-none z-3"
+          routerLink="/shop/catalog"
+        >
+          <span
+            class="bg-light text-dark rounded-pill fs-sm fw-semibold lh-1 py-3 px-4"
+            >For the kitchen</span
+          >
+        </a>
+      </div>
+
+      <div class="row g-4 pt-4">
+        @for (item of categoryData; track $index) {
+          <div class="col-sm-6">
+            <div class="card zoom-effect border-0 rounded-1 overflow-hidden">
+              <span
+                class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-10 z-2"
+              ></span>
+              <div class="zoom-effect-wrapper rounded-1">
+                <img
+                  class="zoom-effect-img"
+                  [src]="item.imageSrc"
+                  alt="Category image"
+                />
+              </div>
+              <a
+                class="card-body d-flex flex-column justify-content-end align-items-start position-absolute top-0 start-0 w-100 h-100 text-decoration-none z-3"
+                routerLink="/shop/product"
+              >
+                <span
+                  class="bg-light text-dark rounded-pill fs-sm fw-semibold lh-1 py-3 px-4"
+                  >{{ item.category }}</span
+                >
+              </a>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

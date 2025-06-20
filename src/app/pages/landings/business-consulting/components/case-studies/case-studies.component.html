@@ -1,0 +1,56 @@
+<section class="container pt-2 pt-sm-4 pb-5 mb-lg-3 mb-xl-4 mb-xxl-5">
+  <h2 class="h1 text-center pb-3 pb-lg-4">Recent case studies</h2>
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    @for (item of allTypeCaseStudies; track $index) {
+      <div class="col">
+        <div
+          class="card bg-primary border-0 h-100 overflow-hidden pt-3 pt-xl-4 px-lg-3 px-xl-4"
+          [ngClass]="{ 'bg-opacity-10 text-primary': item.imageWidth === 291 }"
+        >
+          <div class="card-body position-relative z-2 pb-0">
+            <h3
+              class="h4 card-title"
+              [ngClass]="{
+                'text-primary': item.imageWidth === 291,
+                'text-light': item.imageWidth !== 291,
+              }"
+            >
+              {{ item.title }}
+            </h3>
+            <p
+              class="card-text text-light opacity-80 pb-sm3 pb-md-4 mb-2"
+              [ngClass]="{
+                'text-primary': item.imageWidth === 291,
+                'text-light': item.imageWidth !== 291,
+              }"
+            >
+              {{ item.text }}
+            </p>
+            <a
+              class="btn btn-lg btn-link px-0"
+              [ngClass]="{
+                'text-primary': item.imageWidth === 291,
+                'text-light': item.imageWidth !== 291,
+              }"
+              href="javascript:void(0);"
+            >
+              {{ item.buttonText }}
+              <i class="ai-arrow-right ms-2"></i>
+            </a>
+          </div>
+          <div class="d-flex justify-content-end mt-sm-n5 me-n4">
+            <img [src]="item.imageSrc" [width]="item.imageWidth" alt="Image" />
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div
+    class="text-center my-2 mt-sm-3 mt-lg-0 pt-4 pb-1 pb-sm-3 pb-md-4 pt-lg-5"
+  >
+    <a class="btn btn-outline-primary" href="javascript:void(0);"
+      >Read all case studies</a
+    >
+  </div>
+</section>

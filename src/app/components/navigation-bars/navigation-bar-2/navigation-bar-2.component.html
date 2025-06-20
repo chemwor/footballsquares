@@ -1,0 +1,30 @@
+<header class="navbar navbar-expand-lg fixed-top bg-light">
+  <div class="container">
+    <component-logo-box [className]="'pe-sm-3'" />
+
+    <app-theme-switcher
+      class="form-check form-switch mode-switch order-lg-2 me-3 me-lg-4 ms-auto"
+    />
+
+    <a
+      class="btn btn-primary btn-sm fs-sm order-lg-3 d-none d-sm-inline-flex"
+      [href]="buyLink"
+      target="_blank"
+      rel="noopener"
+    >
+      <i class="ai-cart fs-xl me-2 ms-n1"></i>
+      Buy now
+    </a>
+
+    <vertical-menu-button></vertical-menu-button>
+
+    <nav
+      class="collapse navbar-collapse"
+      #collapse="ngbCollapse"
+      [(ngbCollapse)]="isMenuCollapsed"
+      id="navbarNav"
+    >
+      <horizontal-app-menu />
+    </nav>
+  </div>
+</header>

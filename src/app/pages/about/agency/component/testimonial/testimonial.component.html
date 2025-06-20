@@ -1,0 +1,51 @@
+<section class="pt-5 mt-1 mt-sm-2 mt-xl-4 mt-xxl-5">
+  <div class="container pt-3 pt-md-4 pt-lg-5 mt-xl-2 mt-xxl-3">
+    <div class="fs-sm text-uppercase mb-3">Testimonials</div>
+    <h2 class="display-6 pb-3 mb-lg-4">What our clients say</h2>
+    <div class="card border-0 bg-secondary overflow-hidden">
+      <div class="card-body position-relative z-2 px-lg-0 py-lg-5">
+        <div class="row py-2 py-sm-1 py-md-3 py-lg-4 py-xl-5">
+          <div class="col-md-4 col-lg-3 offset-lg-1 mb-3 mb-md-0">
+            <div class="binded-content">
+              @for (item of testimonialSwiperData; track $index) {
+                <div
+                  class="binded-item"
+                  id="{{ item.id }}"
+                  [ngClass]="$index === 0 ? 'active' : ''"
+                >
+                  <img
+                    class="d-block rounded-circle mb-3"
+                    [src]="item.imageSrc"
+                    width="86"
+                    alt="Lilianna Bocouse"
+                  />
+                  <h4 class="mb-0">{{ item.name }}</h4>
+                  <p class="fs-lg text-body-secondary mb-0">{{ item.role }}</p>
+                </div>
+              }
+            </div>
+          </div>
+          <div class="col-md-8 col-lg-7">
+            <div class="swiper" #testimonialSwipers>
+              <div class="swiper-wrapper" init="false">
+                @for (item of swiperContent; track $index) {
+                  <div
+                    class="swiper-slide"
+                    attr.data-swiper-binded="{{ item.bindedTo }}"
+                  >
+                    <p class="text-dark lead mb-0">{{ item.content }}</p>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="swiper-pagination position-relative bottom-0 pt-4 mt-2 mt-md-3"
+      id="testimonials-bullets"
+    ></div>
+  </div>
+</section>

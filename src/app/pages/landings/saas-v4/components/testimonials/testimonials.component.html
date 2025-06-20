@@ -1,0 +1,108 @@
+<section class="position-relative pt-2 pt-sm-0 pt-md-2 pt-lg-3 pt-xl-4 pb-lg-4">
+  <div class="container pb-2">
+    <h2 class="h1 text-center">Trusted by leading companies</h2>
+    <p class="fs-lg text-center pb-4 pb-lg-5 mb-2 mb-sm-3 mb-xl-4">
+      Learn why top companies from around the globe choose us
+    </p>
+    <ngx-masonry
+      class="masonry-grid row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 g-sm-3 g-md-4"
+    >
+      @for (item of testimonialData; track $index) {
+        <div ngxMasonryItem class="masonry-grid-item col">
+          <div class="card border-0 bg-secondary p-1 p-sm-0 p-md-2">
+            <img
+              src="{{ item.image_light_src }}"
+              class="d-block d-dark-mode-none mx-auto"
+              width="165"
+              alt="Envato"
+            />
+            <img
+              src="{{ item.image_dark_src }}"
+              class="d-none d-dark-mode-block mx-auto"
+              width="165"
+              alt="Envato"
+            />
+            <div class="card-body text-center pt-1">
+              <p class="pb-3 mb-3">
+                {{ item.description }}
+              </p>
+              @if (item.avatar_src) {
+                <img
+                  src="{{ item.avatar_src }}"
+                  class="d-inline-block rounded-circle"
+                  width="80"
+                  alt="Avatar"
+                />
+              }
+              <div class="pt-2 mt-1">
+                <h3 class="h5 mb-1">{{ item.author_name }}</h3>
+                <p class="fs-sm text-body-secondary mb-0">
+                  {{ item.author_role }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </ngx-masonry>
+  </div>
+
+  <div class="d-none d-md-block">
+    <span
+      class="position-absolute start-0 bottom-0 w-100 z-1 d-dark-mode-none"
+      style="
+        height: 390px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0) 0%,
+          #fff 50.14%
+        );
+      "
+    ></span>
+    <span
+      class="position-absolute start-0 bottom-0 w-100 z-2 d-none d-dark-mode-block"
+      style="
+        height: 375px;
+        background: linear-gradient(
+          180deg,
+          rgba(11, 15, 25, 0) 0%,
+          #121519 50.14%
+        );
+      "
+    ></span>
+  </div>
+  <div class="d-md-none">
+    <span
+      class="position-absolute start-0 bottom-0 w-100 z-1 d-dark-mode-none"
+      style="
+        height: 300px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0) 0%,
+          #fff 50.14%
+        );
+      "
+    ></span>
+    <span
+      class="position-absolute start-0 bottom-0 w-100 z-2 d-none d-dark-mode-block"
+      style="
+        height: 290px;
+        background: linear-gradient(
+          180deg,
+          rgba(11, 15, 25, 0) 0%,
+          #121519 50.14%
+        );
+      "
+    ></span>
+  </div>
+
+  <div
+    class="position-absolute start-0 bottom-0 w-100 d-flex justify-content-center z-2 pb-5 px-3 mb-3 mb-md-4 mb-lg-5"
+  >
+    <a
+      href="javascript:void(0);"
+      class="btn btn-outline-primary rounded-pill mb-xl-3 mb-xxl-4"
+      >Read more reviews</a
+    >
+  </div>
+</section>

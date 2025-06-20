@@ -1,0 +1,40 @@
+<div class="row row-cols-3 flex-nowrap pb-4 overflow-auto">
+  @for (item of pricingPlanData; track $index) {
+    <div class="col" style="min-width: 19rem">
+      <div
+        class="card h-100 py-lg-4"
+        [ngClass]="item.name === 'Premium' ? 'border-primary bg-primary' : ''"
+      >
+        <div
+          class="card-body w-100 mx-auto text-center"
+          style="max-width: 23rem"
+        >
+          <h3 [ngClass]="{ 'text-light': item.name === 'Premium' }">
+            {{ item.name }}
+          </h3>
+          <div
+            [ngClass]="{ 'text-light': item.name === 'Premium' }"
+            class="display-2 text-primary"
+          >
+            {{ selectedCurrency }}{{ item.price }}
+          </div>
+          <div
+            class="mb-4"
+            [ngClass]="{ 'text-light': item.name === 'Premium' }"
+          >
+            per month
+          </div>
+          <p
+            class="mb-4 pb-4"
+            [ngClass]="{ 'text-light': item.name === 'Premium' }"
+          >
+            {{ item.description }}
+          </p>
+          <button class="btn btn-{{ item.buttonColor }} w-100" type="button">
+            {{ item.buttonText }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

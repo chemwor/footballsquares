@@ -1,0 +1,40 @@
+<section class="container py-5 my-lg-3 my-xl-4 my-xxl-5">
+  <h2 class="h1 text-center pt-2 pt-sm-3 pt-md-4 pt-xl-5 mt-lg-2 mt-xl-1">
+    We partner with more than 60 brands
+  </h2>
+  <p class="text-center pb-2 pb-sm-3">
+    Clients who have become our friends for many years
+  </p>
+  <div
+    class="row row-cols-3 row-cols-md-4 g-2 g-md-4 pb-2 pb-sm-3 pb-md-4 pb-xl-5"
+  >
+    @for (item of corporatePartner; track $index) {
+      <div class="col">
+        @if (item.logo) {
+          <img
+            class="d-block mx-auto"
+            [src]="item.logo"
+            width="{{ item.width }}"
+            alt="{{ item.name }}"
+          />
+        }
+        @if (item.logoLight) {
+          <img
+            class="d-none d-dark-mode-block mx-auto"
+            [src]="item.logoLight"
+            width="{{ item.width }}"
+            alt="{{ item.width }}"
+          />
+        }
+        @if (item.logoDark) {
+          <img
+            class="d-block d-dark-mode-none mx-auto"
+            [src]="item.logoDark"
+            width="{{ item.width }}"
+            alt="{{ item.width }}"
+          />
+        }
+      </div>
+    }
+  </div>
+</section>

@@ -1,0 +1,81 @@
+<section
+  class="w-100 px-sm-4 mx-auto"
+  style="max-width: 1680px"
+  data-bs-theme="dark"
+>
+  <div class="position-relative z-2 pt-2 pb-3 py-sm-3 py-md-4 py-lg-5">
+    <div
+      class="position-absolute top-0 start-0 w-100 h-100 rounded-5 d-none d-sm-block"
+      style="background-color: #171a1e"
+    ></div>
+    <div
+      class="position-absolute top-0 start-0 w-100 h-100 d-sm-none"
+      style="background-color: #171a1e"
+    ></div>
+    <div class="container position-relative z-2 py-5 my-xl-3 my-xxl-5">
+      <div class="row align-items-center justify-content-center">
+        <div class="col-11 col-sm-9 col-md-8 col-lg-7 pb-3">
+          <div class="binded-content">
+            <div class="binded-item active" id="image1">
+              <img
+                src="assets/img/landing/influencer/testimonials/01.png"
+                alt="Image"
+              />
+            </div>
+            <div class="binded-item" id="image2">
+              <img
+                src="assets/img/landing/influencer/testimonials/02.png"
+                alt="Image"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="col-11 col-sm-9 col-md-8 col-lg-5 col-xl-4 offset-xl-1">
+          <div class="ps-lg-4 ps-xl-0 mt-lg-n4 mt-xl-n5">
+            <div class="swiper" #influenceTestimonial binded-content="true">
+              <div class="swiper-wrapper">
+                @for (item of allInfluenceTestimonial; track $index) {
+                  <div
+                    class="swiper-slide"
+                    attr.data-swiper-binded="{{ item.image_id }}"
+                  >
+                    <div class="ai-quotes text-primary display-3 mb-4"></div>
+                    <p class="text-body lead pb-1 pb-sm-2">
+                      {{ item.quote }}
+                    </p>
+                    <h3 class="h5 fw-bold mb-0">{{ item.author }}</h3>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="d-flex align-items-center justify-content-center pt-4 pt-md-5 mt-2 mt-sm-3 mt-md-0 mt-xl-2"
+      >
+        <button
+          class="btn btn-icon btn-sm btn-outline-primary rounded-circle me-3"
+          type="button"
+          id="prev-testimonial"
+          aria-label="Prev"
+        >
+          <i class="ai-arrow-left"></i>
+        </button>
+        <div
+          class="testimonials-count text-body fw-medium flex-shrink-0 text-center"
+          style="width: 2.5rem"
+        ></div>
+        <button
+          class="btn btn-icon btn-sm btn-outline-primary rounded-circle ms-3"
+          type="button"
+          id="next-testimonial"
+          aria-label="Next"
+        >
+          <i class="ai-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

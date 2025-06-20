@@ -1,0 +1,245 @@
+<section class="container pt-lg-2 pt-xl-4 pt-xxl-5">
+  <div class="row py-sm-3 py-md-4 py-lg-5">
+    <aside class="col-md-3 col-lg-2" style="margin-top: -125px">
+      <div
+        class="d-flex d-md-block flex-wrap position-sticky top-0"
+        style="padding-top: 130px"
+      >
+        <div class="pb-3 mb-2 mb-lg-4 me-5 me-md-0">
+          <h2 class="fs-base fw-normal text-body-secondary mb-2">Company</h2>
+          <ul class="list-unstyled fs-lg fw-semibold text-dark mb-0">
+            <li class="d-block py-1">{{ company.name }}</li>
+            <li class="d-block py-1">{{ company.employees }}</li>
+            <li class="d-block py-1">{{ company.location }}</li>
+            <li class="d-block py-1">
+              <a class="text-dark" href="javascript:void(0);">{{
+                company.website
+              }}</a>
+            </li>
+          </ul>
+        </div>
+        <div class="pb-3 mb-2 mb-lg-4 me-5 me-md-0">
+          <h2 class="fs-base fw-normal text-body-secondary mb-2">Indusrty</h2>
+          <ul class="list-unstyled fs-lg fw-semibold text-dark mb-0">
+            <li class="d-block py-1">{{ industry }}</li>
+          </ul>
+        </div>
+        <div class="pb-3 mb-2 mb-lg-4 me-5 me-md-0">
+          <h2 class="fs-base fw-normal text-body-secondary mb-2">Services</h2>
+          <ul class="list-unstyled fs-lg fw-semibold text-dark mb-0">
+            @for (item of services; track $index) {
+              <li class="d-block py-1">{{ item }}</li>
+            }
+          </ul>
+        </div>
+        <div class="pb-3 mb-2 mb-lg-4">
+          <h2 class="fs-base fw-normal text-body-secondary mb-2">Time spent</h2>
+          <ul class="list-unstyled fs-lg fw-semibold text-dark mb-0">
+            <li class="d-block py-1">2021, 3 months</li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <div class="col-md-9 offset-lg-1">
+      <div class="ps-md-4 ps-lg-0">
+        <div class="border-bottom pb-3 pb-sm-4 pb-lg-5 mb-4">
+          <p class="text-dark lead mb-md-2 mb-lg-3 mb-xl-4">
+            Morbi et massa fames ac scelerisque sit commodo dignissim faucibus
+            quisque proin lectus laoreet sem adipiscing sollicitudin erat massa
+            tellus lorem enim aenean phasellus in hendrerit interdum lorem proin
+            pretium dictum urna suspendisse quis risus et scelerisque sit
+            commodo.
+          </p>
+        </div>
+        @for (item of projectShowCase; track $index) {
+          <h2
+            class="h1 pb-2"
+            [ngClass]="{
+              'pt-2 pt-sm-3 pt-md-4 pt-lg-5': item.id,
+              'pt-3 pt-sm-4 pt-xl-5': !item.id,
+            }"
+          >
+            {{ item.title }}
+          </h2>
+          <p class="fs-lg">{{ item.content }}</p>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="row py-5 my-md-2 my-lg-3 my-xl-4 my-xxl-5">
+    <div class="col-sm-7 mb-4 mb-sm-0">
+      <div class="position-relative mb-4">
+        <div
+          class="position-absolute top-0 start-0 w-100 h-100"
+          style="background-color: #2663f2"
+          data-aos="zoom-in"
+          data-aos-duration="700"
+          data-aos-offset="250"
+        ></div>
+        <img
+          class="position-relative z-2"
+          src="assets/img/portfolio/single/v2/02.png"
+          alt="Image"
+          data-aos="zoom-in"
+          data-aos-duration="400"
+          data-aos-offset="250"
+        />
+      </div>
+      <div class="position-relative">
+        <div
+          class="bg-black position-absolute top-0 start-0 w-100 h-100"
+          data-aos="zoom-in"
+          data-aos-duration="700"
+          data-aos-offset="250"
+        ></div>
+        <img
+          class="position-relative z-2"
+          src="assets/img/portfolio/single/v2/04.png"
+          alt="Image"
+          data-aos="zoom-in"
+          data-aos-duration="400"
+          data-aos-offset="250"
+        />
+      </div>
+    </div>
+    <div class="col-sm-5">
+      <div class="position-relative">
+        <div
+          class="position-absolute top-0 start-0 w-100 h-100"
+          style="max-height: 588px; background-color: #216d2a"
+          data-aos="zoom-in"
+          data-aos-duration="700"
+          data-aos-offset="250"
+        ></div>
+        <img
+          class="position-relative z-2"
+          src="assets/img/portfolio/single/v2/03.png"
+          alt="Image"
+          data-aos="zoom-in"
+          data-aos-duration="400"
+          data-aos-offset="250"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="row pt-sm-3 pt-md-4 pb-5 mb-sm-2 mb-md-3 mb-lg-4 mb-xl-5">
+    <div class="col-md-7 col-xl-6 mb-4 mb-md-0">
+      <p class="text-dark lead mb-0">
+        Morbi et massa fames ac scelerisque sit commodo dignissim faucibus
+        quisque proin lectus laoreet sem adipiscing sollicitudin erat massa
+        tellus lorem enim aenean phasellus in hendrerit interdum lorem proin
+        pretium dictum urna suspendisse quis risus et scelerisque sit commodo.
+      </p>
+    </div>
+    <div class="col-md-5 offset-xl-1">
+      <div class="row row-cols-2 gx-3 gx-sm-4">
+        @for (item of portfolioCounter; track $index) {
+          <div class="col">
+            <div class="h2 display-1 mb-0">{{ item.number }}</div>
+            <p class="fs-sm mb-0">{{ item.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="position-relative w-100 mx-auto pb-1 pb-sm-3 pb-md-4"
+    style="max-width: 1043px"
+  >
+    <img
+      class="d-block position-relative z-5"
+      src="assets/img/portfolio/single/v2/05.png"
+      alt="Image"
+      data-aos="fade-down-right"
+      data-aos-duration="500"
+      data-aos-offset="250"
+    />
+    <img
+      class="d-block position-absolute top-0 start-0 z-2"
+      src="assets/img/portfolio/single/v2/06.png"
+      alt="Image"
+      data-aos="zoom-in"
+      data-aos-duration="500"
+      data-aos-offset="250"
+    />
+    <img
+      class="d-block position-absolute top-0 start-0 z-1"
+      src="assets/img/portfolio/single/v2/07.png"
+      alt="Image"
+      data-aos="fade-down"
+      data-aos-duration="500"
+      data-aos-offset="250"
+    />
+    <img
+      class="d-block position-absolute top-0 start-0"
+      src="assets/img/portfolio/single/v2/08.png"
+      alt="Image"
+      data-aos="fade-left"
+      data-aos-duration="500"
+      data-aos-offset="250"
+    />
+  </div>
+
+  <div class="row py-5 my-lg-3 my-xl-4 my-xxl-5">
+    <div class="col-sm-5 mb-4 mb-sm-0">
+      <div class="position-relative">
+        <div
+          class="bg-secondary position-absolute top-0 start-0 w-100 h-100"
+          data-aos="zoom-in"
+          data-aos-duration="700"
+          data-aos-offset="250"
+        ></div>
+        <img
+          class="position-relative z-2"
+          src="assets/img/portfolio/single/v2/09.png"
+          alt="Image"
+          data-aos="zoom-in"
+          data-aos-duration="400"
+          data-aos-offset="250"
+        />
+      </div>
+    </div>
+    <div class="col-sm-7">
+      <div class="position-relative">
+        <div
+          class="bg-secondary position-absolute top-0 start-0 w-100 h-100"
+          data-aos="zoom-in"
+          data-aos-duration="700"
+          data-aos-offset="250"
+        ></div>
+        <img
+          class="position-relative z-2"
+          src="assets/img/portfolio/single/v2/10.png"
+          alt="Image"
+          data-aos="zoom-in"
+          data-aos-duration="400"
+          data-aos-offset="250"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="row pt-1 pt-sm-3 pt-md-4 pb-5 mb-md-2 mb-lg-3 mb-xl-4 mb-xxl-5">
+    <div class="col-md-11 col-lg-9 col-xl-8 pb-1 pb-sm-3 pb-md-4">
+      <h2 class="h1 pb-sm-2 pb-lg-3">Results</h2>
+      <p class="fs-lg mb-0">
+        Morbi et massa fames ac scelerisque sit commodo dignissim faucibus
+        quisque proin lectus laoreet sem adipiscing sollicitudin erat massa
+        tellus lorem enim aenean phasellus in hendrerit interdum lorem proin
+        pretium dictum urna suspendisse quis risus et.
+      </p>
+      <div class="row row-cols-3 pt-2 pt-sm-3 pt-md-4 pt-xl-5 my-3">
+        @for (item of resultCounter; track $index) {
+          <div class="col">
+            <div class="h2 display-1 mb-0">{{ item.number }}</div>
+            <p class="fs-sm mb-0">{{ item.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

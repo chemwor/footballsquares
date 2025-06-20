@@ -1,0 +1,24 @@
+<section class="container pb-5 pt-lg-3 pt-xl-4 pt-xxl-5 mt-n2 mt-md-0">
+  <div
+    class="row justify-content-center row-cols-2 row-cols-3 row-cols-md-5 gx-0 gx-sm-3 gx-md-2 gx-lg-3 gx-xl-4"
+  >
+    @for (item of webAward; track $index) {
+      <div class="col">
+        <div class="py-sm-2 my-xl-1">
+          <img
+            class="d-block d-dark-mode-none mx-auto"
+            src="{{ item.darkModeSrc }}"
+            width="196"
+            alt="{{ item.brand }}"
+          />
+          <img
+            class="d-none d-dark-mode-block mx-auto"
+            src="{{ item.lightModeSrc }}"
+            width="196"
+            alt="{{ item.brand }}"
+          />
+        </div>
+      </div>
+    }
+  </div>
+</section>

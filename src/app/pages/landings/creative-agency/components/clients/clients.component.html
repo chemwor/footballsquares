@@ -1,0 +1,82 @@
+<section class="pt-sm-1 pt-lg-3 pt-xl-4">
+  <div class="container text-center">
+    <h2 class="h1">We partner with more than 60 brands</h2>
+    <p class="pb-1 pb-sm-2 pb-md-3 pb-lg-4 mb-3">
+      Clients who have become our friends for many years
+    </p>
+  </div>
+  <div class="swiper pb-3 pb-sm-4 mb-xl-2">
+    <swiper-container
+      [config]="firstSwiper"
+      init="false"
+      class="swiper-wrapper"
+      style="transition-timing-function: linear !important"
+    >
+      @for (item of marqueeSwiper; track $index) {
+        <swiper-slide class="swiper-slide">
+          @if (item.src) {
+            <img
+              class="d-block mx-auto"
+              src="{{ item.src }}"
+              width="196"
+              alt="Heineken"
+            />
+          }
+          @if (item.light_mode_src) {
+            <img
+              class="d-block d-dark-mode-none mx-auto"
+              src="{{ item.light_mode_src }}"
+              width="{{ item.width }}"
+              alt="{{ item.brand }}"
+            />
+          }
+          @if (item.dark_mode_src) {
+            <img
+              class="d-none d-dark-mode-block mx-auto"
+              src="{{ item.dark_mode_src }}"
+              width="{{ item.width }}"
+              alt="Starcraft"
+            />
+          }
+        </swiper-slide>
+      }
+    </swiper-container>
+  </div>
+  <div class="swiper" dir="rtl">
+    <swiper-container
+      [config]="secondSwiper"
+      init="false"
+      class="swiper-wrapper"
+      style="transition-timing-function: linear !important"
+    >
+      @for (item of marqueeSwiper; track $index) {
+        <swiper-slide class="swiper-slide">
+          @if (item.src) {
+            <img
+              class="d-block mx-auto"
+              src="{{ item.src }}"
+              width="196"
+              alt="Heineken"
+            />
+          }
+          @if (item.light_mode_src) {
+            <img
+              class="d-block d-dark-mode-none mx-auto"
+              src="{{ item.light_mode_src }}"
+              width="{{ item.width }}"
+              alt="{{ item.brand }}"
+            />
+          }
+          @if (item.dark_mode_src) {
+            <img
+              class="d-none d-dark-mode-block mx-auto"
+              src="{{ item.dark_mode_src }}"
+              width="{{ item.width }}"
+              alt="Starcraft"
+            />
+          }
+        </swiper-slide>
+      }
+    </swiper-container>
+  </div>
+</section>

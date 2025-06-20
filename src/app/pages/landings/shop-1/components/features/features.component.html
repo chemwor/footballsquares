@@ -1,0 +1,26 @@
+<section class="container py-5 mt-2 mb-3 mt-sm-3 mb-sm-4 my-md-4 my-lg-5">
+  <div class="swiper pb-xxl-4 mb-xl-2">
+    <swiper-container
+      [config]="swiperConfig"
+      init="false"
+      class="swiper-wrapper"
+    >
+      @for (item of allfeatures; track $index) {
+        <swiper-slide class="swiper-slide text-center text-sm-start">
+          <div class="text-primary mb-3 mb-sm-4">
+            <div [innerHTML]="item.sanitizedIcon"></div>
+          </div>
+          <h3 class="h5 mb-2 mb-sm-3">{{ item.title }}</h3>
+          <p class="fs-sm mb-0">
+            {{ item.description }}
+          </p>
+        </swiper-slide>
+      }
+    </swiper-container>
+
+    <div
+      id="feature-pagination"
+      class="swiper-pagination position-relative bottom-0 pt-1 mt-4 d-lg-none"
+    ></div>
+  </div>
+</section>

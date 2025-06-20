@@ -1,0 +1,28 @@
+<section class="container py-5 my-lg-3 my-xl-4 my-xxl-5">
+  <div class="swiper pt-3 pb-2 py-sm-3 py-md-4 py-xl-5 my-lg-2">
+    <swiper-container
+      [config]="swiperConfig"
+      init="false"
+      class="swiper-wrapper"
+    >
+      @for (item of benefit; track $index) {
+        <swiper-slide class="swiper-slide text-center">
+          <img
+            class="d-block mx-auto mb-4"
+            src="{{ item.iconSrc }}"
+            width="{{ item.width }}"
+            alt="{{ item.alt }}"
+          />
+          <h3 class="h4 pb-2 mb-1">{{ item.title }}</h3>
+          <p class="fs-sm mb-0">
+            {{ item.description }}
+          </p>
+        </swiper-slide>
+      }
+    </swiper-container>
+
+    <div
+      class="swiper-pagination position-relative bottom-0 mt-2 pt-4 d-lg-none"
+    ></div>
+  </div>
+</section>

@@ -1,0 +1,10 @@
+<div class="h-100 border rounded-3 p-4">
+  <h2 class="h6 text-center text-sm-start mb-4">Sales value, USD</h2>
+  <canvas
+    baseChart
+    [datasets]="lineAreaChart.datasets"
+    [labels]="lineAreaChart.labels"
+    [options]="lineAreaChart.options"
+    type="line"
+  ></canvas>
+</div>

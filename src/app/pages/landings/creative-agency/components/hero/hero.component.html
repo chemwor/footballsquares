@@ -1,0 +1,100 @@
+<section class="container py-5 mt-5 mb-xl-3 mb-xxl-5">
+  <div class="row pt-2">
+    <div class="col-lg-6 d-flex flex-column mb-4 mb-lg-0 pb-sm-3 pb-lg-0">
+      <h1 class="display-1 text-uppercase fw-bold mt-auto mb-2">
+        Creative <span class="fw-normal">solutions</span> studio<span
+          class="d-none d-md-inline-block align-middle ms-4"
+          style="width: 120px; height: 2px; background-color: currentColor"
+        ></span>
+      </h1>
+      <div class="d-flex align-items-center py-4 py-lg-5">
+        <a
+          class="btn btn-lg btn-primary rounded-0 me-2 me-sm-3"
+          href="javascript:void(0);"
+          >Let's work together</a
+        >
+        <div class="flex-shrink-sm-0">
+          <img
+            class="d-dark-mode-none"
+            src="assets/img/brands/clutch-rating-dark.svg"
+            width="155"
+            alt="Clutch"
+          />
+          <img
+            class="d-none d-dark-mode-block"
+            src="assets/img/brands/clutch-rating-light.svg"
+            width="155"
+            alt="Clutch"
+          />
+        </div>
+      </div>
+      <ul class="nav mt-auto mx-n2 pt-sm-3 pt-lg-0">
+        <li class="nav-item me-3">
+          <a class="nav-link p-2" href="javascript:void(0);">instagram</a>
+        </li>
+        <li class="nav-item me-3">
+          <a class="nav-link p-2" href="javascript:void(0);">dribbble</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link p-2" href="javascript:void(0);">behance</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="row row-cols-1 row-cols-sm-2 g-1">
+        @for (item of flipCreativeData; track $index) {
+          <div class="col">
+            <a class="card-flip" href="javascript:void(0);">
+              <div class="card-flip-inner">
+                <div
+                  class="card-flip-front"
+                  [style.background-image]="'url(' + item.image + ')'"
+                >
+                  <div class="d-flex flex-column h-100" data-bs-theme="light">
+                    <h2 class="fs-lg fw-normal mb-0 mt-auto">
+                      {{ item.title }}
+                    </h2>
+                  </div>
+                </div>
+                <div class="card-flip-back bg-secondary">
+                  <div
+                    class="d-flex flex-column h-100 px-sm-2 pt-sm-2 px-lg-0 pt-lg-0 px-xl-3 pt-xl-3"
+                  >
+                    <h3 class="h4">{{ item.title }}</h3>
+                    @if (item.description) {
+                      <p class="text-body mb-3">
+                        {{ item.description }}
+                      </p>
+                    } @else if (item.list) {
+                      <ul class="text-body ps-4 mb-3">
+                        @for (
+                          data of item.list;
+                          track $index;
+                          let last = $last
+                        ) {
+                          <li class="" [ngClass]="last ? 'mb-1' : 'mb-2'">
+                            {{ data }}
+                          </li>
+                        }
+                      </ul>
+                    }
+                    <div
+                      class="text-end pt-3 pt-sm-2 pt-xl-4 mt-auto me-sm-n2 me-lg-0 me-xl-n3"
+                    >
+                      <div
+                        class="btn btn-sm btn-icon btn-outline-primary rounded-circle"
+                      >
+                        <i class="ai-arrow-right"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,108 @@
+<div class="row mb-md-2 mb-xl-4">
+  <div class="col-lg-9 pe-lg-4 pe-xl-5">
+    <h1 class="pb-3 pb-lg-4">Blog list with sidebar</h1>
+
+    @for (item of allListBlog; track $index) {
+      <article class="row g-0 border-0 mb-4">
+        <a
+          class="col-sm-5 bg-repeat-0 bg-size-cover bg-position-center rounded-5"
+          routerLink="/blog/single-v1"
+          style="background-image: url({{ item.image }}); min-height: 14rem"
+          aria-label="Post image"
+        ></a>
+        <div class="col-sm-7">
+          <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
+            <h3>
+              <a routerLink="/blog/single-v1">{{ item.title }}</a>
+            </h3>
+            <p class="d-sm-none d-md-block">{{ item.excerpt }}</p>
+            <div class="d-flex flex-wrap align-items-center mt-n2">
+              <a
+                class="nav-link text-body-secondary fs-sm fw-normal p-0 mt-2 me-3"
+                href="javascript:void(0);"
+              >
+                {{ item.shares }}
+                <i class="ai-share fs-lg ms-1"></i>
+              </a>
+              <a
+                class="nav-link text-body-secondary fs-sm fw-normal d-flex align-items-end p-0 mt-2"
+                href="javascript:void(0);"
+              >
+                {{ item.comments }}
+                <i class="ai-message fs-lg ms-1"></i>
+              </a>
+              <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+              <span class="fs-sm text-body-secondary mt-2">{{
+                item.date
+              }}</span>
+              <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+              <a
+                class="badge text-nav fs-xs border mt-2"
+                href="javascript:void(0);"
+                >{{ item.category }}</a
+              >
+            </div>
+          </div>
+        </div>
+      </article>
+    }
+
+    <div class="row gy-3 align-items-center mt-lg-5 pt-2 pt-md-4 pt-lg-0">
+      <div class="col col-md-4 col-6 order-md-1 order-1">
+        <div class="d-flex align-items-center">
+          <span class="text-body-secondary fs-sm">Show</span>
+          <select class="form-select form-select-flush w-auto">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="25">25</option>
+          </select>
+        </div>
+      </div>
+      <div class="col col-md-4 col-12 order-md-2 order-3 text-center">
+        <button class="btn btn-primary w-md-auto w-100" type="button">
+          Load more posts
+        </button>
+      </div>
+      <div class="col col-md-4 col-6 order-md-3 order-2">
+        <nav aria-label="Page navigation">
+          <ngb-pagination
+            [collectionSize]="50"
+            [directionLinks]="false"
+            class="pagination pagination-sm justify-content-end"
+          >
+            <ng-template class="page-item active" aria-current="page">
+              <span class="page-link"
+                >1<span class="visually-hidden">(current)</span></span
+              >
+            </ng-template>
+            <ng-template class="page-item"
+              ><a class="page-link" href="javascript:void(0);"
+                >2</a
+              ></ng-template
+            >
+            <ng-template class="page-item"
+              ><a class="page-link" href="javascript:void(0);"
+                >3</a
+              ></ng-template
+            >
+            <ng-template class="page-item"
+              ><a class="page-link" href="javascript:void(0);"
+                >4</a
+              ></ng-template
+            >
+            <ng-template class="page-item"
+              ><a class="page-link" href="javascript:void(0);"
+                >5</a
+              ></ng-template
+            >
+          </ngb-pagination>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <aside class="col-lg-3">
+    <list-sidebar-category class="d-none d-lg-block" />
+  </aside>
+</div>

@@ -1,0 +1,219 @@
+<div class="d-flex align-items-center mb-4">
+  <h1 class="h2 mb-0">Orders</h1>
+  <select class="form-select ms-auto" style="max-width: 200px">
+    <option value="All tme">For all time</option>
+    <option value="Last week">Last week</option>
+    <option value="Last month">Last month</option>
+    <option value="Last month">Last month</option>
+    <option value="In progress">In progress</option>
+    <option value="Canceled">Canceled</option>
+    <option value="Delivered">Delivered</option>
+  </select>
+</div>
+<div class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4">
+  <div class="card-body pb-4">
+    <div
+      ngbAccordion
+      class="accordion accordion-alt accordion-orders"
+      id="orders"
+      [closeOthers]="true"
+    >
+      @for (item of allOrder; track $index) {
+        <div
+          class="accordion-item border-top mb-0"
+          ngbAccordionItem
+          [collapsed]="$index == 2 ? false : true"
+        >
+          <h4 class="accordion-header" ngbAccordionHeader>
+            <button
+              ngbAccordionButton
+              class="accordion-button d-flex fs-4 fw-normal text-decoration-none py-3"
+            >
+              <div
+                class="d-flex justify-content-between w-100"
+                style="max-width: 440px"
+              >
+                <div class="me-3 me-sm-4">
+                  <div class="fs-sm text-body-secondary">
+                    {{ item.orderNumber }}
+                  </div>
+                  <span
+                    class="badge bg-opacity-10 fs-xs"
+                    [ngClass]="{
+                      'bg-info text-info': item.status === 'In progress',
+                      'bg-danger text-danger': item.status === 'Canceled',
+                      'bg-primary text-primary': item.status === 'Delivered',
+                    }"
+                    >{{ item.status }}</span
+                  >
+                </div>
+                <div class="me-3 me-sm-4">
+                  <div class="d-none d-sm-block fs-sm text-body-secondary mb-2">
+                    Order date
+                  </div>
+                  <div class="d-sm-none fs-sm text-body-secondary mb-2">
+                    Date
+                  </div>
+                  <div class="fs-sm fw-medium text-dark">
+                    {{ item.orderDate }}
+                  </div>
+                </div>
+                <div class="me-3 me-sm-4">
+                  <div class="fs-sm text-body-secondary mb-2">Total</div>
+                  <div class="fs-sm fw-medium text-dark">
+                    {{ selectedCurrency }}{{ item.total }}
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-button-img d-none d-sm-flex ms-auto">
+                @for (item of item.images; track $index) {
+                  <div class="mx-1">
+                    <img src="{{ item }}" width="48" alt="Product" />
+                  </div>
+                }
+              </div>
+            </button>
+          </h4>
+          <div class="accordion-collapse" ngbAccordionCollapse>
+            <div class="accordion-body" ngbAccordionBody>
+              <ng-template>
+                <div class="table-responsive pt-1">
+                  <table
+                    class="table align-middle w-100"
+                    style="min-width: 450px"
+                  >
+                    <tbody>
+                      @for (data of item.products; track $index) {
+                        <tr>
+                          <td class="border-0 py-1 px-0">
+                            <div class="d-flex align-items-center">
+                              <a
+                                class="d-inline-block flex-shrink-0 bg-secondary rounded-1 p-md-2 p-lg-3"
+                                routerLink="/shop/single"
+                              >
+                                <img
+                                  src="{{ data.image }}"
+                                  width="110"
+                                  alt="Product"
+                                />
+                              </a>
+                              <div class="ps-3 ps-sm-4">
+                                <h4 class="h6 mb-2">
+                                  <a routerLink="/shop/single">{{
+                                    data.name
+                                  }}</a>
+                                </h4>
+                                <div class="text-body-secondary fs-sm me-3">
+                                  Color:
+                                  <span class="text-dark fw-medium">{{
+                                    data.color
+                                  }}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td class="border-0 py-1 pe-0 ps-3 ps-sm-4">
+                            <div class="fs-sm text-body-secondary mb-2">
+                              Quantity
+                            </div>
+                            <div class="fs-sm fw-medium text-dark">
+                              {{ data.quantity }}
+                            </div>
+                          </td>
+                          <td class="border-0 py-1 pe-0 ps-3 ps-sm-4">
+                            <div class="fs-sm text-body-secondary mb-2">
+                              Price
+                            </div>
+                            <div class="fs-sm fw-medium text-dark">
+                              {{ selectedCurrency }}{{ data.price }}
+                            </div>
+                          </td>
+                          <td class="border-0 text-end py-1 pe-0 ps-3 ps-sm-4">
+                            <div class="fs-sm text-body-secondary mb-2">
+                              Total
+                            </div>
+                            <div class="fs-sm fw-medium text-dark">
+                              {{ selectedCurrency
+                              }}{{ data.quantity * data.price }}
+                            </div>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+                <div class="bg-secondary rounded-1 p-4 my-2">
+                  <div class="row">
+                    <div class="col-sm-5 col-md-3 col-lg-4 mb-3 mb-md-0">
+                      <div class="fs-sm fw-medium text-dark mb-1">Payment:</div>
+                      <div class="fs-sm">Upon the delivery</div>
+                      <a
+                        class="btn btn-link py-1 px-0 mt-2"
+                        href="javascript:void(0);"
+                      >
+                        <i class="ai-time me-2 ms-n1"></i>
+                        Order history
+                      </a>
+                    </div>
+                    <div class="col-sm-7 col-md-5 mb-4 mb-md-0">
+                      <div class="fs-sm fw-medium text-dark mb-1">
+                        Delivery address:
+                      </div>
+                      <div class="fs-sm">
+                        401 Magnetic Drive Unit 2,<br />Toronto, Ontario, M3J
+                        3H9, Canada
+                      </div>
+                    </div>
+                    <div class="col-md-4 col-lg-3 text-md-end">
+                      <button
+                        class="btn btn-sm btn-outline-primary w-100 w-md-auto"
+                        type="button"
+                      >
+                        <i class="ai-star me-2 ms-n1"></i>
+                        Leave a review
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="d-sm-flex align-items-center pt-4 pt-sm-5">
+      <nav
+        class="order-sm-2 ms-sm-auto mb-4 mb-sm-0"
+        aria-label="Orders pagination"
+      >
+        <ngb-pagination
+          [collectionSize]="40"
+          [directionLinks]="false"
+          class="pagination pagination-sm justify-content-center"
+        >
+          <ng-template class="page-item active" aria-current="page">
+            <span class="page-link"
+              >1<span class="visually-hidden">(current)</span></span
+            >
+          </ng-template>
+          <ng-template class="page-item"
+            ><a class="page-link" href="javascript:void(0);">2</a></ng-template
+          >
+          <ng-template class="page-item"
+            ><a class="page-link" href="javascript:void(0);">3</a></ng-template
+          >
+          <ng-template class="page-item"
+            ><a class="page-link" href="javascript:void(0);">4</a></ng-template
+          >
+        </ngb-pagination>
+      </nav>
+      <button
+        class="btn btn-primary w-100 w-sm-auto order-sm-1 ms-sm-auto me-sm-n5"
+        type="button"
+      >
+        Load more orders
+      </button>
+    </div>
+  </div>
+</div>

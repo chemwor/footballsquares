@@ -1,0 +1,39 @@
+<section class="bg-secondary py-5">
+  <div class="container py-lg-3 py-xl-4 py-xxl-5">
+    <div
+      class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 py-sm-2 py-md-3 py-lg-4"
+    >
+      @for (item of contactListDetail; track $index) {
+        <div class="col">
+          <h2 class="h4 mb-4">{{ item.location }}</h2>
+          <ul class="list-unstyled mb-0">
+            <li class="nav flex-nowrap mb-3">
+              <i class="{{ item.phone.icon }} lead text-primary me-2"></i>
+              <a
+                class="nav-link fw-normal p-0 mt-n1"
+                href="{{ item.phone.link }}"
+                >{{ item.phone.text }}</a
+              >
+            </li>
+            <li class="nav flex-nowrap mb-3">
+              <i class="{{ item.email.icon }} lead text-primary me-2"></i>
+              <a
+                class="nav-link fw-normal p-0 mt-n1"
+                href="{{ item.phone.link }}"
+                >{{ item.email.text }}</a
+              >
+            </li>
+            <li class="nav flex-nowrap mb-3">
+              <i class="{{ item.address.icon }} lead text-primary me-2"></i>
+              <a
+                class="nav-link fw-normal p-0 mt-n1"
+                href="javascript:void(0);"
+                >{{ item.address.text }}</a
+              >
+            </li>
+          </ul>
+        </div>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,102 @@
+<section class="container overflow-hidden pb-5 mb-2 mb-lg-3 mb-xl-4 mb-xxl-5">
+  <div class="masonry-filterable">
+    <div class="row pb-lg-4 mb-2 mb-sm-3">
+      <div class="col-xxl-3 col-lg-4 text-center text-lg-start">
+        <h1>Our Projects</h1>
+        <p class="mb-4 mb-lg-0">
+          We will put our industry expertise for creativity to work for your
+          project
+        </p>
+      </div>
+
+      <div class="col-xxl-9 col-lg-8 d-flex">
+        <ul
+          class="masonry-filters nav nav-pills fs-sm flex-nowrap overflow-auto text-nowrap w-100 mx-auto me-lg-0 pb-3"
+          style="max-width: 456px"
+        >
+          <li class="nav-item mb-0">
+            <a
+              class="nav-link border"
+              [ngClass]="{ active: activeFilter === 'All' }"
+              href="javascript:void(0);"
+              data-group="all"
+              (click)="filterType('All')"
+              >All</a
+            >
+          </li>
+          <li class="nav-item mb-0">
+            <a
+              class="nav-link border"
+              [ngClass]="{ active: activeFilter === 'Branding' }"
+              href="javascript:void(0);"
+              data-group="branding"
+              (click)="filterType('Branding')"
+              >Branding</a
+            >
+          </li>
+          <li class="nav-item mb-0">
+            <a
+              class="nav-link border"
+              [ngClass]="{ active: activeFilter === 'Stationery' }"
+              href="javascript:void(0);"
+              data-group="stationery"
+              (click)="filterType('Stationery')"
+              >Stationery</a
+            >
+          </li>
+          <li class="nav-item mb-0">
+            <a
+              class="nav-link border"
+              [ngClass]="{ active: activeFilter === 'Web design' }"
+              href="javascript:void(0);"
+              data-group="web"
+              (click)="filterType('Web design')"
+              >Web</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <ngx-masonry [options]="options" class="masonry-grid" data-columns="2">
+      <div
+        *ngFor="let data of projectList"
+        ngxMasonryItem
+        class="masonry-grid-item pb-5 mb-md-2 mb-lg-4 mb-xl-5"
+        data-groups='["branding"]'
+      >
+        <div
+          class="zoom-effect position-relative border-bottom pb-3"
+          [style.maxWidth]="data.width"
+        >
+          <div class="zoom-effect-wrapper">
+            <div class="zoom-effect-img">
+              <img src="{{ data.img }}" alt="Image" />
+            </div>
+          </div>
+          <div class="pt-4 mt-lg-2">
+            <h2 class="h4 mb-2">
+              <a class="stretched-link" routerLink="/portfolio/single-2">{{
+                data.label
+              }}</a>
+            </h2>
+            <div
+              class="d-flex justify-content-between fs-lg text-body-secondary"
+            >
+              <span>{{ data.type }}</span>
+              <span>{{ data.year }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ngx-masonry>
+
+    <div class="text-center pb-sm-2 pb-md-4 mt-n1 mt-lg-n2">
+      <a
+        class="btn btn-lg btn-outline-dark rounded-0"
+        href="javascript:void(0);"
+        >Let's work together</a
+      >
+    </div>
+  </div>
+</section>

@@ -1,0 +1,24 @@
+<section class="container py-md-4 py-lg-5 mb-xl-3 mb-xxl-5">
+  <div class="row pt-sm-2">
+    <div class="col-xl-10">
+      <p class="fs-2 text-dark pb-md-2 mb-lg-5">
+        From the first stages of developing a project plan idea, we pay special
+        attention
+        <span class="fw-semibold"
+          >to design solutions to existing problems,</span
+        >
+        create brands that become part of history, and create a digital skill
+        that harnesses the power of
+        <span class="fw-semibold">creativity and humanity.</span>
+      </p>
+    </div>
+  </div>
+  <div class="row pb-5">
+    @for (item of allAboutData; track $index; let last = $last) {
+      <div class="col-sm-4 col-lg-3" [ngClass]="last ? 'mb-2 mb-sm-3' : 'mb-3'">
+        <h3 class="display-1 mb-0 mb-sm-1">{{ item.number }}</h3>
+        <span class="fs-sm">{{ item.description }}</span>
+      </div>
+    }
+  </div>
+</section>

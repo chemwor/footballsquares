@@ -1,0 +1,98 @@
+<section class="pt-5 mt-lg-3 mt-xl-4 mt-xxl-5">
+  <div class="container pt-2 pt-sm-4 pt-lg-5 mt-md-3 mt-lg-0">
+    <div class="row pb-3 mb-3 mb-lg-4">
+      <div
+        class="col-lg-11 d-sm-flex justify-content-between text-center text-sm-start"
+      >
+        <h2 class="h1 mb-sm-0 mx-auto me-sm-4" style="max-width: 440px">
+          Advantages that make us a unique place
+        </h2>
+        <p class="pt-2 mb-0 mx-auto" style="max-width: 420px">
+          The best yoga and meditation practices, adapted a ta high level to the
+          needs of the modern pace of life.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="container-start pe-0">
+    <div class="swiper">
+      <swiper-container
+        [config]="swiperConfig"
+        init="false"
+        class="swiper-wrapper"
+      >
+        @for (item of yogaFeatures; track $index) {
+          <swiper-slide class="swiper-slide w-auto h-auto">
+            <div
+              class="card border-0 bg-secondary card-hover h-100 py-4"
+              style="max-width: 306px"
+            >
+              <div
+                class="opacity-0 position-absolute top-0 start-0 w-100 h-100 bg-size-cover bg-position-center rounded-5"
+                style="
+                background-image: url({{ item.image }});
+              "
+              ></div>
+              <div class="card-body text-center">
+                <i
+                  class="{{
+                    item.icon_class
+                  }} h1 fw-normal text-primary d-block mb-4"
+                ></i>
+                <h3>{{ item.title }}</h3>
+                <p class="card-text">
+                  {{ item.description }}
+                </p>
+              </div>
+            </div>
+          </swiper-slide>
+          @if (item.button_text) {
+            <swiper-slide class="swiper-slide w-auto h-auto">
+              <div
+                class="card border-0 bg-primary card-hover h-100 py-4"
+                style="max-width: 306px"
+              >
+                <img
+                  class="position-absolute top-0 start-0"
+                  src="{{ item.image }}"
+                  width="306"
+                  alt="Decor"
+                />
+                <div class="card-body position-relative z-2 text-center">
+                  <h3 class="text-white">{{ item.title }}</h3>
+                  <p class="text-white fs-sm">{{ item.description }}</p>
+                  <a
+                    class="btn btn-light text-primary"
+                    href="javascript:void(0);"
+                    >{{ item.button_text }}</a
+                  >
+                </div>
+              </div>
+            </swiper-slide>
+          }
+        }
+      </swiper-container>
+    </div>
+
+    <div
+      class="container d-flex justify-content-center justify-content-sm-end pt-3 mt-3 mt-lg-4"
+    >
+      <button
+        class="btn btn-icon btn-sm btn-outline-primary rounded-circle me-3"
+        type="button"
+        id="prev-feature"
+        aria-label="Prev"
+      >
+        <i class="ai-arrow-left"></i>
+      </button>
+      <button
+        class="btn btn-icon btn-sm btn-outline-primary rounded-circle"
+        type="button"
+        id="next-feature"
+        aria-label="Next"
+      >
+        <i class="ai-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+</section>

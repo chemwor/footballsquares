@@ -1,0 +1,109 @@
+<footer class="footer pt-lg-5 pt-4 pb-5">
+  <div class="container pt-3 mt-md-2 mt-lg-3">
+    <div class="row gy-md-5 gy-4 mb-md-5 mb-4 pb-lg-2">
+      <div class="col-lg-3">
+        <component-logo-box
+          className="d-inline-flex align-items-center mb-lg-4 mb-3"
+        />
+        <p
+          class="mb-4 pb-lg-1 fs-xs text-body-secondary"
+          style="max-width: 306px"
+        >
+          The agency with extensive experience that creates marketing strategies
+          for B2B and B2C companies.
+        </p>
+        <div class="d-flex mt-n3 ms-n3">
+          <a
+            class="btn btn-secondary btn-icon btn-sm btn-facebook rounded-circle mt-3 ms-3"
+            href="javascript:void(0);"
+            aria-label="Facebook"
+          >
+            <i class="ai-facebook"></i>
+          </a>
+          <a
+            class="btn btn-secondary btn-icon btn-sm btn-instagram rounded-circle mt-3 ms-3"
+            href="javascript:void(0);"
+            aria-label="Instagram"
+          >
+            <i class="ai-instagram"></i>
+          </a>
+          <a
+            class="btn btn-secondary btn-icon btn-sm btn-linkedin rounded-circle mt-3 ms-3"
+            href="javascript:void(0);"
+            aria-label="LinkedIn"
+          >
+            <i class="ai-linkedin"></i>
+          </a>
+        </div>
+      </div>
+      <div class="col-xl-8 offset-xl-1 col-lg-9">
+        <div class="row row-cols-sm-4 row-cols-1">
+          <div class="col">
+            <ul class="nav flex-column mb-0">
+              @for (item of services; track $index) {
+                <li class="nav-item mb-2">
+                  <a class="nav-link p-0" href="javascript:void(0);">{{
+                    item
+                  }}</a>
+                </li>
+              }
+            </ul>
+          </div>
+          <div class="col">
+            <ul class="nav flex-column mb-0">
+              @for (data of contact; track $index) {
+                <li class="nav-item mb-2">
+                  <a class="nav-link p-0" href="javascript:void(0);">{{
+                    data
+                  }}</a>
+                </li>
+              }
+            </ul>
+          </div>
+          <div class="col">
+            <ul class="nav flex-column mb-0">
+              @for (item of about; track $index) {
+                <li class="nav-item mb-2">
+                  <a class="nav-link p-0" href="javascript:void(0);">{{
+                    item
+                  }}</a>
+                </li>
+              }
+            </ul>
+          </div>
+          <div class="col">
+            <ul class="nav flex-column mb-0">
+              <li class="nav-item mb-2">
+                <a class="nav-link p-0" href="mailto:+15262200444"
+                  >+&nbsp;1&nbsp;526&nbsp;220&nbsp;0444</a
+                >
+              </li>
+              <li class="nav-item mb-2">
+                <a class="nav-link p-0" href="mailto:+15262200444"
+                  >+&nbsp;1&nbsp;526&nbsp;220&nbsp;0000</a
+                >
+              </li>
+              <li class="nav-item mb-2">
+                <a
+                  class="text-primary fw-semibold p-0"
+                  href="javascript:void(0);"
+                  >example&#64;gmail.com</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="nav fs-sm text-body-secondary">
+      &copy; All rights reserved. Made by
+      <a
+        class="nav-link fw-normal p-0 ms-1"
+        href="{{ developBy }}"
+        target="_blank"
+        rel="noopener"
+        >{{ author }}</a
+      >
+    </div>
+  </div>
+</footer>

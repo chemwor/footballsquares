@@ -1,0 +1,57 @@
+<section class="container py-5 mt-2 mt-sm-3 mt-md-4">
+  <h2 class="h1 text-center pt-lg-3">Industries we work in</h2>
+  <p class="pb-3 pb-md-4 mb-0 mb-sm-2 mb-lg-3 text-center">
+    Most of our projcts come from the industries below
+  </p>
+  <div class="row align-items-lg-center">
+    <div class="col-md-6 col-lg-5 pb-2 pb-lg-0 mb-4 mb-md-0">
+      <div
+        ngbAccordion
+        [closeOthers]="true"
+        class="accordion accordion-alt"
+        id="industries"
+      >
+        @for (item of webStudioIndustries; track $index) {
+          <div
+            ngbAccordionItem
+            [collapsed]="false"
+            class="accordion-item mb-n3 mb-lg-n2 mb-xl-1"
+            (click)="onAccordionChange($index)"
+          >
+            <h3 ngbAccordionHeader class="accordion-header">
+              <button ngbAccordionButton class="accordion-button" type="button">
+                {{ item.title }}
+              </button>
+            </h3>
+            <div
+              ngbAccordionCollapse
+              class="accordion-collapse collapse"
+              [id]="'accordion-' + $index"
+              data-bs-parent="#industries"
+            >
+              <div ngbAccordionBody class="accordion-body">
+                {{ item.content }}
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-7 col-xl-6 offset-xl-1">
+      <div class="ps-lg-4 ps-xl-0">
+        <div class="binded-content">
+          @for (item of bindedImage; track $index) {
+            <div
+              class="binded-item"
+              [ngClass]="{ active: activeAccordionIndex === $index }"
+              id="finance-img"
+            >
+              <img class="rounded-5" [src]="item" alt="Image" />
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

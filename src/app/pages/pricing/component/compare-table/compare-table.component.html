@@ -1,0 +1,120 @@
+<div class="text-center pt-md-1 pt-lg-2">
+  <button
+    class="btn btn-more btn-link fs-4"
+    type="button"
+    data-show-label="Compare plans"
+    (click)="collapse.toggle()"
+    [attr.aria-expanded]="!isCollapsed"
+    data-hide-label="Compare plans"
+    data-bs-toggle="collapse"
+    data-bs-target="#comparePlans"
+    aria-label="Compare plans"
+  ></button>
+</div>
+<div
+  class="collapse show"
+  id="comparePlans"
+  #collapse="ngbCollapse"
+  [(ngbCollapse)]="isCollapsed"
+>
+  <div class="table-responsive pt-sm-2 pt-lg-3">
+    <table class="table text-center text-nowrap">
+      <thead>
+        <tr>
+          <th scope="col" class="border-0 py-3">&nbsp;</th>
+          <th scope="col" class="border-0 py-3">
+            <span class="h5 mb-0">Light</span>
+          </th>
+          <th scope="col" class="border-0 py-3">
+            <span class="h5 mb-0">Premium</span>
+          </th>
+          <th scope="col" class="border-0 py-3">
+            <span class="h5 mb-0">Medium</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of compareDataTable; track $index) {
+          @if (item.title !== '') {
+            <tr>
+              <th scope="col" class="border-0 text-start pt-4 pb-3 ps-4">
+                <div class="h5 pt-1 mb-0">{{ item.title }}</div>
+              </th>
+              <th scope="col" class="border-0 py-3">&nbsp;</th>
+              <th scope="col" class="border-0 py-3">&nbsp;</th>
+              <th scope="col" class="border-0 py-3">&nbsp;</th>
+            </tr>
+          }
+          @for (data of item.children; track $index; let even = $even) {
+            <tr>
+              <th
+                scope="row"
+                class="border-0 text-start py-3 ps-4"
+                [ngClass]="{ 'bg-secondary rounded-3 rounded-end-0': even }"
+              >
+                @if (data.feature.info) {
+                  <span class="d-flex align-items-center text-body fw-medium">
+                    {{ data.feature.name }}
+                    <i
+                      class="ai-circle-info fs-lg ms-2"
+                      placement="end"
+                      triggers="mouseenter:mouseleave"
+                      [ngbPopover]="data.feature.info"
+                    ></i>
+                  </span>
+                } @else {
+                  <span
+                    class="text-body fw-medium"
+                    [ngClass]="{ 'bg-secondary rounded-3 rounded-end-0': even }"
+                    >{{ data.feature.name }}</span
+                  >
+                }
+              </th>
+
+              <td class="border-0 py-3" [ngClass]="{ 'bg-secondary': even }">
+                @if (data.light === true) {
+                  <i class="ai-check fs-xl text-success"></i>
+                } @else if (data.light === false) {
+                  <i class="ai-cross fs-xl text-danger"></i>
+                } @else {
+                  <span class="text-dark">{{ data.light }}</span>
+                }
+              </td>
+              <td class="border-0 py-3" [ngClass]="{ 'bg-secondary': even }">
+                @if (data.premium == true) {
+                  <i class="ai-check fs-xl text-success"></i>
+                } @else if (data.premium === false) {
+                  <i class="ai-cross fs-xl text-danger"></i>
+                } @else {
+                  <span class="text-dark">{{ data.premium }}</span>
+                }
+              </td>
+              <td
+                class="border-0 rounded-3 rounded-start-0 py-3"
+                [ngClass]="{ 'bg-secondary': even }"
+              >
+                @if (data.medium == true) {
+                  <i class="ai-check fs-xl text-success"></i>
+                } @else if (data.medium == false) {
+                  <i class="ai-cross fs-xl text-danger"></i>
+                } @else {
+                  <span class="text-dark">{{ data.medium }}</span>
+                }
+              </td>
+            </tr>
+          }
+        }
+        <tr>
+          <td class="border-0 pt-4">&nbsp;</td>
+          @for (item of pricingPlanData; track $index) {
+            <td class="border-0 pt-4">
+              <button class="btn btn-outline-primary mt-3" type="button">
+                Get started {{ selectdCurrency }}{{ item.price }}
+              </button>
+            </td>
+          }
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

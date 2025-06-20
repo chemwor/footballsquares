@@ -1,0 +1,58 @@
+<section class="container pb-5 mb-2 mb-lg-3 mb-xl-4 mb-xxl-5">
+  <h2 class="h1 pb-3 pb-lg-4">Editor's picks</h2>
+  <div class="swiper">
+    <swiper-container
+      [config]="swiperConfig"
+      init="false"
+      class="swiper-wrapper"
+    >
+      @for (item of editorsData; track $index) {
+        <swiper-slide class="swiper-slide h-auto">
+          <div class="card border-0 bg-secondary">
+            <div class="card-body pb-4">
+              <div class="d-flex align-items-center mb-4 mt-n1">
+                <span class="fs-sm text-body-secondary">{{ item.date }}</span>
+                <span class="fs-xs opacity-20 mx-3">|</span>
+                <a
+                  class="badge text-nav fs-xs border"
+                  href="javascript:void(0);"
+                  >{{ item.category }}</a
+                >
+              </div>
+              <h3 class="h4 card-title">
+                <a routerLink="/blog/post-1">{{ item.title }}</a>
+              </h3>
+              <p class="card-text">
+                {{ item.content }}
+              </p>
+            </div>
+            <div class="card-footer pt-3">
+              <a
+                class="d-flex align-items-center text-decoration-none pb-2"
+                href="javascript:void(0);"
+              >
+                <img
+                  class="rounded-circle"
+                  [src]="item.author.avatar"
+                  width="48"
+                  alt="Post author"
+                />
+                <h6 class="ps-3 mb-0">{{ item.author.name }}</h6>
+              </a>
+            </div>
+          </div>
+        </swiper-slide>
+      }
+    </swiper-container>
+
+    <div
+      class="swiper-pagination position-relative bottom-0 mt-2 pt-4 d-lg-none"
+    ></div>
+  </div>
+
+  <div class="text-center pt-4 mt-2 mt-lg-0 pt-lg-5 pb-sm-2 pb-md-4">
+    <a class="btn btn-primary" routerLink="/blog/grid-sidebar"
+      >Read all articles</a
+    >
+  </div>
+</section>

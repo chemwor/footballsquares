@@ -1,0 +1,50 @@
+<section class="container pt-5 mt-lg-3 mt-xl-4 mt-xxl-5">
+  <h2 class="h1 text-center pb-3 pt-2 pt-sm-3 pt-md-4 pt-xl-5 mb-3 mb-lg-4">
+    Choose a convenient plan
+  </h2>
+
+  <div class="row row-cols-3 flex-nowrap pb-3 overflow-auto">
+    @for (item of coWorkingPricing; track $index) {
+      <div class="col" style="min-width: 19rem">
+        <div
+          class="card h-100 py-lg-4"
+          [ngClass]="{ 'border-primary bg-primary': item.name === 'Pro' }"
+        >
+          <div
+            class="card-body w-100 mx-auto text-center"
+            style="max-width: 23rem"
+          >
+            <h3 [ngClass]="{ 'text-light': item.name === 'Pro' }">
+              {{ item.name }}
+            </h3>
+            <div
+              class="display-2 text-primary"
+              [ngClass]="{ 'text-light ': item.name === 'Pro' }"
+            >
+              {{ selectedCurrency }}{{ item.price }}
+            </div>
+            <div
+              class="mb-4"
+              [ngClass]="{ 'text-light opacity-70 ': item.name === 'Pro' }"
+            >
+              {{ item.frequency }}
+            </div>
+            <p
+              class="mb-4 pb-4"
+              [ngClass]="{ 'text-light opacity-70 ': item.name === 'Pro' }"
+            >
+              {{ item.description }}
+            </p>
+            <button
+              class="btn btn-primary w-100"
+              [ngClass]="{ 'btn-light  ': item.name === 'Pro' }"
+              type="button"
+            >
+              Get this plan now
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</section>

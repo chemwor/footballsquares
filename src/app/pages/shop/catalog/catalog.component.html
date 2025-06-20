@@ -1,0 +1,34 @@
+<catalog-search-modal />
+
+<main class="page-wrapper">
+  <component-navigation-bar-3 />
+
+  <div class="container py-5 mt-5 mb-lg-4 mb-xl-5">
+    <catalog-breadcrumb />
+
+    <catalog-banner />
+
+    <div class="row pt-xl-3 mt-n1 mt-sm-0">
+      <div class="col-lg-9 offset-lg-3 pt-lg-3">
+        <h1 class="pb-2 pb-sm-3">Home decoration</h1>
+      </div>
+    </div>
+    <div class="row pb-2 pb-sm-4">
+      <catalog-sidebar class="col-lg-3 d-none d-lg-block" />
+      <catalog-product-grid class="col-lg-9" />
+    </div>
+  </div>
+
+  <button
+    class="d-lg-none btn btn-sm fs-sm btn-primary w-100 rounded-0 fixed-bottom"
+    (click)="onSettingsButtonClicked()"
+    type="button"
+    data-bs-toggle="offcanvas"
+    data-bs-target="#shopSidebar"
+  >
+    <i class="ai-filter me-2"></i>
+    Filters
+  </button>
+</main>
+
+<catalog-footer />

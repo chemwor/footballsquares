@@ -1,0 +1,47 @@
+<section
+  class="container pt-5 mt-sm-2 mt-md-3 mt-lg-4 mt-xxl-5 mb-n4 mb-md-n2 mb-lg-0"
+>
+  <div class="d-lg-none rounded-5 overflow-hidden">
+    <div
+      leaflet
+      [leafletOptions]="options1"
+      class="interactive-map"
+      style="height: 350px"
+    ></div>
+  </div>
+  <div
+    class="position-relative overflow-hidden rounded-5 px-lg-5 mt-lg-3 mt-xl-5"
+  >
+    <div class="d-none d-xxl-block" style="height: 160px"></div>
+    <div class="d-none d-xl-block d-xxl-none" style="height: 130px"></div>
+    <div class="d-none d-lg-block d-xl-none" style="height: 100px"></div>
+    <div class="position-relative z-5 ms-lg-5" style="max-width: 530px">
+      <div class="card border-0">
+        <div class="card-body">
+          <h2 class="h4 mb-sm-4">Around Space</h2>
+          <div class="d-sm-flex mb-3">
+            <div class="mb-3 mb-sm-0 me-sm-4">
+              <p class="mb-0">5211 Valley Apt. 667 Victoria Hill Rd., London</p>
+              <p class="mb-0">+1 526 220 0459</p>
+            </div>
+            <div class="d-none d-sm-block border-end"></div>
+            <div class="ms-sm-4">
+              <p class="mb-0">5217 Apartment. 705 Childerditch Ln., London</p>
+              <p class="mb-0">+1 526 220 5439</p>
+            </div>
+          </div>
+          <a href="milto:email@xample.com">email&#64;xample.com</a>
+        </div>
+      </div>
+    </div>
+    <div class="d-none d-xxl-block" style="height: 160px"></div>
+    <div class="d-none d-xl-block d-xxl-none" style="height: 130px"></div>
+    <div class="d-none d-lg-block d-xl-none" style="height: 100px"></div>
+
+    <div
+      leaflet
+      [leafletOptions]="options"
+      class="d-none d-lg-block interactive-map position-absolute z-1 top-0 start-0 w-100 h-100"
+    ></div>
+  </div>
+</section>

@@ -1,0 +1,12 @@
+<div class="border-bottom py-md-2 py-lg-3 py-xl-4 py-xxl-5">
+  <div class="row my-5">
+    <div class="col-md-10 col-lg-8 col-xl-7">
+      @for (item of singlepageDescriptionData; track $index) {
+        <h2 class="h1 pb-2" [ngClass]="{ 'pt-3 pt-sm-4 pt-xl-5': !item.id }">
+          {{ item.title }}
+        </h2>
+        <p class="fs-lg">{{ item.content }}</p>
+      }
+    </div>
+  </div>
+</div>

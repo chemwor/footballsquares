@@ -1,0 +1,157 @@
+<div
+  class="row align-items-center py-3 py-sm-4 py-lg-5 mb-3 my-sm-2 my-md-3 my-lg-0 my-xl-2 my-xxl-4"
+>
+  <div
+    class="col-md-6 col-lg-7 col-xl-6 offset-xl-1 order-md-2 pb-1 pb-sm-2 pb-md-0 mb-4 mb-md-0"
+  >
+    <img
+      class="d-block rounded-5"
+      src="assets/img/landing/corporate/features/01.jpg"
+      alt="Image"
+    />
+  </div>
+  <div class="col-md-6 col-lg-5 order-md-1">
+    <div class="pe-md-4 pe-lg-0">
+      <h2 class="h1 pb-sm-2 pb-lg-3">Let's do business together</h2>
+      <p class="fs-xl">
+        We partner with more than 60 brands. Clients who have become our friends
+        for many years.
+      </p>
+      <div class="border-dashed mb-4 mt-5"></div>
+      <div class="row row-cols-3 pt-2 g-4">
+        <div class="col">
+          <img
+            class="d-block d-dark-mode-none mx-auto"
+            src="assets/img/brands/starcraft-dark.svg"
+            width="160"
+            alt="Starcraft"
+          />
+          <img
+            class="d-none d-dark-mode-block mx-auto"
+            src="assets/img/brands/starcraft-light.svg"
+            width="160"
+            alt="Starcraft"
+          />
+        </div>
+        <div class="col">
+          <img
+            class="d-block mx-auto"
+            src="assets/img/brands/klinos.svg"
+            width="160"
+            alt="Klinos"
+          />
+        </div>
+        <div class="col">
+          <img
+            class="d-block mx-auto"
+            src="assets/img/brands/auchan.svg"
+            width="160"
+            alt="Auchan"
+          />
+        </div>
+        <div class="col">
+          <img
+            class="d-block d-dark-mode-none mx-auto"
+            src="assets/img/brands/champion-dark.svg"
+            width="160"
+            alt="Champion"
+          />
+          <img
+            class="d-none d-dark-mode-block mx-auto"
+            src="assets/img/brands/champion-light.svg"
+            width="160"
+            alt="Champion"
+          />
+        </div>
+        <div class="col">
+          <img
+            class="d-block mx-auto"
+            src="assets/img/brands/suzuki.svg"
+            width="160"
+            alt="Suzuki"
+          />
+        </div>
+        <div class="col">
+          <img
+            class="d-block mx-auto"
+            src="assets/img/brands/philips.svg"
+            width="160"
+            alt="Philips"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="row align-items-center py-3 py-sm-4 py-lg-5 mb-3 my-sm-2 my-md-3 my-lg-0 my-xl-2 my-xxl-4"
+>
+  <div
+    class="col-md-6 col-lg-7 col-xl-6 offset-xl-1 order-md-2 pb-1 pb-sm-2 pb-md-0 mb-4 mb-md-0"
+  >
+    <img
+      class="d-block rounded-5"
+      src="assets/img/landing/corporate/features/02.jpg"
+      alt="Image"
+    />
+  </div>
+  <div class="col-md-6 col-lg-5 order-md-1">
+    <div class="pe-md-4 pe-lg-0">
+      <h2 class="h1 pb-3 mb-2 mb-lg-3 mb-xl-4">
+        Our professional approach to your business
+      </h2>
+      <div class="row row-cols-1 row-cols-sm-2 g-4">
+        @for (item of allFeatureData; track $index) {
+          <div class="col">
+            <div class="text-body-secondary mb-2">{{ item.number }}</div>
+            <h3 class="h5">{{ item.title }}</h3>
+            <p class="mb-1">{{ item.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="row align-items-center py-3 py-sm-4 py-lg-5 my-sm-2 my-md-3 my-lg-0 my-xl-2 my-xxl-4"
+>
+  <div
+    class="col-md-6 col-lg-7 col-xl-6 offset-xl-1 order-md-2 pb-1 pb-sm-2 pb-md-0 mb-4 mb-md-0"
+  >
+    <img
+      class="d-block rounded-5"
+      src="assets/img/landing/corporate/features/03.jpg"
+      alt="Image"
+    />
+  </div>
+  <div class="col-md-6 col-lg-5 order-md-1">
+    <div class="pe-md-4 pe-lg-0">
+      <h2 class="h1 pb-sm-2 pb-lg-3">
+        Full range of business and consulting services
+      </h2>
+      <p class="fs-xl mb-lg-4">
+        Find aute irure dolor in reprehenderit in voluptate velit esse cillum
+        dolore euvert fugiat neque congue.
+      </p>
+      <ul class="list-unstyled pb-3 mb-3 mb-lg-4">
+        <li class="d-flex pt-1 mt-2 mx-2 mx-md-0">
+          <i class="ai-check-alt text-primary fs-4 mt-n1 me-2"></i>Forecasting
+          and recommendations
+        </li>
+        <li class="d-flex pt-1 mt-2 mx-2 mx-md-0">
+          <i class="ai-check-alt text-primary fs-4 mt-n1 me-2"></i
+          >Identification of patterns, analysis
+        </li>
+        <li class="d-flex pt-1 mt-2 mx-2 mx-md-0">
+          <i class="ai-check-alt text-primary fs-4 mt-n1 me-2"></i>Segmentation
+          by various methods
+        </li>
+      </ul>
+      <a class="btn btn-primary" href="javascript:void(0);"
+        >Book a free consultation</a
+      >
+    </div>
+  </div>
+</div>
