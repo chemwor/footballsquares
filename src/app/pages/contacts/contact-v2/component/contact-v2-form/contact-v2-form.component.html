@@ -56,20 +56,20 @@
         }
       </div>
       <div class="col-sm-6">
-        <label class="form-label fs-base" for="location">Location</label>
+        <label class="form-label fs-base" for="topic">Topic</label>
         <select
           class="form-select form-select-lg"
-          id="location"
-          formControlName="location"
+          id="topic"
+          formControlName="topic"
         >
-          <option value="All locations" [defaultSelected]="'All locations'">
-            All locations
+          <option value="Other" [defaultSelected]="'Other'">
+            Choose a topic
           </option>
-          <option value="Asia and Pacific">Asia and Pacific</option>
-          <option value="Central Europe">Central Europe</option>
-          <option value="Eastern Europe">Eastern Europe</option>
-          <option value="North America">North America</option>
-          <option value="South America">South America</option>
+          <option value="Billing">Billing</option>
+          <option value="Technical Support">Technical Support</option>
+          <option value="General Inquiry">General Inquiry</option>
+          <option value="Partnerships">Partnerships</option>
+          <option value="Feedback">Feedback</option>
         </select>
       </div>
       <div class="col-sm-12">

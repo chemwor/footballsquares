@@ -3,7 +3,7 @@ import { Breadcrumb1Component } from '@components/breadcrumb/breadcrumb-1/breadc
 import { NavigationBar2Component } from '@components/navigation-bars'
 import { ContactV2FormComponent } from './component/contact-v2-form/contact-v2-form.component'
 import { ContactDetailComponent } from './component/contact-detail/contact-detail.component'
-import { FooterComponent } from './component/footer/footer.component'
+import { FooterComponent } from '../../landings/mobile-showcase/components/footer/footer.component'
 
 @Component({
   selector: 'app-contact-v2',
