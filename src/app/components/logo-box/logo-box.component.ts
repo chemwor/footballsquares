@@ -1,10 +1,11 @@
 import { Component, Input } from '@angular/core'
 import { RouterModule } from '@angular/router'
+import { NgOptimizedImage } from '@angular/common'
 
 @Component({
   selector: 'component-logo-box',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, NgOptimizedImage],
   templateUrl: './logo-box.component.html',
 })
 

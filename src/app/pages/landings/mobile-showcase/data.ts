@@ -50,24 +50,31 @@ export const mobileShowCaseFaq: mobileFaqsType[] = [
 
 export const featureSwiper: FeatureSwiperType[] = [
   {
-    id: '#image1',
+    id: 'image1',
     text: '01',
-    title: 'Choose the courses you are interested in',
+    title: 'Tell Us About Your Game',
     content:
-      'Odio pellentesque faucibus tortor, sit ac mattis tincidunt magna sit. Vitae elementum amet etiam rhoncus, lacinia amet interdum pharetra tincidunt. Ultricies faucibus ac morbi eget nunc pretium id. Velit tristique scelerisque elit sociis convallis ultricies aliquam.',
+      'Fill out a quick form with your belt level, strengths, goals, and preferred positions. The more details you share, the more accurate your plan becomes.',
   },
   {
-    id: '#image2',
+    id: 'image2',
     text: '02',
-    title: 'Track classes in progress and seek new knowledge',
+    title: 'Get Your Custom Gameplan',
     content:
-      'Odio pellentesque faucibus tortor, sit ac mattis tincidunt magna sit. Vitae elementum amet etiam rhoncus, lacinia amet interdum pharetra tincidunt. Ultricies faucibus ac morbi eget nunc pretium id. Velit tristique scelerisque elit sociis convallis ultricies aliquam.',
+      'We build a fully personalized strategy based on your style — complete with 5 curated videos, a situational flowchart, and positional priorities.',
   },
   {
-    id: '#image3',
-    text: '03',
-    title: 'Study with a teacher in video format at a time convenient for you',
+    id: 'image2',
+    text: '02',
+    title: 'Get Your Custom Gameplan',
     content:
-      'Odio pellentesque faucibus tortor, sit ac mattis tincidunt magna sit. Vitae elementum amet etiam rhoncus, lacinia amet interdum pharetra tincidunt. Ultricies faucibus ac morbi eget nunc pretium id. Velit tristique scelerisque elit sociis convallis ultricies aliquam.',
+      'We build a fully personalized strategy based on your style — complete with 5 curated videos, a situational flowchart, and positional priorities.',
+  },
+  {
+    id: 'image3',
+    text: '03',
+    title: 'Drill It. Own It. Win.',
+    content:
+      'Start training with purpose. Use your gameplan to sharpen specific areas, track progress, and perform with confidence in every roll.',
   },
 ]
