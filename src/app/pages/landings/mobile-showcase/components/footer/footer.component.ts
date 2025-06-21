@@ -1,7 +1,7 @@
 import { Component } from '@angular/core'
 import { RouterModule } from '@angular/router'
 import { LogoBoxComponent } from '@components/logo-box/logo-box.component'
-import { createdBy, developedByLink } from 'src/app/states/constants'
+import { buyLink, createdBy, developedByLink } from 'src/app/states/constants'
 
 @Component({
   selector: 'mobile-showcase-footer',
@@ -13,4 +13,5 @@ import { createdBy, developedByLink } from 'src/app/states/constants'
 export class FooterComponent {
   author = createdBy
   developBy = developedByLink
+  protected readonly buyLink = buyLink
 }

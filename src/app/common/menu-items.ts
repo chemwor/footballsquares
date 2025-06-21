@@ -14,7 +14,7 @@ export const MENU_ITEMS: MenuItemType[] = [
   {
     key: 'mobile-showcase',
     label: 'Home',
-    url: '/landings/mobile-showcase',
+    url: '/',
   },
   {
     key: 'contacts-2',
