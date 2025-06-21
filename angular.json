@@ -29,7 +29,7 @@
               {
                 "glob": "_redirects",
                 "input": "src",
-                "output": "./"
+                "output": "./dist/browser"
               }
 
             ],
