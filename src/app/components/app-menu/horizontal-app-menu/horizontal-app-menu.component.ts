@@ -18,10 +18,8 @@ export class HorizontalAppMenu {
 
   megaMenuItems = this.menuItems.filter((item) => item.isMega)
   normalMenuItems = this.menuItems.filter((item) => !item.isMega)
-  splitMegaMenuItems: MenuItemType[][] = splitArray(
-    this.megaMenuItems[0].children ?? [],
-    10
-  )
+
+  splitMegaMenuItems: MenuItemType[][] = []
 
   trimmedURL = location?.pathname?.replaceAll(
     basePath !== '' ? basePath + '/' : '',
@@ -32,6 +30,10 @@ export class HorizontalAppMenu {
   activeMenuItems: string[] = []
 
   ngOnInit() {
+    if (this.megaMenuItems.length > 0 && this.megaMenuItems[0].children) {
+      this.splitMegaMenuItems = splitArray(this.megaMenuItems[0].children, 10)
+    }
+
     if (this.matchingMenuItem) {
       this.activeMenuItems = [
         ...findAllParent(this.menuItems, this.matchingMenuItem),
@@ -39,3 +41,4 @@ export class HorizontalAppMenu {
     }
   }
 }
+

@@ -5,10 +5,10 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./pages/landings/home/home.component').then(
-        (mod) => mod.HomeComponent
+      import('./pages/landings/mobile-showcase/mobile-showcase.component').then(
+        (mod) => mod.MobileShowcaseComponent
       ),
-    title: 'Around Angular | Multipurpose Bootstrap Template',
+    title: 'Mobile Showcase | Around Angular',
   },
   {
     path: 'landings',
