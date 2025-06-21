@@ -30,7 +30,7 @@ export class TitleService {
 
     if (route.snapshot.data['title']) {
       this.titleService.setTitle(
-        `Around Angular | ${route.snapshot.data['title']} `
+        `My BJJ Gameplan | ${route.snapshot.data['title']} `
       )
     }
   }

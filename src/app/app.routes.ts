@@ -8,7 +8,7 @@ export const routes: Routes = [
       import('./pages/landings/mobile-showcase/mobile-showcase.component').then(
         (mod) => mod.MobileShowcaseComponent
       ),
-    title: 'Mobile Showcase | Around Angular',
+    title: 'Roll with a Plan | My BJJ Gameplan',
   },
   {
     path: 'landings',
