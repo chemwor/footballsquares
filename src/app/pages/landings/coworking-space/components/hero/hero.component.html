@@ -10,12 +10,11 @@
         <p
           class="fs-lg text-center text-lg-start pb-3 pb-sm-0 pb-md-2 mb-4 mb-sm-5"
         >
-          Fill out your info and we’ll email you a free preview of your custom gameplan along with a link to purchase the full version. Your full plan will be delivered to your inbox within 30 minutes—tailored to your belt rank, goals, and rolling style.
-        </p>
+          Fill out your info and we’ll email you a free preview of your custom gameplan, along with a link to purchase the full version for $10. Your full plan will be delivered to your inbox within 30 minutes—tailored to your belt rank, goals, and rolling style.        </p>
 
         <!-- Form -->
         <div class="card border-0 bg-primary py-4 px-xxl-4">
-          <form class="card-body" #bjjForm="ngForm">
+          <form class="card-body" #bjjForm="ngForm" (ngSubmit)="submitForm()" [ngClass]="{ 'was-validated': formSubmitted }" novalidate>
             <h2 class="h3 card-title text-white text-center pb-2 pb-xxl-3">
               Get Your Personalized BJJ Gameplan
             </h2>

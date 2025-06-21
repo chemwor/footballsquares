@@ -8,6 +8,7 @@ import {
 } from '@ng-bootstrap/ng-bootstrap'
 import type { JarallaxOptions } from 'jarallax'
 import { CommonModule } from '@angular/common'
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'coworking-space-hero',
@@ -27,8 +28,11 @@ export class HeroComponent {
     speed: 0.6,
   }
 
+  constructor(private http: HttpClient) {}
+
   currentStep = 1;
   totalSteps = 3;
+  formSubmitted = false;
 
   formData: {
     [key: string]: any;
@@ -90,6 +94,27 @@ export class HeroComponent {
         fieldArray.splice(index, 1);
       }
     }
+  }
+
+
+  submitForm() {
+    this.formSubmitted = true;
+
+    if (this.currentStep < this.totalSteps) return;
+
+    const url = 'https://mybjjgameplan-7678d6be1c32.herokuapp.com/generate-game-plan'; // ✅ Replace with your real Heroku URL
+
+    this.http.post(url, this.formData).subscribe({
+      next: (res) => {
+        console.log('Form submitted successfully', res);
+        alert('✅ Your BJJ Gameplan request was submitted! Check your email.');
+        // Optionally reset form or redirect
+      },
+      error: (err) => {
+        console.error('❌ Error submitting form:', err);
+        alert('⚠️ There was an issue submitting the form. Please try again later.');
+      }
+    });
   }
 
 }
