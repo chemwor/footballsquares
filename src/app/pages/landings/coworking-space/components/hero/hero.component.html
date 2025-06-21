@@ -13,85 +13,7 @@
           Fill out your info and we’ll email you a free preview of your custom gameplan along with a link to purchase the full version. Your full plan will be delivered to your inbox within 30 minutes—tailored to your belt rank, goals, and rolling style.
         </p>
 
-<!--        Form info-->
-<!--        <div class="card border-0 bg-primary py-4 px-xxl-4">-->
-<!--          <form class="card-body" data-bs-theme="dark">-->
-<!--            <h2 class="h3 card-title text-white text-center pb-2 pb-xxl-3">-->
-<!--              Reserve your spot-->
-<!--            </h2>-->
-<!--            <div class="mb-3">-->
-<!--              <label class="form-label fs-base" for="space">Space</label>-->
-<!--              <select class="form-select form-select-lg" required id="space">-->
-<!--                <option value="" disabled>Choose space</option>-->
-<!--                <option value="Coworking main room">Coworking main room</option>-->
-<!--                <option value="Coworking terrace">Coworking terrace</option>-->
-<!--                <option value="Skype room 1" selected>Skype room 1</option>-->
-<!--                <option value="Skype room 2">Skype room 2</option>-->
-<!--                <option value="Meeting room 1">Meeting room 1</option>-->
-<!--                <option value="Meeting room 2">Meeting room 2</option>-->
-<!--                <option value="Gaming room">Gaming room</option>-->
-<!--              </select>-->
-<!--            </div>-->
-<!--            <div class="mb-3">-->
-<!--              <label class="form-label fs-base" for="company"-->
-<!--                >Company size</label-->
-<!--              >-->
-<!--              <input-->
-<!--                class="form-control form-control-lg"-->
-<!--                type="number"-->
-<!--                value="1"-->
-<!--                required-->
-<!--                id="company"-->
-<!--              />-->
-<!--            </div>-->
-<!--            <div class="mb-3">-->
-<!--              <label class="form-label">Date and time</label>-->
-<!--              <div class="position-relative">-->
-<!--                <input-->
-<!--                  class="form-control form-control-lg date-picker pe-5"-->
-<!--                  type="text"-->
-<!--                  placeholder="Choose date/time"-->
-<!--                  ngbDatepicker-->
-<!--                  #d="ngbDatepicker"-->
-<!--                  (click)="d.toggle()"-->
-<!--                />-->
-<!--                <i-->
-<!--                  class="ai-calendar position-absolute top-50 end-0 translate-middle-y fs-lg text-white opacity-80 me-3"-->
-<!--                ></i>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            <div class="mb-3">-->
-<!--              <label class="form-label fs-base" for="email"-->
-<!--                >Email address</label-->
-<!--              >-->
-<!--              <input-->
-<!--                class="form-control form-control-lg"-->
-<!--                type="email"-->
-<!--                placeholder="johnDoe@example.com"-->
-<!--                required-->
-<!--                id="email"-->
-<!--              />-->
-<!--            </div>-->
-<!--            <div-->
-<!--              class="d-flex flex-column flex-sm-row flex-lg-column flex-xxl-row align-items-center justify-content-center justify-content-lg-start pt-3 pt-xxl-4"-->
-<!--            >-->
-<!--              <button-->
-<!--                class="btn btn-light w-100 w-sm-auto w-lg-100 w-xxl-auto mb-2 mb-sm-0 mb-lg-2 mb-xxl-0 me-sm-3 me-lg-0 me-xxl-3"-->
-<!--                type="submit"-->
-<!--              >-->
-<!--                Book space now-->
-<!--              </button>-->
-<!--              <a-->
-<!--                class="d-flex align-items-center fs-sm fw-semibold text-white text-decoration-none px-3 py-2"-->
-<!--                href="tel:+15262200459"-->
-<!--              >-->
-<!--                <i class="ai-phone fs-xl me-2"></i>-->
-<!--                +1&nbsp;526&nbsp;220&nbsp;0459-->
-<!--              </a>-->
-<!--            </div>-->
-<!--          </form>-->
-<!--        </div>-->
-
+        <!-- Form -->
         <div class="card border-0 bg-primary py-4 px-xxl-4">
           <form class="card-body" #bjjForm="ngForm">
             <h2 class="h3 card-title text-white text-center pb-2 pb-xxl-3">
@@ -103,8 +25,8 @@
               <h3 class="text-white fs-5 mb-3">Foundational Info</h3>
 
               <div class="mb-3">
-                <label class="form-label fs-base" for="beltLevel">Belt Level</label>
-                <select class="form-select form-select-lg" required [(ngModel)]="formData.beltLevel" name="beltLevel" id="beltLevel">
+                <label class="form-label fs-base text-white" for="beltLevel">Belt Level</label>
+                <select class="form-select form-select-lg text-white" required [(ngModel)]="formData.beltLevel" name="beltLevel" id="beltLevel">
                   <option value="" disabled>Select</option>
                   <option>White</option>
                   <option>Blue</option>
@@ -115,8 +37,8 @@
               </div>
 
               <div class="mb-3">
-                <label class="form-label fs-base" for="position">Preferred Position</label>
-                <select class="form-select form-select-lg" required [(ngModel)]="formData.position" name="position" id="position">
+                <label class="form-label fs-base text-white" for="position">Preferred Position</label>
+                <select class="form-select form-select-lg text-white" required [(ngModel)]="formData.position" name="position" id="position">
                   <option value="" disabled>Select</option>
                   <option>Top</option>
                   <option>Bottom</option>
@@ -126,21 +48,21 @@
               </div>
 
               <div class="mb-3">
-                <label class="form-label fs-base">Body Type</label>
+                <label class="form-label fs-base text-white">Body Type</label>
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-2">
                   <div class="form-check" *ngFor="let type of bodyTypes">
-                    <input class="form-check-input" type="checkbox" [value]="type" (change)="onCheckboxChange($event, 'bodyTypes')" [checked]="formData.bodyTypes.includes(type)" [attr.name]="type">
-                    <label class="form-check-label">{{ type }}</label>
+                    <input class="form-check-input " type="checkbox" [value]="type" (change)="onCheckboxChange($event, 'bodyTypes')" [checked]="formData.bodyTypes.includes(type)" [attr.name]="type">
+                    <label class="form-check-label text-white">{{ type }}</label>
                   </div>
                 </div>
               </div>
 
               <div class="mb-3">
-                <label class="form-label fs-base">Primary Goals</label>
+                <label class="form-label fs-base text-white">Primary Goals</label>
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-2">
                   <div class="form-check" *ngFor="let goal of goals">
                     <input class="form-check-input" type="checkbox" [value]="goal" (change)="onCheckboxChange($event, 'primaryGoals')" [checked]="formData.primaryGoals.includes(goal)" [attr.name]="goal">
-                    <label class="form-check-label">{{ goal }}</label>
+                    <label class="form-check-label text-white">{{ goal }}</label>
                   </div>
                 </div>
               </div>
@@ -151,8 +73,8 @@
               <h3 class="text-white fs-5 mb-3">Performance & Preferences</h3>
 
               <div class="mb-3">
-                <label class="form-label fs-base" for="giNogi">Gi / No-Gi Preference</label>
-                <select class="form-select form-select-lg" required [(ngModel)]="formData.giNogi" name="giNogi" id="giNogi">
+                <label class="form-label fs-base text-white" for="giNogi">Gi / No-Gi Preference</label>
+                <select class="form-select form-select-lg text-white" required [(ngModel)]="formData.giNogi" name="giNogi" id="giNogi">
                   <option value="" disabled>Select</option>
                   <option>Mostly Gi</option>
                   <option>Mostly No-Gi</option>
@@ -162,8 +84,8 @@
               </div>
 
               <div class="mb-3">
-                <label class="form-label fs-base" for="weeklyTraining">Weekly Training Frequency</label>
-                <select class="form-select form-select-lg" required [(ngModel)]="formData.weeklyTraining" name="weeklyTraining" id="weeklyTraining">
+                <label class="form-label fs-base text-white" for="weeklyTraining">Weekly Training Frequency</label>
+                <select class="form-select form-select-lg text-white" required [(ngModel)]="formData.weeklyTraining" name="weeklyTraining" id="weeklyTraining">
                   <option value="" disabled>Select</option>
                   <option>1–2x per week</option>
                   <option>3–4x per week</option>
@@ -173,42 +95,42 @@
               </div>
 
               <div class="mb-3">
-                <label class="form-label fs-base">Performance Strengths</label>
+                <label class="form-label fs-base text-white">Performance Strengths</label>
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-2">
                   <div class="form-check" *ngFor="let strength of performanceStrengths">
                     <input class="form-check-input" type="checkbox" [value]="strength" (change)="onCheckboxChange($event, 'performanceStrengths')" [checked]="formData.performanceStrengths.includes(strength)" [attr.name]="strength">
-                    <label class="form-check-label">{{ strength }}</label>
+                    <label class="form-check-label text-white">{{ strength }}</label>
                   </div>
                 </div>
               </div>
 
               <div class="mb-3">
-                <label class="form-label fs-base">Experience Outside BJJ</label>
+                <label class="form-label fs-base text-white">Experience Outside BJJ</label>
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-2">
                   <div class="form-check" *ngFor="let exp of experiences">
                     <input class="form-check-input" type="checkbox" [value]="exp" (change)="onCheckboxChange($event, 'experiences')" [checked]="formData.experiences.includes(exp)" [attr.name]="exp">
-                    <label class="form-check-label">{{ exp }}</label>
+                    <label class="form-check-label text-white">{{ exp }}</label>
                   </div>
                 </div>
               </div>
 
               <div class="mb-3">
-                <label class="form-label fs-base" for="injuries">Injuries or Limitations</label>
+                <label class="form-label fs-base text-white" for="injuries">Injuries or Limitations</label>
                 <textarea class="form-control form-control-lg" [(ngModel)]="formData.injuries" name="injuries" id="injuries" rows="3"></textarea>
               </div>
             </div>
 
             <!-- Step 3 -->
             <div *ngIf="currentStep === 3">
-              <h3 class="text-white fs-5 mb-3">Delivery Details</h3>
+              <h3 class="text-white fs-5 mb-3 text-white">Delivery Details</h3>
 
               <div class="mb-3">
-                <label class="form-label fs-base" for="name">Name</label>
-                <input class="form-control form-control-lg" type="text" [(ngModel)]="formData.name" name="name" id="name" required>
+                <label class="form-label fs-base text-white" for="name">Name</label>
+                <input class="form-control form-control-lg text-white" type="text" [(ngModel)]="formData.name" name="name" id="name" required>
               </div>
               <div class="mb-3">
-                <label class="form-label fs-base" for="email">Email Address</label>
-                <input class="form-control form-control-lg" type="email" [(ngModel)]="formData.email" name="email" id="email" required>
+                <label class="form-label fs-base text-white" for="email">Email Address</label>
+                <input class="form-control form-control-lg text-white" type="email" [(ngModel)]="formData.email" name="email" id="email" required>
               </div>
             </div>
 
