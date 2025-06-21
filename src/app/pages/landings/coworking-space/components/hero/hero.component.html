@@ -135,12 +135,28 @@
 
             <!-- Navigation -->
             <div class="d-flex flex-column flex-sm-row flex-lg-column flex-xxl-row align-items-center justify-content-center justify-content-lg-start pt-3 pt-xxl-4">
-              <button type="button" class="btn btn-outline-light w-100 w-sm-auto w-lg-100 w-xxl-auto mb-2 mb-sm-0 mb-lg-2 mb-xxl-0 me-sm-3 me-lg-0 me-xxl-3" (click)="prevStep()" [disabled]="currentStep === 1">
+              <button *ngIf="currentStep > 1"
+                      type="button"
+                      class="btn btn-outline-light w-100 w-sm-auto w-lg-100 w-xxl-auto mb-2 mb-sm-0 mb-lg-2 mb-xxl-0 me-sm-3 me-lg-0 me-xxl-3"
+                      (click)="prevStep()">
                 Previous
               </button>
-              <button type="button" class="btn btn-light w-100 w-sm-auto w-lg-100 w-xxl-auto mb-2 mb-sm-0 mb-lg-2 mb-xxl-0 me-sm-3 me-lg-0 me-xxl-3" (click)="nextStep()">
-                {{ currentStep === totalSteps ? 'Get My Preview' : 'Next' }}
+
+              <!-- Next Button (for steps 1 and 2) -->
+              <button *ngIf="currentStep < totalSteps"
+                      type="button"
+                      class="btn btn-light w-100 w-sm-auto w-lg-100 w-xxl-auto mb-2 mb-sm-0 mb-lg-2 mb-xxl-0"
+                      (click)="nextStep()">
+                Next
               </button>
+
+              <!-- Submit Button (on final step only) -->
+              <button *ngIf="currentStep === totalSteps"
+                      type="submit"
+                      class="btn btn-light w-100 w-sm-auto w-lg-100 w-xxl-auto mb-2 mb-sm-0 mb-lg-2 mb-xxl-0">
+                Get My Preview
+              </button>
+
             </div>
           </form>
         </div>
