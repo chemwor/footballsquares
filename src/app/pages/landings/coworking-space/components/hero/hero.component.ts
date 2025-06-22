@@ -47,6 +47,7 @@ export class HeroComponent {
     injuries: string;
     name: string;
     email: string;
+    referalCode?: string;
   } = {
     beltLevel: '',
     position: '',
@@ -58,8 +59,10 @@ export class HeroComponent {
     experiences: [],
     injuries: '',
     name: '',
-    email: ''
+    email: '',
+    referalCode: ''
   };
+
 
 
   bodyTypes: string[] = ['Tall', 'Short', 'Compact', 'Lean', 'Strong', 'Flexible', 'Heavyset', 'Muscular'];
