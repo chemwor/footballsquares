@@ -24,6 +24,6 @@ export const MENU_ITEMS: MenuItemType[] = [
   {
     key: 'coworking-space',
     label: 'Get Your Gameplan',
-    url: '/landings/coworking-space',
+    url: '/landings/get-your-plan',
   }
 ]

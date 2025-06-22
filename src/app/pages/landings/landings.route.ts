@@ -14,7 +14,7 @@ import { WebStudioComponent } from './web-studio/web-studio.component'
 import { CorporateComponent } from './corporate/corporate.component'
 import { InsuranceComponent } from './insurance/insurance.component'
 import { BusinessConsultingComponent } from './business-consulting/business-consulting.component'
-import { CoworkingSpaceComponent } from './coworking-space/coworking-space.component'
+import { CoworkingSpaceComponent } from './get-your-plan/coworking-space.component'
 import { YogaStudioComponent } from './yoga-studio/yoga-studio.component'
 import { InfluencerComponent } from './influencer/influencer.component'
 import { BlogComponent } from './blog/blog.component'
@@ -96,9 +96,9 @@ export const LANDING_ROUTES: Route[] = [
     data: { title: 'Business Consulting' },
   },
   {
-    path: 'coworking-space',
+    path: 'get-your-plan',
     component: CoworkingSpaceComponent,
-    data: { title: 'Coworking Space' },
+    data: { title: 'Get Your Plan' },
   },
   {
     path: 'yoga-studio',
