@@ -20,6 +20,7 @@ export class VerticalAppMenuComponent {
     '/'
   )
   matchingMenuItem: MenuItemType | undefined
+  @Input() offcanvasRef!: any
 
   ngOnInit(): void {
     if (this.menuItems)
