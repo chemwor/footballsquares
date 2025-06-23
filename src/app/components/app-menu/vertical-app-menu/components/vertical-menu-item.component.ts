@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core'
+import { Component, EventEmitter, Input, Output } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import type { MenuItemType } from 'src/app/common/menu-items'
 
@@ -17,6 +17,7 @@ import type { MenuItemType } from 'src/app/common/menu-items'
         [routerLink]="item.url ?? ''"
         [target]="item.target ?? '_self'"
         [class]="linkClassName"
+        (click)="handleClick()"
       >
         {{ item.label }}
       </a>
@@ -27,4 +28,9 @@ export class VerticalMenuItemComponent {
   @Input() item!: MenuItemType
   @Input() linkClassName?: string
   @Input() itemClassName?: string
+  @Output() itemClicked = new EventEmitter<unknown>()
+
+  handleClick() {
+    this.itemClicked.emit();
+  }
 }

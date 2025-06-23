@@ -12,20 +12,22 @@ import { LogoBoxComponent } from '@components/logo-box/logo-box.component'
     <ng-template #offcanvasContent let-offcanvas>
       <div class="offcanvas-header border-bottom">
         <component-logo-box />
-
         <button
-          (click)="offcanvasService.dismiss()"
+          (click)="offcanvas.dismiss()"
           class="btn-close"
           type="button"
-          data-bs-dismiss="offcanvas"
           aria-label="Close"
         ></button>
       </div>
 
       <div class="offcanvas-body">
-        <vertical-app-menu [menuItems]="menuItems"></vertical-app-menu>
+        <vertical-app-menu
+          [menuItems]="menuItems"
+          [offcanvasRef]="offcanvas"
+        ></vertical-app-menu>
       </div>
     </ng-template>
+
 
     <button
       class="navbar-toggler ms-sm-3"
