@@ -105,7 +105,9 @@ export class HeroComponent {
 
     if (this.currentStep < this.totalSteps) return;
 
-    const url = 'https://mbjjgnonprod-9c5b35ea0c2c.herokuapp.com/generate-game-plan'; // ✅ Replace with your real Heroku URL
+    const url = 'https://mybjjgameplan-7678d6be1c32.herokuapp.com/generate-game-plan'; // ✅ Replace with your real Heroku URL
+    // const url = 'https://mbjjgnonprod-9c5b35ea0c2c.herokuapp.com/generate-game-plan'; // ✅ Replace with your real Heroku URL
+
 
     this.http.post(url, this.formData).subscribe({
       next: (res) => {
