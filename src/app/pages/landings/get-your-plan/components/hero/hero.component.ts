@@ -10,6 +10,10 @@ import type { JarallaxOptions } from 'jarallax'
 import { CommonModule } from '@angular/common'
 import { HttpClient } from '@angular/common/http';
 
+
+// ✅ Tell TypeScript about gtag
+declare function gtag(command: string, eventName: string, params?: any): void;
+
 @Component({
   selector: 'coworking-space-hero',
   standalone: true,
@@ -114,6 +118,12 @@ export class HeroComponent {
         console.log('Form submitted successfully', res);
         alert('✅ Your BJJ Gameplan request was submitted! Check your email.');
         // Optionally reset form or redirect
+
+
+        // ✅ Trigger Google Ads conversion
+        gtag('event', 'conversion', {
+          send_to: 'AW-17007905582/JUHSCMvtlOIaEK6WgK4_'
+        });
       },
       error: (err) => {
         console.error('❌ Error submitting form:', err);
