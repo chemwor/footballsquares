@@ -71,8 +71,8 @@ export class HeroComponent {
 
   bodyTypes: string[] = ['Tall', 'Short', 'Compact', 'Lean', 'Strong', 'Flexible', 'Heavyset', 'Muscular'];
   goals : string[] = ['Hobbyist', 'Competing Soon', 'Long-Term Competitor', 'Self-Defense', 'MMA Crossover', 'Fitness'];
-  performanceStrengths: string[]  = ['Strength', 'Agility', 'Cardio', 'Flexibility', 'Speed', 'Fight IQ', 'Pressure', 'Precision', 'Wrestling Base'];
-  experiences: string[]  = ['None', 'Wrestling', 'Judo', 'MMA / Striking', 'Yoga', 'General Gym', 'CrossFit', 'Other'];
+  performanceStrengths: string[]  = ['Strength', 'Agility', 'Cardio', 'Flexibility', 'Speed', 'Fight IQ', 'Pressure', 'Precision'];
+  experiences: string[]  = ['None', 'Wrestling', 'Judo', 'MMA / Striking', 'Yoga', 'General Gym', 'CrossFit'];
 
   nextStep() {
     if (this.currentStep < this.totalSteps) {
