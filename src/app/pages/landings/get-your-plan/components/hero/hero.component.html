@@ -22,6 +22,9 @@
             <!-- Step 1 -->
             <div *ngIf="currentStep === 1">
               <h3 class="text-white fs-5 mb-3">Foundational Info</h3>
+              <div *ngIf="validationMessage" class="alert alert-warning text-white bg-danger border-0 rounded-2 text-center">
+                {{ validationMessage }}
+              </div>
 
               <div class="mb-3">
                 <label class="form-label fs-base text-white" for="beltLevel">Belt Level</label>
@@ -70,6 +73,9 @@
             <!-- Step 2 -->
             <div *ngIf="currentStep === 2">
               <h3 class="text-white fs-5 mb-3">Performance & Preferences</h3>
+              <div *ngIf="validationMessage" class="alert alert-warning text-white bg-danger border-0 rounded-2 text-center">
+                {{ validationMessage }}
+              </div>
 
               <div class="mb-3">
                 <label class="form-label fs-base text-white" for="giNogi">Gi / No-Gi Preference</label>
@@ -122,6 +128,9 @@
             <!-- Step 3 -->
             <div *ngIf="currentStep === 3">
               <h3 class="text-white fs-5 mb-3 text-white">Delivery Details</h3>
+              <div *ngIf="validationMessage" class="alert alert-warning text-white bg-danger border-0 rounded-2 text-center">
+                {{ validationMessage }}
+              </div>
 
               <div class="mb-3">
                 <label class="form-label fs-base text-white" for="name">Name</label>
