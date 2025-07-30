@@ -35,8 +35,10 @@ export class HeroComponent {
   constructor(private http: HttpClient) {}
 
   currentStep = 1;
-  totalSteps = 3;
+  totalSteps = 6;
   formSubmitted = false;
+  showInjuriesField = false;
+
 
   formData: {
     [key: string]: any;
@@ -69,26 +71,57 @@ export class HeroComponent {
 
 
 
-  bodyTypes: string[] = ['Tall', 'Short', 'Compact', 'Lean', 'Strong', 'Flexible', 'Heavyset', 'Muscular'];
-  goals : string[] = ['Hobbyist', 'Competing Soon', 'Long-Term Competitor', 'Self-Defense', 'MMA Crossover', 'Fitness'];
-  performanceStrengths: string[]  = ['Strength', 'Agility', 'Cardio', 'Flexibility', 'Speed', 'Fight IQ', 'Pressure', 'Precision'];
-  experiences: string[]  = ['None', 'Wrestling', 'Judo', 'MMA / Striking', 'Yoga', 'General Gym', 'CrossFit'];
-  validationMessage = '';
+  bodyTypes: string[] = [
+    'Tall',
+    'Short',
+    'Lean',
+    'Heavyset',
+    'Muscular'
+  ];  goals: string[] = [
+    'Hobbyist',
+    'Competing Soon',
+    'Long-Term Competitor',
+    'Self-Defense',
+    'MMA Transition',
+    'Stay Fit & Healthy'
+  ];  performanceStrengths: string[] = [
+    'Power',
+    'Agility',
+    'Cardio Endurance',
+    'Flexibility',
+    'Speed',
+    'Fight IQ',
+    'Pressure Control',
+    'Precision Timing'
+  ];  experiences: string[] = [
+    'None',
+    'Wrestling',
+    'Judo',
+    'Striking (Boxing, Muay Thai, etc.)',
+    'Yoga / Mobility Training',
+    'Gym & Weight Training',
+    'CrossFit / HIIT'
+  ];  validationMessage = '';
 
 
   isCurrentStepValid(): boolean {
     switch (this.currentStep) {
       case 1:
         return this.formData.beltLevel !== '' &&
-          this.formData.position !== '' &&
-          this.formData.bodyTypes.length > 0 &&
-          this.formData.primaryGoals.length > 0;
+          this.formData.position !== '';
       case 2:
-        return this.formData.giNogi !== '' &&
-          this.formData.weeklyTraining !== '' &&
-          this.formData.performanceStrengths.length > 0 &&
-          this.formData.experiences.length > 0;
+        return this.formData.bodyTypes.length > 0 &&
+          this.formData.primaryGoals.length > 0;
       case 3:
+        return this.formData.giNogi !== '' &&
+          this.formData.weeklyTraining !== '';
+      case 4:
+        return this.formData.performanceStrengths.length > 0 &&
+          this.formData.experiences.length > 0;
+      case 5:
+        // ✅ Injuries are optional, just return true
+        return true;
+      case 6:
         return this.formData.name.trim() !== '' &&
           this.formData.email.trim() !== '';
       default:
@@ -97,27 +130,42 @@ export class HeroComponent {
   }
 
 
+
+  onToggleInjury(show: boolean) {
+    this.showInjuriesField = show;
+    if (!show) {
+      this.formData.injuries = '';
+    }
+  }
+
+
+
   getValidationError(): string {
     switch (this.currentStep) {
       case 1:
         if (!this.formData.beltLevel) return 'Please select your belt level.';
         if (!this.formData.position) return 'Please select your preferred position.';
+        break;
+      case 2:
         if (!this.formData.bodyTypes.length) return 'Please select at least one body type.';
         if (!this.formData.primaryGoals.length) return 'Please select at least one primary goal.';
         break;
-      case 2:
+      case 3:
         if (!this.formData.giNogi) return 'Please select your Gi / No-Gi preference.';
         if (!this.formData.weeklyTraining) return 'Please select your weekly training frequency.';
+        break;
+      case 4:
         if (!this.formData.performanceStrengths.length) return 'Please select at least one performance strength.';
         if (!this.formData.experiences.length) return 'Please select at least one prior experience.';
         break;
-      case 3:
-        if (!this.formData.name) return 'Please enter your name.';
-        if (!this.formData.email) return 'Please enter your email address.';
+      case 6:
+        if (!this.formData.name.trim()) return 'Please enter your name.';
+        if (!this.formData.email.trim()) return 'Please enter your email address.';
         break;
     }
     return '';
   }
+
 
 
 
