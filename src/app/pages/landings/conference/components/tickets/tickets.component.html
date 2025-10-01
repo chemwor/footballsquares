@@ -1,4 +1,4 @@
-<section class="container" id="tickets">
+<section class="container" id="tickets" style="padding-block: 100px">
   <div class="row border border-light rounded-5 overflow-hidden g-0">
     <div class="col-md-7 col-xl-8">
       <div
@@ -17,14 +17,12 @@
           class="card-body position-relative z-2 py-5 px-2 mx-auto"
           style="max-width: 732px"
         >
-          <h2 class="h1">In-Person Experience</h2>
+          <h2 class="h1">Standard Host</h2>
           <p class="pb-3 mb-lg-4">
-            Aenean sollicitudin sit convallis auctor egestas urna massa semper
-            ultrices libero suspendisse venenatis urna ac in vitae pharetra
-            aliquam.
+            A simple way to run unlimited boards with ease, perfect for casual hosts and small groups.
           </p>
           <div class="display-3 text-primary fw-bold pb-3 mb-1 mb-lg-3">
-            {{ selectedCurrency }}299
+            {{ selectedCurrency }}19.99 / month
           </div>
           <ul class="list-unstyled mb-0">
             @for (item of content; track $index) {
@@ -37,7 +35,7 @@
         </div>
         <div class="card-footer w-100 border-0 pt-0 pb-5 px-2 mx-0">
           <button class="btn btn-lg btn-primary" type="button">
-            Buy ticket
+            Launch Your Game
           </button>
         </div>
       </div>
@@ -49,12 +47,11 @@
         class="card h-100 bg-secondary border-0 rounded-0 py-md-3 py-lg-4 py-xl-5 px-3 px-sm-4 px-lg-5"
       >
         <div class="card-body py-5 px-2">
-          <h2 class="h1">Live Stream</h2>
+          <h2 class="h1">Premium Host</h2>
           <p class="pb-3 mb-lg-4">
-            Sit facilisis viverra ullamcorper vestibulum nunc tincidunt egestas.
-          </p>
+            Automated board creation and built-in email marketing handle the heavy lifting, leaving you with nothing to do but approve players.          </p>
           <div class="display-3 text-primary fw-bold pb-3 mb-1 mb-lg-3">
-            {{ selectedCurrency }}89
+            {{ selectedCurrency }}39.99 / month
           </div>
           <ul class="list-unstyled mb-0">
             @for (item of stream; track $index) {
@@ -67,7 +64,7 @@
         </div>
         <div class="card-footer w-100 border-0 pt-0 pb-5 px-2 mx-0">
           <button class="btn btn-lg btn-primary" type="button">
-            Buy ticket
+            Unlock Full Automation
           </button>
         </div>
       </div>

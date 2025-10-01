@@ -11,15 +11,17 @@ import { currency } from 'src/app/states/constants'
 export class TicketsComponent {
   selectedCurrency = currency
   content = [
-    'Non egestas pretium iaculis venenatis ipsum cras enim et amet.',
-    'Et purus quis laoreet ipsum',
-    'Suspendisse turpis vehicula id ornare ut ut sollicitudin tempus vel.',
-    'Justo, quam tortor leo sed varius arcu sit rhoncus.',
-    'Sed maecenas sit vestibulum id ornare habitasse sit scelerisque.',
+    'Unlimited boards',
+    'Choose sport & match',
+    'Shareable link to invite players',
+    'Approve/decline squares',
+    'Automatic winner highlights + email announcements',
+    'Basic email notifications',
   ]
   stream = [
-    'Integer lacinia quisque etiam quis morbi aliquam commodo.',
-    'Neque, ullamcorper elit sit natoque.',
-    'Sed orci, lacus, nunc vestibulum mi vel etiam pulvinar erat.',
+    'Everything in Standard, plus',
+    'Automated board creation for selected games',
+    'Automatic email marketing (invites + reminders sent to players)',
+    'Priority support',
   ]
 }

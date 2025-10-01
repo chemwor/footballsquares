@@ -9,6 +9,9 @@ import { TestimonialsComponent } from './components/testimonials/testimonials.co
 import { PricingComponent } from './components/pricing/pricing.component'
 import { AddressComponent } from './components/address/address.component'
 import { FooterComponent } from '../mobile-showcase/components/footer/footer.component'
+import { BoardComponent } from '../../../components/board/board.component'
+import { FormsModule } from '@angular/forms'
+import { AdminPanelComponent } from '@components/admin-panel/admin-panel.component'
 
 @Component({
   selector: 'landings-coworking-space',
@@ -24,6 +27,9 @@ import { FooterComponent } from '../mobile-showcase/components/footer/footer.com
     PricingComponent,
     AddressComponent,
     FooterComponent,
+    BoardComponent,
+    FormsModule,
+    AdminPanelComponent,
   ],
   templateUrl: './coworking-space.component.html',
   styles: ``,

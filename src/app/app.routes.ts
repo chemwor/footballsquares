@@ -5,10 +5,10 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./pages/landings/mobile-showcase/mobile-showcase.component').then(
-        (mod) => mod.MobileShowcaseComponent
+      import('./pages/landings/saas-v3/saas-v3.component').then(
+        (mod) => mod.SaasV3Component
       ),
-    title: 'Roll with a Plan | My BJJ Gameplan',
+    title: 'SaaS V3 | Home',
   },
   {
     path: 'landings',

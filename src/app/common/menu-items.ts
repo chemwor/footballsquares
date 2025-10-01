@@ -23,7 +23,25 @@ export const MENU_ITEMS: MenuItemType[] = [
   },
   {
     key: 'coworking-space',
-    label: 'Get Your Gameplan',
-    url: '/landings/get-your-plan',
+    label: 'Create Your Game',
+    url: '/landings/get-your-picks',
+  },
+
+  {
+    key: 'coworking-space',
+    label: 'Game page',
+    url: '/landings/get-your-picks',
+  },
+
+  {
+    key: 'coworking-space',
+    label: 'Current games',
+    url: '/landings/get-your-picks',
+  },
+
+  {
+    key: 'coworking-space',
+    label: 'Create Your Game',
+    url: '/landings/get-your-picks',
   }
 ]

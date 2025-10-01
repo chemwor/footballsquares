@@ -1,0 +1,110 @@
+<section class="pt-5">
+  <div class="container position-relative z-2 pt-5 mt-3 mt-sm-4 mt-md-5">
+    <div class="row pt-xl-3 pt-xxl-4">
+      <div class="col-lg-7 col-xxl-6">
+        <h1 class="display-3 text-center text-lg-start">
+          Create Your Game Board
+        </h1>
+      </div>
+      <div class="col-lg-5 offset-xxl-1 pt-sm-3">
+        <p
+          class="fs-lg text-center text-lg-start pb-3 pb-sm-0 pb-md-2 mb-4 mb-sm-5"
+        >
+          Pick the sport, set the board size, choose the match, and give your board a name. Once you’re done, you’ll have a link ready to share.
+        </p>
+
+        <!-- Form -->
+        <div class="card border-0 bg-primary py-4 px-xxl-4">
+          <form class="card-body" #bjjForm="ngForm" (ngSubmit)="submitForm()" [ngClass]="{ 'was-validated': formSubmitted }" novalidate>
+            <h2 class="h3 card-title text-white text-center pb-2 pb-xxl-3">
+              Get Your Personalized BJJ Gameplan
+            </h2>
+
+            <!-- Step 1 Only: Game Board Details -->
+            <div>
+              <h3 class="text-white fs-5 mb-3">Game Board Details</h3>
+              <div *ngIf="validationMessage" class="alert alert-warning text-white bg-danger border-0 rounded-2 text-center">
+                {{ validationMessage }}
+              </div>
+
+              <!-- Sport Dropdown -->
+              <div class="mb-3">
+                <label class="form-label fs-base text-white" for="sport">Sport</label>
+                <select class="form-select form-select-lg text-white" required [(ngModel)]="formData['sport']" name="sport" id="sport" (change)="onSportChange($event)">
+                  <option value="" disabled>Select</option>
+                  <option *ngFor="let s of sports" [value]="s">{{ s }}</option>
+                </select>
+              </div>
+
+              <!-- Match / Games Dropdown -->
+              <div class="mb-3">
+                <label class="form-label fs-base text-white" for="match">Match / Game</label>
+                <select class="form-select form-select-lg text-white" required [(ngModel)]="formData['match']" name="match" id="match" [disabled]="!formData['sport']">
+                  <option value="" disabled>Select</option>
+                  <option *ngFor="let m of matches" [value]="m">{{ m }}</option>
+                </select>
+              </div>
+
+              <!-- Board Size -->
+              <div class="mb-3">
+                <label class="form-label fs-base text-white" for="boardSize">Board Size</label>
+                <select class="form-select form-select-lg text-white" required [(ngModel)]="formData['boardSize']" name="boardSize" id="boardSize">
+                  <option value="10x10">10×10 (default)</option>
+                  <option value="5x5">5×5 (small group)</option>
+                </select>
+              </div>
+
+              <!-- Board Name / Title -->
+              <div class="mb-3">
+                <label class="form-label fs-base text-white" for="boardName">Board Name / Title</label>
+                <input class="form-control form-control-lg text-white" type="text" [(ngModel)]="formData['boardName']" name="boardName" id="boardName" required placeholder="e.g., Sunday Night Game">
+              </div>
+
+              <!-- Submit Button -->
+              <div class="d-flex justify-content-center pt-3">
+                <button type="submit" class="btn btn-light w-100 w-sm-auto">
+                  Create Board
+                </button>
+              </div>
+
+            </div>
+          </form>
+        </div>
+
+
+
+
+
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="jarallax"
+    data-jarallax
+    data-speed="0.6"
+    style="
+      background-image: url(assets/img/edgard-bortoletto-jZzUh7lzxHo-unsplash.jpg);
+    "
+    ngJarallax
+    [config]="jarallaxConfig"
+  >
+    <div
+      class="d-none d-xxl-block"
+      style="height: 830px; margin-top: -470px"
+    ></div>
+    <div
+      class="d-none d-xl-block d-xxl-none"
+      style="height: 780px; margin-top: -490px"
+    ></div>
+    <div
+      class="d-none d-lg-block d-xl-none"
+      style="height: 700px; margin-top: -560px"
+    ></div>
+    <div
+      class="d-none d-sm-block d-lg-none"
+      style="height: 520px; margin-top: -450px"
+    ></div>
+    <div class="d-sm-none" style="height: 500px; margin-top: -450px"></div>
+  </div>
+</section>
