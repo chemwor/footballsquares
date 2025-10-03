@@ -12,36 +12,76 @@ export type MenuItemType = {
 
 export const MENU_ITEMS: MenuItemType[] = [
   {
-    key: 'mobile-showcase',
+    key: 'home',
     label: 'Home',
     url: '/',
   },
   {
-    key: 'contacts-2',
-    url: '/contacts/v2',
+    key: 'games',
+    label: 'Games',
+    children: [
+      {
+        key: 'current-games',
+        label: 'Current Games',
+        url: '/blog/list-no-sidebar',
+      },
+      {
+        key: 'completed-games',
+        label: 'Completed Games',
+        url: '/blog/complete-games',
+      },
+    ]
+  },
+  {
+    key: 'admin',
+    label: 'Admin',
+    children: [
+      {
+        key: 'admin-dashboard',
+        label: 'Admin Dashboard',
+        url: '/services/admin-game-page',
+      },
+      {
+        key: 'hosted-games',
+        label: 'Hosted Games',
+        url: '/blog/hosted-games',
+      },
+      {
+        key: 'hosted-history',
+        label: 'Hosted History',
+        url: '/blog/hosted-history',
+      },
+    ]
+  },
+  {
+    key: 'game-management',
+    label: 'Game Page',
+    url: '/services/v3',
+  },
+  {
+    key: 'create-game',
+    label: 'Create Your Game',
+    url: '/landings/get-your-picks',
+  },
+  {
+    key: 'auth',
+    label: 'Account',
+    children: [
+      {
+        key: 'signin',
+        label: 'Sign In',
+        url: '/auth/signin',
+      },
+      {
+        key: 'signup',
+        label: 'Sign Up',
+        url: '/auth/sign-up',
+      },
+    ]
+  },
+  {
+    key: 'contact',
     label: 'Contact',
+    url: '/contacts/v2',
   },
-  {
-    key: 'coworking-space',
-    label: 'Create Your Game',
-    url: '/landings/get-your-picks',
-  },
-
-  {
-    key: 'coworking-space',
-    label: 'Game page',
-    url: '/landings/get-your-picks',
-  },
-
-  {
-    key: 'coworking-space',
-    label: 'Current games',
-    url: '/landings/get-your-picks',
-  },
-
-  {
-    key: 'coworking-space',
-    label: 'Create Your Game',
-    url: '/landings/get-your-picks',
-  }
 ]

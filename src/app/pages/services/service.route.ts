@@ -2,6 +2,7 @@ import { Route } from '@angular/router'
 import { ServiceV1Component } from './service-v1/service-v1.component'
 import { ServiceV2Component } from './service-v2/service-v2.component'
 import { ServiceV3Component } from './service-v3/service-v3.component'
+import { AdminGamePageComponent } from './admin-game-page/admin-game-page.component'
 
 export const SERVICE_ROUTES: Route[] = [
   {
@@ -18,5 +19,10 @@ export const SERVICE_ROUTES: Route[] = [
     path: 'v3',
     component: ServiceV3Component,
     data: { title: 'Services v.3' },
+  },
+  {
+    path: 'admin-game-page',
+    component: AdminGamePageComponent,
+    data: { title: 'Admin Game Page' },
   },
 ]

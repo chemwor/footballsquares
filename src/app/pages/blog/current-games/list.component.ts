@@ -19,3 +19,4 @@ import { FooterComponent } from './component/footer/footer.component'
   styles: ``,
 })
 export class ListComponent {}
+

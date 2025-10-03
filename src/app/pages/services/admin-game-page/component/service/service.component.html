@@ -1,0 +1,47 @@
+<section class="container py-4 py-sm-5 my-md-2 my-lg-3 my-xl-4 my-xxl-5">
+  @for (item of allService; track $index; let odd = $odd) {
+    <div class="row align-items-center py-4 py-xl-5 my-2">
+      <div
+        class="col-md-6"
+        [ngClass]="
+          !odd
+            ? 'offset-xl-1 order-md-2 pb-2 mb-4 mb-md-0'
+            : 'pb-2 mb-4 mb-md-0'
+        "
+      >
+        <img class="rounded-5" [src]="item.imgSrc" alt="Image" />
+      </div>
+      <div
+        class="col-md-6 col-xl-5"
+        [ngClass]="!odd ? 'order-md-1' : ' offset-xl-1'"
+      >
+        <div [ngClass]="odd ? 'ps-md-4 pe-xl-0' : 'pe-md-4 pe-xl-0'">
+          <h2 class="h1 pb-2 pb-lg-3">{{ item.headingText }}</h2>
+          <p class="pb-2 pb-lg-0 mb-4 mb-lg-5">{{ item.contentText }}</p>
+          <div class="row row-cols-2">
+            @for (item of item.features; track $index) {
+              <div class="col">
+                <div class="d-table bg-secondary rounded-1 p-2 mb-3">
+                  <img
+                    class="d-block d-dark-mode-none m-1"
+                    [src]="item.lightSrc"
+                    width="28"
+                    alt="Icon"
+                  />
+                  <img
+                    class="d-none d-dark-mode-block m-1"
+                    [src]="item.darkSrc"
+                    width="28"
+                    alt="Icon"
+                  />
+                </div>
+                <h3 class="h5 mb-2">{{ item.headingText }}</h3>
+                <p class="fs-sm mb-0">{{ item.descriptionText }}</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</section>

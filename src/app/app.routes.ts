@@ -35,6 +35,27 @@ export const routes: Routes = [
       import('./pages/blog/blog.route').then((mod) => mod.BLOG_ROUTES),
   },
   {
+    path: 'blog/complete-games',
+    loadComponent: () =>
+      import('./pages/blog/complete-games/complete-games.component').then(
+        (m) => m.CompleteGamesComponent
+      ),
+  },
+  {
+    path: 'blog/hosted-games',
+    loadComponent: () =>
+      import('./pages/blog/hosted-games/complete-games.component').then(
+        (m) => m.CompleteGamesComponent
+      ),
+  },
+  {
+    path: 'blog/hosted-history',
+    loadComponent: () =>
+      import('./pages/blog/hosted-history/complete-games.component').then(
+        (m) => m.CompleteGamesComponent
+      ),
+  },
+  {
     path: 'auth',
     loadChildren: () =>
       import('./pages/account/auth/auth.route').then((mod) => mod.AUTH_ROUTES),

@@ -1,0 +1,33 @@
+<section class="container pt-2 pt-sm-0">
+  <h2 class="h1 text-center">We partner with more than 60 brands</h2>
+  <p class="text-center pb-2 pb-sm-3">
+    Clients who have become our friends for many years
+  </p>
+  <div class="row row-cols-3 row-cols-md-4 g-2 g-md-4">
+    @for (item of partnerData; track $index) {
+      <div class="col">
+        @if (item.src) {
+          <img
+            class="d-block mx-auto"
+            [src]="item.src"
+            width="220"
+            alt="{{ item.name }}"
+          />
+        } @else {
+          <img
+            class="d-block d-dark-mode-none mx-auto"
+            [src]="item.darkSrc"
+            width="220"
+            alt="Champion"
+          />
+          <img
+            class="d-none d-dark-mode-block mx-auto"
+            [src]="item.lightSrc"
+            width="220"
+            alt="Champion"
+          />
+        }
+      </div>
+    }
+  </div>
+</section>

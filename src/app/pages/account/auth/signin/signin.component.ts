@@ -9,6 +9,8 @@ import {
 } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { createdBy, developedByLink } from 'src/app/states/constants'
+import { AuthService } from 'src/app/services/auth.service'
+import { CommonModule } from '@angular/common'
 
 @Component({
   selector: 'app-signin',
@@ -18,6 +20,7 @@ import { createdBy, developedByLink } from 'src/app/states/constants'
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
+    CommonModule,
   ],
   templateUrl: './signin.component.html',
 })
@@ -27,8 +30,13 @@ export class SigninComponent implements OnInit {
   showPassword: boolean = false
   author = createdBy
   developBy = developedByLink
+  errorMessage: string = ''
+  successMessage: string = ''
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    public authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -47,12 +55,49 @@ export class SigninComponent implements OnInit {
   /**
    * On submit form
    */
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     this.formSubmitted = true
+    this.errorMessage = ''
+    this.successMessage = ''
 
     if (this.loginForm.valid) {
-      const email = this.formValues['email'].value // Get the username from the form
-      const password = this.formValues['password'].value // Get the password from the form
+      const email = this.formValues['email'].value
+      const password = this.formValues['password'].value
+
+      const result = await this.authService.signIn(email, password)
+
+      if (result.success) {
+        this.successMessage = 'Successfully signed in! Redirecting...'
+        // AuthService will handle navigation automatically
+      } else {
+        this.errorMessage = result.error || 'An error occurred during sign in'
+      }
+    }
+  }
+
+  /**
+   * Sign in with Google
+   */
+  async signInWithGoogle(): Promise<void> {
+    this.errorMessage = ''
+
+    const result = await this.authService.signInWithGoogle()
+
+    if (!result.success) {
+      this.errorMessage = result.error || 'An error occurred during Google sign in'
+    }
+  }
+
+  /**
+   * Sign in with Facebook
+   */
+  async signInWithFacebook(): Promise<void> {
+    this.errorMessage = ''
+
+    const result = await this.authService.signInWithFacebook()
+
+    if (!result.success) {
+      this.errorMessage = result.error || 'An error occurred during Facebook sign in'
     }
   }
 }

@@ -9,9 +9,10 @@ import { JarallaxDirective } from '@components/jarallax-directive/jarallax-direc
 import type { JarallaxOptions } from 'jarallax'
 import { RouterModule } from '@angular/router'
 import { BoardComponent } from '@components/board/board.component'
+import { AdminPanelComponent } from '@components/admin-panel/admin-panel.component'
 
 @Component({
-  selector: 'app-service-v3',
+  selector: 'admin-game-page',
   standalone: true,
   imports: [
     NavigationBar2Component,
@@ -23,11 +24,12 @@ import { BoardComponent } from '@components/board/board.component'
     JarallaxDirective,
     RouterModule,
     BoardComponent,
+    AdminPanelComponent,
   ],
-  templateUrl: './service-v3.component.html',
+  templateUrl: './admin-game-page.component.html',
   styles: ``,
 })
-export class ServiceV3Component {
+export class AdminGamePageComponent {
   jarallaxConfig: JarallaxOptions = {
     speed: 0.6,
   }

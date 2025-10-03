@@ -6,9 +6,14 @@ import { SigninupComponent } from './signinup/signinup.component'
 
 export const AUTH_ROUTES: Route[] = [
   {
-    path: 'sign-in',
+    path: 'signin',
     component: SigninComponent,
     data: { title: 'Account - Sign In' },
+  },
+  {
+    path: 'sign-in',
+    redirectTo: 'signin',
+    pathMatch: 'full',
   },
   {
     path: 'password-recovery',
@@ -16,9 +21,14 @@ export const AUTH_ROUTES: Route[] = [
     data: { title: 'Account - Password Recovery' },
   },
   {
-    path: 'sign-up',
+    path: 'signup',
     component: SignupComponent,
     data: { title: 'Account - Sign Up' },
+  },
+  {
+    path: 'sign-up',
+    redirectTo: 'signup',
+    pathMatch: 'full',
   },
   {
     path: 'sign-in-n-up',
