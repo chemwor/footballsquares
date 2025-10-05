@@ -1,41 +1,85 @@
 <main class="page-wrapper">
   <component-navigation-bar-2 />
 
-  <section
-    class="jarallax bg-dark py-5"
-    ngJarallax
-    [config]="jarallaxConfig"
-    data-jarallax
-    data-speed="0.6"
-    data-bs-theme="dark"
-  >
-    <div
-      class="position-absolute top-0 start-0 w-100 h-100 bg-black opacity-60"
-    ></div>
-    <div
-      class="jarallax-img"
-      style="
-        background-image: url(assets/img/services/v3/hero-bg.jpg);
-        background-size: cover;
-      "
-    ></div>
-    <div
-      class="container position-relative z-2 pt-5 pb-md-2 pb-lg-3 pb-xl-4 pb-xxl-5"
-    >
-<!--      <nav aria-label="breadcrumb">-->
-<!--        <ol class="pt-lg-3 mb-0 breadcrumb">-->
-<!--          <li class="breadcrumb-item"><a routerLink="/">Home</a></li>-->
-<!--          <li class="breadcrumb-item active" aria-current="page">-->
-<!--            Services v.3-->
-<!--          </li>-->
-<!--        </ol>-->
-<!--      </nav>-->
-      <single-v3-hero />
+  @if (loading) {
+    <div class="container py-5">
+      <div class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
     </div>
-  </section>
-  <sq-admin-panel/>
-<!--  <service-v3-service />-->
-<!--  <service-v3-partner />-->
-<!--  <service-v3-skills />-->
+  }
+
+  @if (error && !loading) {
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+          <div class="text-center">
+            @if (accessDenied) {
+              <div class="alert alert-danger p-4">
+                <div class="mb-4">
+                  <i class="bi bi-shield-exclamation display-1 text-danger"></i>
+                </div>
+                <h2 class="h3 mb-3">Access Denied</h2>
+                <p class="mb-3 fs-5">You are not authorized to view this admin page.</p>
+                <p class="text-muted mb-4">Only the game owner can access the admin panel for this game.</p>
+                <div class="d-flex gap-3 justify-content-center">
+                  <a routerLink="/blog/hosted-games" class="btn btn-primary">
+                    <i class="bi bi-list-ul me-2"></i>View Your Games
+                  </a>
+                  <a routerLink="/" class="btn btn-outline-secondary">
+                    <i class="bi bi-house me-2"></i>Go Home
+                  </a>
+                </div>
+              </div>
+            } @else {
+              <div class="alert alert-warning p-4">
+                <div class="mb-4">
+                  <i class="bi bi-exclamation-triangle display-1 text-warning"></i>
+                </div>
+                <h2 class="h3 mb-3">Error</h2>
+                <p class="mb-4">{{ error }}</p>
+                <a routerLink="/" class="btn btn-primary">
+                  <i class="bi bi-house me-2"></i>Go Home
+                </a>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (gameData && !loading && !error) {
+    <section
+      class="jarallax bg-dark py-5"
+      ngJarallax
+      [config]="jarallaxConfig"
+      data-jarallax
+      data-speed="0.6"
+      data-bs-theme="dark"
+    >
+      <div
+        class="position-absolute top-0 start-0 w-100 h-100 bg-black opacity-60"
+      ></div>
+      <div
+        class="jarallax-img"
+        style="
+          background-image: url(assets/img/services/v3/hero-bg.jpg);
+          background-size: cover;
+        "
+      ></div>
+      <div
+        class="container position-relative z-2 pt-5 pb-md-2 pb-lg-3 pb-xl-4 pb-xxl-5"
+      >
+        <single-v3-hero [gameData]="gameData" />
+      </div>
+    </section>
+    <sq-game-actions [gameData]="gameData" [isAdminView]="true" />
+    <sq-admin-panel [gameData]="gameData" />
+    <sq-admin-board-view [gameData]="gameData" />
+    <sq-quarter-winners [gameData]="gameData" [showAdminControls]="true" />
+  }
 </main>
 <service-v3-footer />

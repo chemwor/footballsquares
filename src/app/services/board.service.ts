@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { Square, SquareStatus } from '../models/square.model';
+import { Square } from '../models/square.model';
 import { SupabaseBoardRepository } from '../data-sources/board.repository';
 
 @Injectable({ providedIn: 'root' })
@@ -35,8 +35,11 @@ export class BoardService {
     this.squares.set([...squares]); // Force signal update with new array reference
   }
 
-  async initBoard(size: number) {
+  async initBoard(size: number, gameId?: string) {
     this.gridSize.set(size);
+    if (gameId) {
+      this.gameId = gameId;
+    }
     await this.loadSquares();
   }
 

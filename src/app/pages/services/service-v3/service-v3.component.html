@@ -1,41 +1,51 @@
 <main class="page-wrapper">
   <component-navigation-bar-2 />
 
-  <section
-    class="jarallax bg-dark py-5"
-    ngJarallax
-    [config]="jarallaxConfig"
-    data-jarallax
-    data-speed="0.6"
-    data-bs-theme="dark"
-  >
-    <div
-      class="position-absolute top-0 start-0 w-100 h-100 bg-black opacity-60"
-    ></div>
-    <div
-      class="jarallax-img"
-      style="
-        background-image: url(assets/img/services/v3/hero-bg.jpg);
-        background-size: cover;
-      "
-    ></div>
-    <div
-      class="container position-relative z-2 pt-5 pb-md-2 pb-lg-3 pb-xl-4 pb-xxl-5"
-    >
-<!--      <nav aria-label="breadcrumb">-->
-<!--        <ol class="pt-lg-3 mb-0 breadcrumb">-->
-<!--          <li class="breadcrumb-item"><a routerLink="/">Home</a></li>-->
-<!--          <li class="breadcrumb-item active" aria-current="page">-->
-<!--            Services v.3-->
-<!--          </li>-->
-<!--        </ol>-->
-<!--      </nav>-->
-      <single-v3-hero />
+  @if (loading) {
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     </div>
-  </section>
-  <sq-board/>
-<!--  <service-v3-service />-->
-<!--  <service-v3-partner />-->
-<!--  <service-v3-skills />-->
+  }
+
+  @if (error) {
+    <div class="container py-5">
+      <div class="alert alert-danger text-center">
+        <h4>Error Loading Game</h4>
+        <p>{{ error }}</p>
+      </div>
+    </div>
+  }
+
+  @if (gameData && !loading && !error) {
+    <section
+      class="jarallax bg-dark py-5"
+      ngJarallax
+      [config]="jarallaxConfig"
+      data-jarallax
+      data-speed="0.6"
+      data-bs-theme="dark"
+    >
+      <div
+        class="position-absolute top-0 start-0 w-100 h-100 bg-black opacity-60"
+      ></div>
+      <div
+        class="jarallax-img"
+        style="
+          background-image: url(assets/img/services/v3/hero-bg.jpg);
+          background-size: cover;
+        "
+      ></div>
+      <div
+        class="container position-relative z-2 pt-5 pb-md-2 pb-lg-3 pb-xl-4 pb-xxl-5"
+      >
+        <single-v3-hero [gameData]="gameData" />
+      </div>
+    </section>
+    <sq-game-actions [gameData]="gameData" [isAdminView]="false" />
+    <sq-board [gameData]="gameData" />
+    <sq-quarter-winners [gameData]="gameData" [showAdminControls]="false" />
+  }
 </main>
 <service-v3-footer />

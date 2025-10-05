@@ -1,0 +1,400 @@
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { supabase } from '../../data-sources/supabase.client';
+
+interface QuarterWinner {
+  quarter: string;
+  homeScore: number | null;
+  awayScore: number | null;
+  winnerName: string;
+  winnerEmail: string;
+  payout: number;
+  isActive: boolean;
+}
+
+@Component({
+  selector: 'sq-quarter-winners',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './quarter-winners.component.html',
+  styles: [`
+    .winners-container {
+      background: #181a1b;
+      color: #eee;
+      padding: 2rem;
+      border-radius: 12px;
+      margin: 2rem 0;
+    }
+
+    .winners-title {
+      text-align: center;
+      color: #f7c873;
+      margin-bottom: 2rem;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .quarters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .quarter-card {
+      background: #23272a;
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .quarter-card.active {
+      border-color: #2ecc40;
+      background: #1e3a24;
+      box-shadow: 0 0 20px rgba(46, 204, 64, 0.3);
+    }
+
+    .quarter-card.dormant {
+      border-color: #666;
+      opacity: 0.7;
+    }
+
+    .quarter-header {
+      text-align: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #444;
+      padding-bottom: 1rem;
+    }
+
+    .quarter-header h3 {
+      margin: 0;
+      color: #f7c873;
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+    .score {
+      margin-top: 0.5rem;
+      font-size: 1.1rem;
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .winner-info {
+      text-align: center;
+    }
+
+    .winner-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #2ecc40;
+      margin-bottom: 0.5rem;
+    }
+
+    .winner-email {
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-bottom: 1rem;
+    }
+
+    .payout {
+      background: #2ecc40;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 25px;
+      display: inline-block;
+      font-weight: bold;
+    }
+
+    .payout-amount {
+      font-size: 1.1rem;
+    }
+
+    .dormant-message {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    .dormant-text {
+      color: #666;
+      font-style: italic;
+      font-size: 1.1rem;
+    }
+
+    .admin-controls {
+      border-top: 1px solid #444;
+      padding-top: 2rem;
+      margin-top: 2rem;
+    }
+
+    .admin-controls h3 {
+      color: #f7c873;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .quarter-control {
+      background: #2a2d30;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    .quarter-control h4 {
+      margin: 0 0 1rem 0;
+      color: #f7c873;
+    }
+
+    .score-inputs {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .score-inputs label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .score-inputs input {
+      background: #181a1b;
+      border: 1px solid #444;
+      color: #eee;
+      padding: 0.3rem 0.5rem;
+      border-radius: 4px;
+      width: 60px;
+    }
+
+    .quarter-control button {
+      background: #2ecc40;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      width: 100%;
+    }
+
+    .quarter-control button:hover:not(:disabled) {
+      background: #27ae36;
+    }
+
+    .quarter-control button:disabled {
+      background: #666;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 768px) {
+      .quarters-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .controls-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .winners-container {
+        padding: 1rem;
+      }
+
+      .winners-title {
+        font-size: 1.5rem;
+      }
+    }
+  `]
+})
+export class QuarterWinnersComponent implements OnInit, OnChanges {
+  @Input() gameData: any = null;
+  @Input() showAdminControls: boolean = false;
+
+  showWinners = false;
+  quarters: QuarterWinner[] = [];
+
+  async ngOnInit() {
+    if (this.gameData) {
+      await this.initializeQuarters();
+    }
+  }
+
+  async ngOnChanges(changes: SimpleChanges) {
+    if (changes['gameData'] && this.gameData) {
+      await this.initializeQuarters();
+    }
+  }
+
+  async initializeQuarters() {
+    // Initialize quarters with empty data first
+    this.quarters = [
+      {
+        quarter: '1st Quarter',
+        homeScore: null,
+        awayScore: null,
+        winnerName: '',
+        winnerEmail: '',
+        payout: 250,
+        isActive: false
+      },
+      {
+        quarter: '2nd Quarter',
+        homeScore: null,
+        awayScore: null,
+        winnerName: '',
+        winnerEmail: '',
+        payout: 250,
+        isActive: false
+      },
+      {
+        quarter: '3rd Quarter',
+        homeScore: null,
+        awayScore: null,
+        winnerName: '',
+        winnerEmail: '',
+        payout: 250,
+        isActive: false
+      },
+      {
+        quarter: 'Final Score',
+        homeScore: null,
+        awayScore: null,
+        winnerName: '',
+        winnerEmail: '',
+        payout: 250,
+        isActive: false
+      }
+    ];
+
+    // Load actual winners from database
+    await this.loadWinnersFromDatabase();
+
+    // Show winners section if game status is appropriate
+    this.showWinners = this.shouldShowWinners();
+  }
+
+  async loadWinnersFromDatabase() {
+    if (!this.gameData?.id) return;
+
+    try {
+      // Query squares table for quarter winners
+      const { data, error } = await supabase
+        .from('squares')
+        .select('*')
+        .eq('game_id', this.gameData.id)
+        .in('status', ['quarter_1_winner', 'quarter_2_winner', 'quarter_3_winner', 'final_winner']);
+
+      if (error) {
+        console.error('Error loading quarter winners:', error);
+        return;
+      }
+
+      console.log('Quarter winners loaded from database:', data);
+
+      // Update quarters with winner data
+      data?.forEach(square => {
+        let quarterIndex = -1;
+
+        switch (square.status) {
+          case 'quarter_1_winner':
+            quarterIndex = 0;
+            break;
+          case 'quarter_2_winner':
+            quarterIndex = 1;
+            break;
+          case 'quarter_3_winner':
+            quarterIndex = 2;
+            break;
+          case 'final_winner':
+            quarterIndex = 3;
+            break;
+        }
+
+        if (quarterIndex >= 0 && quarterIndex < this.quarters.length) {
+          this.quarters[quarterIndex] = {
+            ...this.quarters[quarterIndex],
+            winnerName: square.name || '',
+            winnerEmail: square.email || '',
+            isActive: true,
+            // You can add homeScore and awayScore from additional fields if stored
+            // homeScore: square.home_score || null,
+            // awayScore: square.away_score || null,
+          };
+        }
+      });
+
+    } catch (err) {
+      console.error('Error loading winners:', err);
+    }
+  }
+
+  shouldShowWinners(): boolean {
+    // Show winners if:
+    // 1. Game is in progress or completed
+    // 2. At least one quarter has been declared
+    // 3. Admin wants to see the component for testing
+
+    const gameStatus = this.gameData?.status;
+    const hasActiveQuarters = this.quarters.some(q => q.isActive);
+
+    return gameStatus === 'locked' ||
+           gameStatus === 'drawn' ||
+           gameStatus === 'closed' ||
+           hasActiveQuarters ||
+           this.showAdminControls;
+  }
+
+  // Template methods (used in HTML template)
+  updateWinner(quarterIndex: number): void {
+    const quarter = this.quarters[quarterIndex];
+    if (quarter.homeScore !== null && quarter.awayScore !== null) {
+      // Calculate winner based on last digit of scores
+      const homeLastDigit = quarter.homeScore % 10;
+      const awayLastDigit = quarter.awayScore % 10;
+
+      // This would typically lookup the winner from the squares grid
+      console.log(`Quarter ${quarterIndex + 1} scores updated:`, {
+        home: homeLastDigit,
+        away: awayLastDigit
+      });
+    }
+  }
+
+  activateQuarter(quarterIndex: number): void {
+    const quarter = this.quarters[quarterIndex];
+    if (quarter.homeScore !== null && quarter.awayScore !== null) {
+      quarter.isActive = true;
+
+      // Here you would:
+      // 1. Calculate the winning square based on last digits
+      // 2. Look up who owns that square
+      // 3. Save the winner to the database
+      // 4. Update the UI
+
+      console.log(`Quarter ${quarterIndex + 1} activated with winner:`, quarter.winnerName);
+    }
+  }
+
+  obfuscateEmail(email: string): string {
+    if (!email) return '';
+    const [user, domain] = email.split('@');
+    if (!user || !domain) return email;
+    const visible = user.slice(0, 3);
+    return `${visible}${'*'.repeat(Math.max(0, user.length - 3))}@${domain}`;
+  }
+
+  calculateWinningSquare(homeScore: number, awayScore: number): { row: number; col: number } {
+    const homeDigit = homeScore % 10;
+    const awayDigit = awayScore % 10;
+    return { row: homeDigit, col: awayDigit };
+  }
+}

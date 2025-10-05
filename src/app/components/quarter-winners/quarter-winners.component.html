@@ -1,0 +1,66 @@
+<div class="winners-container" *ngIf="showWinners">
+  <h2 class="winners-title">Quarter Winners</h2>
+
+  <div class="quarters-grid">
+    <div
+      *ngFor="let winner of quarters"
+      class="quarter-card"
+      [ngClass]="{ 'active': winner.isActive, 'dormant': !winner.isActive }"
+    >
+      <div class="quarter-header">
+        <h3>{{ winner.quarter }}</h3>
+        <div class="score" *ngIf="winner.homeScore !== null && winner.awayScore !== null">
+          {{ gameData?.team1_name || 'Home' }}: {{ winner.homeScore }} -
+          {{ gameData?.team2_name || 'Away' }}: {{ winner.awayScore }}
+        </div>
+      </div>
+
+      <div class="winner-info" *ngIf="winner.isActive && winner.winnerName">
+        <div class="winner-name">🏆 {{ winner.winnerName }}</div>
+        <div class="winner-email">{{ obfuscateEmail(winner.winnerEmail) }}</div>
+        <div class="payout" *ngIf="winner.payout > 0">
+          <span class="payout-amount">${{ winner.payout }}</span>
+        </div>
+      </div>
+
+      <div class="dormant-message" *ngIf="!winner.isActive">
+        <span class="dormant-text">Awaiting Results</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Controls (if needed) -->
+<!--  <div class="admin-controls" *ngIf="showAdminControls">-->
+<!--    <h3>Set Winners (Admin)</h3>-->
+<!--    <div class="controls-grid">-->
+<!--      <div *ngFor="let quarter of quarters; let i = index" class="quarter-control">-->
+<!--        <h4>{{ quarter.quarter }}</h4>-->
+<!--        <div class="score-inputs">-->
+<!--          <label>-->
+<!--            {{ gameData?.team1_name || 'Home' }} Score:-->
+<!--            <input-->
+<!--              type="number"-->
+<!--              [(ngModel)]="quarter.homeScore"-->
+<!--              (change)="updateWinner(i)"-->
+<!--              min="0"-->
+<!--              max="99"-->
+<!--            >-->
+<!--          </label>-->
+<!--          <label>-->
+<!--            {{ gameData?.team2_name || 'Away' }} Score:-->
+<!--            <input-->
+<!--              type="number"-->
+<!--              [(ngModel)]="quarter.awayScore"-->
+<!--              (change)="updateWinner(i)"-->
+<!--              min="0"-->
+<!--              max="99"-->
+<!--            >-->
+<!--          </label>-->
+<!--        </div>-->
+<!--        <button (click)="activateQuarter(i)" [disabled]="quarter.isActive">-->
+<!--          Declare Winner-->
+<!--        </button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+</div>

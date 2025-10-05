@@ -1,0 +1,66 @@
+<div class="game-actions-container">
+  <div class="actions-header">
+    <div class="game-timing">
+      <div class="start-time">
+        📅 {{ formatStartTime() }}
+      </div>
+      <div class="countdown" [ngClass]="countdownClass">
+        {{ countdownText }}
+      </div>
+    </div>
+    <div class="status-badge" [ngClass]="getStatusBadgeClass()">
+      {{ getStatusText() }}
+    </div>
+  </div>
+
+  <div class="quick-actions">
+    <!-- Share Link -->
+    <div class="action-button" (click)="copyShareLink()">
+      <div class="action-icon">🔗</div>
+      <div class="action-title">Share Game</div>
+      <div class="action-description">Copy link to clipboard</div>
+      <input
+        class="share-url"
+        [value]="gameShareUrl"
+        readonly
+        (click)="$event.stopPropagation()"
+      >
+    </div>
+
+    <!-- Lock/Unlock Board - Only show for admin view -->
+    <div
+      *ngIf="isAdminView"
+      class="action-button"
+      [ngClass]="getLockButtonClass()"
+      (click)="toggleLockBoard()"
+      [class.disabled]="isGameClosed()"
+    >
+      <div class="action-icon">
+        {{ gameData?.status === 'locked' ? '🔓' : '🔒' }}
+      </div>
+      <div class="action-title">{{ getLockButtonText() }}</div>
+      <div class="action-description">
+        {{ gameData?.status === 'locked' ? 'Allow new requests' : 'Prevent new requests' }}
+      </div>
+    </div>
+
+    <!-- Close Game - Only show for admin view -->
+    <div
+      *ngIf="isAdminView"
+      class="action-button danger"
+      (click)="closeGame()"
+      [class.disabled]="isGameClosed()"
+    >
+      <div class="action-icon">🚫</div>
+      <div class="action-title">Close Game</div>
+      <div class="action-description">
+        {{ isGameClosed() ? 'Game is closed' : 'End game permanently' }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation Message -->
+<div class="confirmation-message" *ngIf="showConfirmation">
+  {{ confirmationMessage }}
+</div>

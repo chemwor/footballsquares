@@ -19,14 +19,14 @@
   <article class="row g-0 border-0 mb-4">
     <a
       class="col-sm-5 col-lg-4 bg-repeat-0 bg-size-cover bg-position-center rounded-5"
-      routerLink="/shop/product"
+      [routerLink]="['/services/admin-game-page', game.id]"
       style="background-image: url({{ game.image }}); min-height: 16rem"
       aria-label="Post image"
     ></a>
     <div class="col-sm-7 col-lg-8">
       <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
         <h3>
-          <a routerLink="/shop/product">{{ game.title }}</a>
+          <a [routerLink]="['/services/admin-game-page', game.id]">{{ game.title }}</a>
         </h3>
         <div class="mb-2">
           <span class="badge bg-primary me-2">{{ game.sport }}</span>

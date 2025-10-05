@@ -1,4 +1,4 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BoardService } from '../../services/board.service';
@@ -11,14 +11,9 @@ import { Square, SquareStatus } from '../../models/square.model';
   imports: [CommonModule, FormsModule, RequestModalComponent],
   template: `
 
-    <div class="price-indicator">
-      <span class="price">$5</span>
-      <span class="per-square">per square</span>
-    </div>
-
     <div class="board-container">
-      <div class="axis-label x-axis">Eagles</div>
-      <div class="axis-label y-axis">Falcons</div>
+      <div class="axis-label x-axis">{{ gameData?.team2_name || 'Away Team' }}</div>
+      <div class="axis-label y-axis">{{ gameData?.team1_name || 'Home Team' }}</div>
       <div class="board" [style.--cols]="size()">
         <div class="header corner"></div>
         <div *ngFor="let col of cols()" class="header">{{col}}</div>
@@ -104,7 +99,7 @@ import { Square, SquareStatus } from '../../models/square.model';
     .board-container {
       position: relative;
       padding: 3rem 0 0 3rem;
-      margin: 0 2rem;
+      //margin: 0 2rem;
     }
     .axis-label {
       position: absolute;
@@ -196,6 +191,8 @@ import { Square, SquareStatus } from '../../models/square.model';
   `]
 })
 export class BoardComponent implements OnInit {
+  @Input() gameData: any = null;
+
   sizes = [5, 6, 8, 10, 12, 20];
   size = this.board.gridSize;
   rows = this.board.rows;
@@ -211,7 +208,15 @@ export class BoardComponent implements OnInit {
   constructor(public board: BoardService) {}
 
   async ngOnInit() {
-    await this.board.initBoard(this.size());
+    // Initialize board with game data if available
+    const boardSize = this.gameData?.boardSize || this.size();
+    const gameId = this.gameData?.id;
+
+    if (gameId) {
+      await this.board.initBoard(boardSize, gameId);
+    } else {
+      await this.board.initBoard(boardSize);
+    }
   }
 
   cellStatus(row: number, col: number): SquareStatus {

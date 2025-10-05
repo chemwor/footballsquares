@@ -84,6 +84,26 @@ export class SupabaseBoardRepository implements BoardRepository {
     if (error) throw error;
     return data || [];
   }
+
+  async seedSquares(gameId: string, boardSize: number): Promise<void> {
+    try {
+      // Call the Supabase stored procedure to seed squares with correct parameter names
+      const { error } = await supabase.rpc('seed_squares', {
+        p_game_id: gameId,
+        p_size: boardSize
+      });
+
+      if (error) {
+        console.error('Error seeding squares:', error);
+        throw error;
+      }
+
+      console.log(`Successfully seeded squares for game ${gameId} with board size ${boardSize}`);
+    } catch (err) {
+      console.error('Error calling seed_squares function:', err);
+      throw err;
+    }
+  }
 }
 
 export function uid(): string {

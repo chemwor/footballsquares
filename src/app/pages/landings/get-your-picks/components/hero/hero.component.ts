@@ -9,6 +9,8 @@ import {
 import type { JarallaxOptions } from 'jarallax';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { supabase } from 'src/app/data-sources/supabase.client';
 
 
 // ✅ Tell TypeScript about gtag
@@ -32,7 +34,7 @@ export class HeroComponent {
     speed: 0.6,
   }
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   formSubmitted = false;
   validationMessage = '';
@@ -42,7 +44,8 @@ export class HeroComponent {
     sport: '',
     match: '',
     boardSize: '10x10',
-    boardName: ''
+    boardName: '',
+    reverseSquares: false
   };
 
   sports: string[] = ['Football', 'Basketball', 'Baseball', 'Soccer', 'Hockey', 'Other'];
@@ -64,35 +67,106 @@ export class HeroComponent {
     this.formData['match'] = '';
   }
 
-  submitForm() {
+  async submitForm() {
     this.formSubmitted = true;
     if (!this.formData['sport'] || !this.formData['match'] || !this.formData['boardSize'] || !this.formData['boardName']) {
       this.validationMessage = 'Please fill in all required fields.';
       return;
     }
     this.validationMessage = '';
-    // Handle form submission logic here
-    // e.g., send to backend or show confirmation
 
+    // Get current user info from Supabase
+    const {
+      data: { user },
+      error: userError
+    } = await supabase.auth.getUser();
+    if (userError) {
+      console.error('❌ Error fetching user:', userError);
+    }
+    console.log('Current Supabase user:', user);
 
-    const url = 'https://mybjjgameplan-7678d6be1c32.herokuapp.com/generate-game-plan';
+    // Map form fields to Supabase games table columns
+    const [team1, team2] = this.formData['match'].split(' vs ');
+    const boardSizeNumber = parseInt(this.formData['boardSize'], 10);
 
-    this.http.post(url, this.formData).subscribe({
-      next: (res) => {
-        console.log('Form submitted successfully', res);
-        alert('✅ Your BJJ Gameplan request was submitted! Check your email.');
-        // Optionally reset form or redirect
+    // Get the user's display name, fallback to email, then to 'Unknown User'
+    const ownerName =
+      user?.user_metadata?.['full_name'] ||
+      user?.user_metadata?.['display_name'] ||
+      user?.user_metadata?.['name'] ||
+      user?.email ||
+      'Unknown User'
 
+    const payload = {
+      sport: this.formData['sport'],
+      title: this.formData['boardName'],
+      grid_size: boardSizeNumber,
+      team1_name: team1 || '',
+      team2_name: team2 || '',
+      status: 'open',
+      owner_id: user?.id || null,
+      owner_name: ownerName,
+      reverse_squares: this.formData['reverseSquares'] || false,
+    };
 
-        // ✅ Trigger Google Ads conversion
-        gtag('event', 'conversion', {
-          send_to: 'AW-17007905582/JUHSCMvtlOIaEK6WgK4_'
-        });
-      },
-      error: (err) => {
-        console.error('❌ Error submitting form:', err);
-        alert('⚠️ There was an issue submitting the form. Please try again later.');
+    try {
+      // Create the game
+      const { error, data } = await supabase.from('games').insert([payload]).select();
+      if (error) {
+        console.error('❌ Error creating game:', error);
+        alert('⚠️ There was an issue creating the game. Please try again later.');
+        return;
       }
+
+      const newGame = data[0];
+      const gameId = newGame.id;
+      console.log('Game created successfully', newGame);
+
+      // Seed the squares for the newly created game
+      // const { error: seedError } = await supabase.rpc('seed_squares', {
+      //   p_game_id: gameId,
+      //   p_size: boardSizeNumber
+      // });
+      //
+      // if (seedError) {
+      //   console.error('❌ Error seeding squares:', seedError);
+      //   alert('⚠️ Game created but there was an issue setting up the board. Please contact support.');
+      //   return;
+      // }
+      //
+      // console.log(`✅ Squares seeded successfully for game ${gameId} with board size ${boardSizeNumber}`);
+
+      // Track conversion
+      gtag('event', 'conversion', {
+        send_to: 'AW-17007905582/JUHSCMvtlOIaEK6WgK4_'
+      });
+
+      // Route to the admin page for the newly created game
+      this.router.navigate(['/services/admin-game-page', gameId]);
+
+    } catch (err) {
+      console.error('❌ Unexpected error during game creation:', err);
+      alert('⚠️ There was an unexpected issue creating the game. Please try again later.');
+    }
+  }
+
+  async ngOnInit() {
+    // Get current user info from Supabase on component load (use getSession for reliability)
+    const {
+      data: { session },
+      error: sessionError
+    } = await supabase.auth.getSession();
+    if (sessionError) {
+      console.error('❌ Error fetching session:', sessionError);
+    }
+    console.log('Current Supabase session (on load):', session);
+    console.log('Current Supabase user (on load):', session?.user);
+
+    // Listen for auth state changes and log session/user when available
+    supabase.auth.onAuthStateChange((event, session) => {
+      console.log(`[Supabase] Auth event: ${event}`);
+      console.log('Session after event:', session);
+      console.log('User after event:', session?.user);
     });
   }
 

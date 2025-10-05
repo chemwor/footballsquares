@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { supabase } from '../data-sources/supabase.client';
-import { User, AuthError, AuthResponse } from '@supabase/supabase-js';
+import { User, AuthError, AuthResponse, Provider } from '@supabase/supabase-js';
 
 @Injectable({
   providedIn: 'root'
@@ -80,6 +80,15 @@ export class AuthService {
     }
   }
 
+  async signInWithOAuth(options: { provider: Provider; options?: any }): Promise<{ error?: any }> {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth(options);
+      return { error };
+    } catch (error) {
+      return { error };
+    }
+  }
+
   async signInWithGoogle(): Promise<{ success: boolean; error?: string }> {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -105,24 +114,18 @@ export class AuthService {
 
   async signInWithFacebook(): Promise<{ success: boolean; error?: string }> {
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: 'facebook',
         options: {
-          redirectTo: `${window.location.origin}/`
-        }
+          redirectTo: window.location.origin,
+        },
       });
-
       if (error) {
-        // Handle specific OAuth provider errors
-        if (error.message.includes('provider is not enabled') || error.message.includes('Unsupported provider')) {
-          return { success: false, error: 'Facebook sign-in is not available at the moment. Please use email/password authentication.' };
-        }
         return { success: false, error: error.message };
       }
-
       return { success: true };
     } catch (error) {
-      return { success: false, error: 'Facebook sign-in is currently unavailable. Please try email/password authentication.' };
+      return { success: false, error: 'An unexpected error occurred during Facebook sign-in.' };
     }
   }
 

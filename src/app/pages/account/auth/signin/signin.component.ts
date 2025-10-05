@@ -78,13 +78,20 @@ export class SigninComponent implements OnInit {
   /**
    * Sign in with Google
    */
-  async signInWithGoogle(): Promise<void> {
-    this.errorMessage = ''
-
-    const result = await this.authService.signInWithGoogle()
-
-    if (!result.success) {
-      this.errorMessage = result.error || 'An error occurred during Google sign in'
+  async signInWithGoogle() {
+    try {
+      const { error } = await this.authService.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin, // Ensure this matches your Supabase dashboard setting
+        },
+      })
+      if (error) {
+        this.errorMessage = error.message
+        console.error('Google sign-in error:', error)
+      }
+    } catch (err) {
+      this.errorMessage = 'An unexpected error occurred during Google sign-in.'
     }
   }
 

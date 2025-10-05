@@ -1,7 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BoardService } from '../../services/board.service';
 import { signal } from '@angular/core';
+import { supabase } from '../../data-sources/supabase.client';
 
 @Component({
   selector: 'sq-admin-panel',
@@ -10,8 +11,8 @@ import { signal } from '@angular/core';
   template: `
     <div class="admin-panel">
       <h3>Pending Requests</h3>
-      <div *ngIf="board.pendingRequests().length === 0">No pending squares.</div>
-      <div *ngFor="let sq of board.pendingRequests()">
+      <div *ngIf="pendingSquares().length === 0">No pending squares.</div>
+      <div *ngFor="let sq of pendingSquares()">
         <span>{{sq.name}}</span>
         <span>{{obfuscateEmail(sq.email!)}}</span>
         <span>[{{sq.row_idx}},{{sq.col_idx}}]</span>
@@ -19,7 +20,7 @@ import { signal } from '@angular/core';
         <button (click)="decline(sq.id)" class="decline">Decline</button>
       </div>
       <h3>Approved Squares</h3>
-      <div *ngFor="let sq of board.approvedSquares()">
+      <div *ngFor="let sq of approvedSquares()">
         <span>{{sq.name}}</span>
         <span>[{{sq.row_idx}},{{sq.col_idx}}]</span>
       </div>
@@ -126,29 +127,118 @@ import { signal } from '@angular/core';
     `
   ]
 })
-export class AdminPanelComponent implements OnInit {
-  @Input() gameId: string = '5759eb9e-66a6-48f0-9b2b-775df3b100b2';
+export class AdminPanelComponent implements OnInit, OnChanges {
+  @Input() gameData: any = null;
+
+  pendingSquares = signal<any[]>([]);
+  approvedSquares = signal<any[]>([]);
   actionConfirmed = signal<string | null>(null);
+  loading = signal<boolean>(false);
 
   constructor(public board: BoardService) {}
 
   async ngOnInit() {
-    await this.board.loadSquares();
+    console.log('AdminPanel ngOnInit - gameData:', this.gameData);
+    if (this.gameData?.id) {
+      await this.loadSquares();
+    }
   }
 
-  async approve(id: string) {
-    await this.board.approve(id);
-    this.showConfirmation('Square approved!');
+  async ngOnChanges(changes: SimpleChanges) {
+    console.log('AdminPanel ngOnChanges - gameData changed:', changes['gameData']);
+    if (changes['gameData'] && this.gameData?.id) {
+      await this.loadSquares();
+    }
   }
 
-  async decline(id: string) {
-    await this.board.decline(id);
-    this.showConfirmation('Square declined!');
+  async loadSquares() {
+    if (!this.gameData?.id) {
+      console.log('No gameData.id available, cannot load squares');
+      return;
+    }
+
+    console.log('Loading squares for game:', this.gameData.id);
+    this.loading.set(true);
+    try {
+      const { data, error } = await supabase
+        .from('squares')
+        .select('*')
+        .eq('game_id', this.gameData.id)
+        .in('status', ['pending', 'approved']);
+
+      if (error) {
+        console.error('Error loading squares:', error);
+        return;
+      }
+
+      console.log('Raw squares data:', data);
+      const pending = data?.filter(sq => sq.status === 'pending') || [];
+      const approved = data?.filter(sq => sq.status === 'approved') || [];
+
+      console.log('Pending squares:', pending);
+      console.log('Approved squares:', approved);
+
+      this.pendingSquares.set(pending);
+      this.approvedSquares.set(approved);
+
+    } catch (err) {
+      console.error('Unexpected error loading squares:', err);
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  showConfirmation(msg: string) {
-    this.actionConfirmed.set(msg);
-    setTimeout(() => this.actionConfirmed.set(null), 2000);
+  async approve(squareId: string) {
+    try {
+      const { error } = await supabase
+        .from('squares')
+        .update({
+          status: 'approved',
+          approved_at: new Date().toISOString()
+        })
+        .eq('id', squareId)
+        .eq('game_id', this.gameData.id);
+
+      if (error) {
+        console.error('Error approving square:', error);
+        return;
+      }
+
+      this.actionConfirmed.set('Square approved successfully!');
+      await this.loadSquares(); // Refresh the lists
+      this.hideConfirmationAfterDelay();
+
+    } catch (err) {
+      console.error('Error approving square:', err);
+    }
+  }
+
+  async decline(squareId: string) {
+    try {
+      const { error } = await supabase
+        .from('squares')
+        .update({
+          status: 'empty',
+          name: null,
+          email: null,
+          requested_at: null,
+          approved_at: null
+        })
+        .eq('id', squareId)
+        .eq('game_id', this.gameData.id);
+
+      if (error) {
+        console.error('Error declining square:', error);
+        return;
+      }
+
+      this.actionConfirmed.set('Square declined successfully!');
+      await this.loadSquares(); // Refresh the lists
+      this.hideConfirmationAfterDelay();
+
+    } catch (err) {
+      console.error('Error declining square:', err);
+    }
   }
 
   obfuscateEmail(email: string): string {
@@ -156,5 +246,11 @@ export class AdminPanelComponent implements OnInit {
     if (!user || !domain) return email;
     const visible = user.slice(0, 3);
     return `${visible}${'*'.repeat(Math.max(0, user.length - 3))}@${domain}`;
+  }
+
+  private hideConfirmationAfterDelay() {
+    setTimeout(() => {
+      this.actionConfirmed.set(null);
+    }, 3000);
   }
 }
