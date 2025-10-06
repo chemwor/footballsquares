@@ -15,52 +15,65 @@
   </div>
 </div>
 
-@for (game of games; track $index) {
-  <article class="row g-0 border-0 mb-4">
-    <a
-      class="col-sm-5 col-lg-4 bg-repeat-0 bg-size-cover bg-position-center rounded-5"
-      routerLink="/shop/product"
-      style="background-image: url({{ game.image }}); min-height: 16rem"
-      aria-label="Post image"
-    ></a>
-    <div class="col-sm-7 col-lg-8">
-      <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
-        <h3>
-          <a routerLink="/shop/product">{{ game.title }}</a>
-        </h3>
-        <div class="mb-2">
-          <span class="badge bg-primary me-2">{{ game.sport }}</span>
-          <span class="badge bg-secondary me-2">{{ game.match }}</span>
-          <span class="badge bg-dark me-2">{{ game.boardSize }}</span>
-          <span class="badge bg-success">{{ game.status }}</span>
-        </div>
-        <p class="d-sm-none d-md-block">{{ game.excerpt }}</p>
-        <div class="d-flex flex-wrap align-items-center mt-n2">
-<!--          <a-->
-<!--            class="nav-link text-body-secondary fs-sm fw-normal p-0 mt-2 me-3"-->
-<!--            href="javascript:void(0);"-->
-<!--          >-->
-<!--            {{ game.shares }}-->
-<!--            <i class="ai-share fs-lg ms-1"></i>-->
-<!--          </a>-->
-<!--          <a-->
-<!--            class="nav-link text-body-secondary fs-sm fw-normal d-flex align-items-end p-0 mt-2"-->
-<!--            href="javascript:void(0);"-->
-<!--          >-->
-<!--            {{ game.comments }}-->
-<!--            <i class="ai-message fs-lg ms-1"></i>-->
-<!--          </a>-->
-          <span class="badge bg-primary me-2">{{ game.ownerName }}</span>
-          <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
-          <span class="fs-sm text-body-secondary mt-2">{{ game.date }}</span>
-<!--          <span class="fs-xs opacity-20 mt-2 mx-3">|</span>-->
+<!-- Loading State -->
+<div *ngIf="loading" class="text-center py-5">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  <p class="mt-3 text-muted">Loading your completed games...</p>
+</div>
+
+<!-- Error State -->
+<div *ngIf="error && !loading" class="alert alert-danger" role="alert">
+  <i class="ai-alert-circle me-2"></i>
+  {{ error }}
+</div>
+
+<!-- Empty State -->
+<div *ngIf="!loading && !error && games.length === 0" class="text-center py-5">
+  <div class="mb-4">
+    <i class="ai-check-circle text-muted" style="font-size: 4rem;"></i>
+  </div>
+  <h3 class="h4 mb-3">No Completed Games Yet</h3>
+  <p class="text-muted mb-4">You haven't participated in any completed games yet. Join some current games to see your results here!</p>
+  <a routerLink="/blog/current-games" class="btn btn-primary">Browse Current Games</a>
+</div>
+
+<!-- Games List -->
+<div *ngIf="!loading && !error && games.length > 0">
+  @for (game of games; track $index) {
+    <article class="row g-0 border-0 mb-4">
+      <a
+        class="col-sm-5 col-lg-4 bg-repeat-0 bg-size-cover bg-position-center rounded-5"
+        routerLink="/services/game-page/{{ game.id }}"
+        style="background-image: url({{ game.image }}); min-height: 16rem"
+        aria-label="Post image"
+      ></a>
+      <div class="col-sm-7 col-lg-8">
+        <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
+          <h3>
+            <a routerLink="/services/game-page/{{ game.id }}">{{ game.title }}</a>
+          </h3>
+          <div class="mb-2">
+            <span class="badge bg-primary me-2">{{ game.sport }}</span>
+            <span class="badge bg-secondary me-2">{{ game.match }}</span>
+            <span class="badge bg-dark me-2">{{ game.boardSize }}</span>
+            <span class="badge bg-success">{{ game.status | titlecase }}</span>
+          </div>
+          <p class="d-sm-none d-md-block">{{ game.excerpt }}</p>
+          <div class="d-flex flex-wrap align-items-center mt-n2">
+            <span class="badge bg-primary me-2">{{ game.ownerName }}</span>
+            <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+            <span class="fs-sm text-body-secondary mt-2">{{ game.date }}</span>
+          </div>
         </div>
       </div>
-    </div>
-  </article>
-}
+    </article>
+  }
+</div>
 
-<div class="row gy-3 align-items-center mt-lg-5 pt-2 pt-md-4 pt-lg-0">
+<!-- Pagination (only show if there are games) -->
+<div *ngIf="!loading && !error && games.length > 0" class="row gy-3 align-items-center mt-lg-5 pt-2 pt-md-4 pt-lg-0">
   <div class="col col-md-4 col-6 order-md-1 order-1">
     <div class="d-flex align-items-center">
       <span class="text-body-secondary fs-sm">Show</span>

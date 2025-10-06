@@ -48,6 +48,7 @@ export class SupabaseBoardRepository implements BoardRepository {
         status: square.status,
         name: square.name,
         email: square.email,
+        user_id: square.user_id, // Include user_id in updates
         requested_at: square.requestedAt,
       })
       .eq('id', square.id)
@@ -63,6 +64,7 @@ export class SupabaseBoardRepository implements BoardRepository {
         approved_at: square.approved_at,
         name: square.name,
         email: square.email,
+        user_id: square.user_id, // Include user_id in admin updates
         requested_at: square.requestedAt,
         // admin_id removed, use RLS policy to check game ownership
       })

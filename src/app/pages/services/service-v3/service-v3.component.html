@@ -44,6 +44,9 @@
       </div>
     </section>
     <sq-game-actions [gameData]="gameData" [isAdminView]="false" />
+    <div class="container py-4">
+      <sq-user-squares [gameData]="gameData" />
+    </div>
     <sq-board [gameData]="gameData" />
     <sq-quarter-winners [gameData]="gameData" [showAdminControls]="false" />
   }

@@ -1,6 +1,7 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, OnChanges, SimpleChanges, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { supabase } from '../../data-sources/supabase.client';
 
 @Component({
   selector: 'sq-request-modal',
@@ -10,7 +11,10 @@ import { FormsModule } from '@angular/forms';
     <div *ngIf="open" class="modal-backdrop debug-modal" (click)="onBackdrop($event)" tabindex="-1">
       <div class="modal" role="dialog" aria-modal="true" (keydown.escape)="close()"
         (click)="$event.stopPropagation()">
-        <h2>Request Square [{{row}},{{col}}]</h2>
+        <h2>
+          Request Square
+          <span *ngIf="shouldShowCoordinates()"> [{{row}},{{col}}]</span>
+        </h2>
         <form (submit)="submit($event)" #form="ngForm">
           <div class="form-group">
             <label for="name">Name</label>
@@ -145,36 +149,80 @@ import { FormsModule } from '@angular/forms';
     }
   `]
 })
-export class RequestModalComponent implements OnChanges {
+export class RequestModalComponent implements OnChanges, OnInit {
   @Input() open = false;
   @Input() row!: number;
   @Input() col!: number;
+  @Input() gameData: any = null;
   @Output() closed = new EventEmitter<void>();
-  @Output() requested = new EventEmitter<{ name: string; email: string }>();
+  @Output() requested = new EventEmitter<{ name: string; email: string; userId?: string }>();
 
   name = '';
   email = '';
+  userId?: string; // Store the current user's ID
 
   @ViewChild('nameField') nameField!: ElementRef;
 
+  async ngOnInit() {
+    await this.loadUserInfo();
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes['open'] && this.open) {
+      this.loadUserInfo(); // Reload user info when modal opens
       setTimeout(() => {
-        this.nameField.nativeElement.focus();
+        this.nameField?.nativeElement?.focus();
       }, 0);
+    }
+  }
+
+  shouldShowCoordinates(): boolean {
+    // Hide coordinates if hide_axes is true, unless game is closed
+    if (this.gameData?.status === 'closed') {
+      return true; // Always show coordinates when game is closed
+    }
+    return !this.gameData?.hide_axes;
+  }
+
+  async loadUserInfo() {
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+
+      if (error) {
+        console.error('Error loading user info for modal:', error);
+        return;
+      }
+
+      if (user) {
+        // Store the user ID
+        this.userId = user.id;
+
+        // Auto-populate with user's information
+        this.name =
+          user.user_metadata?.['full_name'] ||
+          user.user_metadata?.['display_name'] ||
+          user.user_metadata?.['name'] ||
+          this.name // Keep existing value if no metadata
+        this.email = user.email || this.email; // Keep existing value if no email
+        console.log('Auto-populated user info:', { name: this.name, email: this.email, userId: this.userId });
+      } else {
+        // Clear user ID if no user is logged in
+        this.userId = undefined;
+      }
+    } catch (err) {
+      console.error('Unexpected error loading user info:', err);
     }
   }
 
   close() {
     this.closed.emit();
-    this.name = '';
-    this.email = '';
+    // Don't clear the fields immediately - they might want to reopen
   }
 
   submit(event: Event) {
     event.preventDefault();
     if (this.name && this.email) {
-      this.requested.emit({ name: this.name, email: this.email });
+      this.requested.emit({ name: this.name, email: this.email, userId: this.userId });
       this.close();
     }
   }

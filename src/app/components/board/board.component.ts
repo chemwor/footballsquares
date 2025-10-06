@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { BoardService } from '../../services/board.service';
 import { RequestModalComponent } from '../request-modal/request-modal.component';
 import { Square, SquareStatus } from '../../models/square.model';
+import { supabase } from '../../data-sources/supabase.client';
 
 @Component({
   selector: 'sq-board',
@@ -12,14 +13,16 @@ import { Square, SquareStatus } from '../../models/square.model';
   template: `
 
     <div class="board-container">
-      <div class="axis-label x-axis">{{ gameData?.team2_name || 'Away Team' }}</div>
+<!--      <div class="axis-label x-axis">{{ gameData?.team2_name || 'Away Team' }}</div>-->
       <div class="axis-label y-axis">{{ gameData?.team1_name || 'Home Team' }}</div>
       <div class="board" [style.--cols]="size()">
         <div class="header corner"></div>
-        <div *ngFor="let col of cols()" class="header">{{col}}</div>
-        <ng-container *ngFor="let row of rows()">
-          <div class="header">{{row}}</div>
-          <ng-container *ngFor="let col of cols()">
+        <div *ngFor="let col of getDisplayCols()" class="header">
+          {{ shouldShowAxisNumbers() ? col : '?' }}
+        </div>
+        <ng-container *ngFor="let row of getDisplayRows()">
+          <div class="header">{{ shouldShowAxisNumbers() ? row : '?' }}</div>
+          <ng-container *ngFor="let col of getDisplayCols()">
             <div
               class="cell"
               [ngClass]="cellClass(row, col)"
@@ -34,7 +37,9 @@ import { Square, SquareStatus } from '../../models/square.model';
                   <span class="name">{{getSquareName(row, col)}}</span>
                 </span>
                 <span *ngSwitchCase="'approved'" class="user-info">
-                  <span class="pill approved">Locked</span>
+                  <span class="pill" [ngClass]="isWinningSquare(row, col) ? 'winner' : 'approved'">
+                    {{ isWinningSquare(row, col) ? 'Winner' : 'Locked' }}
+                  </span>
                   <span class="name">{{getSquareName(row, col)}}</span>
                 </span>
               </ng-container>
@@ -49,6 +54,7 @@ import { Square, SquareStatus } from '../../models/square.model';
       [open]="modalOpen()"
       [row]="modalRow()"
       [col]="modalCol()"
+      [gameData]="gameData"
       (closed)="closeModal()"
       (requested)="request($event)"
     />
@@ -161,6 +167,7 @@ import { Square, SquareStatus } from '../../models/square.model';
     .cell.empty:hover, .cell.empty:focus { background: #2c3136; }
     .cell.pending { background: #524726; }
     .cell.approved { background: #1e3a24; }
+    .cell.winner { background: #2ecc40 !important; } /* Highlight winner squares */
     .user-info {
       display: flex;
       flex-direction: column;
@@ -182,6 +189,7 @@ import { Square, SquareStatus } from '../../models/square.model';
     }
     .pill.pending { background: #f7c873; color: #000; }
     .pill.approved { background: #2ecc40; color: #fff; }
+    .pill.winner { background: #FFD700; color: #000; font-weight: bold; } /* Gold background for winners */
     .admin-panel { background: #222; border-radius: 12px; padding: 1rem; margin-top: 2rem; }
     .admin-panel h3 { margin-top: 0; }
     .admin-panel div { display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem; }
@@ -201,6 +209,18 @@ export class BoardComponent implements OnInit {
   pending = this.board.pendingRequests;
   approved = this.board.approvedSquares;
 
+  // Override rows and cols with game data
+  displayRows: number[] = [];
+  displayCols: number[] = [];
+
+  // Store winning squares data
+  winningSquares: Array<{
+    row_idx: number;
+    col_idx: number;
+    period_no: number;
+    winner_name: string;
+  }> = [];
+
   modalOpen = signal(false);
   modalRow = signal<number>(0);
   modalCol = signal<number>(0);
@@ -209,14 +229,105 @@ export class BoardComponent implements OnInit {
 
   async ngOnInit() {
     // Initialize board with game data if available
-    const boardSize = this.gameData?.boardSize || this.size();
+    const boardSize = this.gameData?.grid_size || this.gameData?.boardSize || this.size();
     const gameId = this.gameData?.id;
 
     if (gameId) {
       await this.board.initBoard(boardSize, gameId);
+      // Load winning squares data
+      await this.loadWinningSquares();
     } else {
       await this.board.initBoard(boardSize);
     }
+
+    // Set up display rows and cols from game data
+    this.initializeAxisNumbers();
+  }
+
+  async loadWinningSquares() {
+    if (!this.gameData?.id) return;
+
+    try {
+      // Query game_winners table to get winning square positions from home_digit and away_digit
+      const { data, error } = await supabase
+        .from('game_winners')
+        .select(`
+          period_no,
+          winner_name,
+          home_digit,
+          away_digit
+        `)
+        .eq('game_id', this.gameData.id);
+
+      if (error) {
+        console.error('Error loading winning squares:', error);
+        return;
+      }
+
+      // Map the winning squares data using home_digit and away_digit as coordinates
+      this.winningSquares = (data || []).map(winner => ({
+        row_idx: winner.home_digit, // home_digit is the row (Y-axis)
+        col_idx: winner.away_digit, // away_digit is the column (X-axis)
+        period_no: winner.period_no,
+        winner_name: winner.winner_name || ''
+      }));
+
+      console.log('Loaded winning squares for board highlighting:', this.winningSquares);
+      console.log('Number of winning squares found:', this.winningSquares.length);
+      console.log('Winning coordinates:', this.winningSquares.map(w => `[${w.row_idx}, ${w.col_idx}] - ${w.winner_name}`));
+    } catch (err) {
+      console.error('Unexpected error loading winning squares:', err);
+    }
+  }
+
+  isWinningSquare(row: number, col: number): boolean {
+    // Find the winning square by matching the display values (what shows on the board headers)
+    // with the winning digits from the game_winners table
+
+    const isInWinnersTable = this.winningSquares.some(winner => {
+      // winner.row_idx is home_digit (Y-axis winning number)
+      // winner.col_idx is away_digit (X-axis winning number)
+      // We need to find the square where the display shows these numbers
+
+      const matches = row === winner.row_idx && col === winner.col_idx;
+      console.log(`Comparing winner digits [${winner.row_idx}, ${winner.col_idx}] with square [${row}, ${col}]: ${matches}`);
+      return matches;
+    });
+
+    if (isInWinnersTable) {
+      console.log(`✓ Square [${row}, ${col}] is a winner!`);
+      return true;
+    }
+
+    return false;
+  }
+
+  initializeAxisNumbers() {
+    const gridSize = this.gameData?.grid_size || this.size();
+
+    // Use randomized axis numbers from database if available, otherwise fall back to sequential
+    if (this.gameData?.x_axis_numbers && this.gameData?.y_axis_numbers) {
+      // Use the randomized numbers from the database
+      this.displayCols = this.gameData.x_axis_numbers.slice(0, gridSize);
+      this.displayRows = this.gameData.y_axis_numbers.slice(0, gridSize);
+      console.log('Player board using randomized axis numbers from database');
+      console.log('X-axis (cols):', this.displayCols);
+      console.log('Y-axis (rows):', this.displayRows);
+    } else {
+      // Fallback to sequential numbers if randomized numbers aren't available
+      this.displayRows = Array.from({ length: gridSize }, (_, i) => i);
+      this.displayCols = Array.from({ length: gridSize }, (_, i) => i);
+      console.log('Player board using sequential fallback numbers');
+    }
+  }
+
+  // Update template methods to use display arrays
+  getDisplayRows(): number[] {
+    return this.displayRows;
+  }
+
+  getDisplayCols(): number[] {
+    return this.displayCols;
   }
 
   cellStatus(row: number, col: number): SquareStatus {
@@ -227,7 +338,14 @@ export class BoardComponent implements OnInit {
 
   cellClass(row: number, col: number) {
     const status = this.cellStatus(row, col);
-    return { cell: true, [status]: true, empty: status === 'empty' };
+    const isWinner = this.isWinningSquare(row, col);
+
+    return {
+      cell: true,
+      [status]: true,
+      empty: status === 'empty',
+      winner: isWinner
+    };
   }
 
   ariaLabel(row: number, col: number) {
@@ -254,8 +372,8 @@ export class BoardComponent implements OnInit {
     this.modalOpen.set(false);
   }
 
-  async request({ name, email }: { name: string; email: string }) {
-    await this.board.requestSquare(this.modalRow(), this.modalCol(), name, email);
+  async request({ name, email, userId }: { name: string; email: string; userId?: string }) {
+    await this.board.requestSquare(this.modalRow(), this.modalCol(), name, email, userId);
     this.closeModal();
   }
 
@@ -291,5 +409,15 @@ export class BoardComponent implements OnInit {
     const squares = this.board.squares() || [];
     const sq = squares.find(s => Number(s.row_idx) === row && Number(s.col_idx) === col);
     return sq?.name ?? '';
+  }
+
+  shouldShowAxisNumbers(): boolean {
+    // Always show axis numbers if the game is closed (final reveal)
+    if (this.gameData?.status === 'closed') {
+      return true;
+    }
+
+    // Otherwise, check the hide_axes flag from game data
+    return !this.gameData?.hide_axes;
   }
 }

@@ -1,17 +1,18 @@
-import { Component } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
 import { blogPostList, BlogPostType } from '../../../list-sidebar/data'
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap'
 import { RouterModule } from '@angular/router'
+import { CommonModule } from '@angular/common'
 import { supabase } from '../../../../../data-sources/supabase.client'
 
 @Component({
   selector: 'completed-games',
   standalone: true,
-  imports: [NgbPaginationModule, RouterModule],
+  imports: [NgbPaginationModule, RouterModule, CommonModule],
   templateUrl: './complete-games.component.html',
   styles: ``,
 })
-export class ListBlogComponent {
+export class ListBlogComponent implements OnInit {
   allListBlog: BlogPostType[] = blogPostList;
   games: any[] = [];
   loading: boolean = false;

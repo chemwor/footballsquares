@@ -9,6 +9,7 @@ export interface Square {
   status: SquareStatus;
   name?: string;
   email?: string;
+  user_id?: string; // Optional - for logged in users
   requestedAt?: string; // ISO
   approved_at?: string; // ISO, for Supabase compatibility
 }

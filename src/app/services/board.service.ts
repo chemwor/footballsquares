@@ -43,7 +43,7 @@ export class BoardService {
     await this.loadSquares();
   }
 
-  async requestSquare(row: number, col: number, name: string, email: string) {
+  async requestSquare(row: number, col: number, name: string, email: string, userId?: string) {
     const square = this.squares().find((s: Square) => Number(s.row_idx) === row && Number(s.col_idx) === col);
     if (square && square.status === 'empty') {
       const updated: Square = {
@@ -51,6 +51,7 @@ export class BoardService {
         status: 'pending',
         name,
         email,
+        user_id: userId, // Include the user ID if provided
         requestedAt: new Date().toISOString(),
       };
       await this.repo.updateSquare(updated, this.gameId);
@@ -85,6 +86,7 @@ export class BoardService {
         status: 'empty',
         name: undefined,
         email: undefined,
+        user_id: undefined, // Clear user_id when declining
         requestedAt: undefined,
         approved_at: undefined,
       };

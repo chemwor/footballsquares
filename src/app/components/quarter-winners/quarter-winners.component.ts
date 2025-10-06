@@ -7,9 +7,12 @@ interface QuarterWinner {
   quarter: string;
   homeScore: number | null;
   awayScore: number | null;
-  winnerName: string;
-  winnerEmail: string;
-  payout: number;
+  winners: Array<{
+    winnerName: string;
+    winnerEmail: string;
+    squarePosition?: string;
+  }>;
+  totalPayout: number;
   isActive: boolean;
 }
 
@@ -87,6 +90,10 @@ interface QuarterWinner {
       text-align: center;
     }
 
+    .winner-item {
+      padding: 0.5rem 0;
+    }
+
     .winner-name {
       font-size: 1.2rem;
       font-weight: bold;
@@ -97,7 +104,19 @@ interface QuarterWinner {
     .winner-email {
       font-size: 0.9rem;
       color: #aaa;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .square-position {
+      font-size: 0.8rem;
+      color: #f7c873;
+      font-weight: 500;
+    }
+
+    .total-payout {
+      text-align: center;
+      border-top: 1px solid #444;
+      padding-top: 1rem;
     }
 
     .payout {
@@ -241,36 +260,32 @@ export class QuarterWinnersComponent implements OnInit, OnChanges {
         quarter: '1st Quarter',
         homeScore: null,
         awayScore: null,
-        winnerName: '',
-        winnerEmail: '',
-        payout: 250,
+        winners: [],
+        totalPayout: 0,
         isActive: false
       },
       {
         quarter: '2nd Quarter',
         homeScore: null,
         awayScore: null,
-        winnerName: '',
-        winnerEmail: '',
-        payout: 250,
+        winners: [],
+        totalPayout: 0,
         isActive: false
       },
       {
         quarter: '3rd Quarter',
         homeScore: null,
         awayScore: null,
-        winnerName: '',
-        winnerEmail: '',
-        payout: 250,
+        winners: [],
+        totalPayout: 0,
         isActive: false
       },
       {
         quarter: 'Final Score',
         homeScore: null,
         awayScore: null,
-        winnerName: '',
-        winnerEmail: '',
-        payout: 250,
+        winners: [],
+        totalPayout: 0,
         isActive: false
       }
     ];
@@ -286,12 +301,25 @@ export class QuarterWinnersComponent implements OnInit, OnChanges {
     if (!this.gameData?.id) return;
 
     try {
-      // Query squares table for quarter winners
+      // Query game_winners table joined with squares to get winner information
       const { data, error } = await supabase
-        .from('squares')
-        .select('*')
+        .from('game_winners')
+        .select(`
+          period_no,
+          home_digit,
+          away_digit,
+          announced_at,
+          winner_name,
+          winner_email,
+          squares!inner(
+            id,
+            row_idx,
+            col_idx,
+            user_id
+          )
+        `)
         .eq('game_id', this.gameData.id)
-        .in('status', ['quarter_1_winner', 'quarter_2_winner', 'quarter_3_winner', 'final_winner']);
+        .order('period_no');
 
       if (error) {
         console.error('Error loading quarter winners:', error);
@@ -300,35 +328,53 @@ export class QuarterWinnersComponent implements OnInit, OnChanges {
 
       console.log('Quarter winners loaded from database:', data);
 
-      // Update quarters with winner data
-      data?.forEach(square => {
-        let quarterIndex = -1;
+      // Group winners by quarter to avoid duplicates
+      const winnersByQuarter: { [key: number]: any[] } = {};
 
-        switch (square.status) {
-          case 'quarter_1_winner':
-            quarterIndex = 0;
-            break;
-          case 'quarter_2_winner':
-            quarterIndex = 1;
-            break;
-          case 'quarter_3_winner':
-            quarterIndex = 2;
-            break;
-          case 'final_winner':
-            quarterIndex = 3;
-            break;
+      data?.forEach(winner => {
+        const quarterIndex = winner.period_no - 1;
+        if (!winnersByQuarter[quarterIndex]) {
+          winnersByQuarter[quarterIndex] = [];
         }
+        winnersByQuarter[quarterIndex].push(winner);
+      });
 
-        if (quarterIndex >= 0 && quarterIndex < this.quarters.length) {
+      // Update quarters with grouped winner data
+      Object.keys(winnersByQuarter).forEach(quarterIndexStr => {
+        const quarterIndex = parseInt(quarterIndexStr);
+        const winners = winnersByQuarter[quarterIndex];
+
+        if (quarterIndex >= 0 && quarterIndex < this.quarters.length && winners.length > 0) {
+          // Use the first winner to get the scores (they should all be the same for the quarter)
+          const firstWinner = winners[0];
+          const homeScore = firstWinner.home_digit !== null ? firstWinner.home_digit : null;
+          const awayScore = firstWinner.away_digit !== null ? firstWinner.away_digit : null;
+
+          // Map all winners for this quarter
+          const quarterWinners = winners.map(winner => {
+            const squareData = winner.squares as any;
+            return {
+              winnerName: winner.winner_name || '',
+              winnerEmail: winner.winner_email || '',
+              squarePosition: squareData ? `[${squareData.row_idx}, ${squareData.col_idx}]` : undefined
+            };
+          });
+
+          // Replace the quarter data (don't append)
           this.quarters[quarterIndex] = {
             ...this.quarters[quarterIndex],
-            winnerName: square.name || '',
-            winnerEmail: square.email || '',
-            isActive: true,
-            // You can add homeScore and awayScore from additional fields if stored
-            // homeScore: square.home_score || null,
-            // awayScore: square.away_score || null,
+            homeScore: homeScore,
+            awayScore: awayScore,
+            winners: quarterWinners, // Replace, don't append
+            isActive: true
           };
+
+          console.log(`Quarter ${quarterIndex + 1} winners:`, {
+            count: quarterWinners.length,
+            homeDigit: homeScore,
+            awayDigit: awayScore,
+            winners: quarterWinners.map(w => w.winnerName)
+          });
         }
       });
 
@@ -380,7 +426,7 @@ export class QuarterWinnersComponent implements OnInit, OnChanges {
       // 3. Save the winner to the database
       // 4. Update the UI
 
-      console.log(`Quarter ${quarterIndex + 1} activated with winner:`, quarter.winnerName);
+      console.log(`Quarter ${quarterIndex + 1} activated with ${quarter.winners.length} winner(s)`);
     }
   }
 

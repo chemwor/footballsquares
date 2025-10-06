@@ -97,6 +97,20 @@ export class HeroComponent {
       user?.email ||
       'Unknown User'
 
+    // Generate randomized axis numbers (0-9 shuffled)
+    const generateRandomizedNumbers = (): number[] => {
+      const numbers = Array.from({ length: 10 }, (_, i) => i); // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+      // Fisher-Yates shuffle algorithm
+      for (let i = numbers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+      }
+      return numbers;
+    };
+
+    const xAxisNumbers = generateRandomizedNumbers();
+    const yAxisNumbers = generateRandomizedNumbers();
+
     const payload = {
       sport: this.formData['sport'],
       title: this.formData['boardName'],
@@ -107,6 +121,10 @@ export class HeroComponent {
       owner_id: user?.id || null,
       owner_name: ownerName,
       reverse_squares: this.formData['reverseSquares'] || false,
+      x_axis_numbers: xAxisNumbers,
+      y_axis_numbers: yAxisNumbers,
+      axes_randomized_at: new Date().toISOString(),
+      random_seed: Math.random().toString(36).substring(2, 15), // Generate a random seed for tracking
     };
 
     try {

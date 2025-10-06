@@ -8,6 +8,7 @@ import { RouterModule, ActivatedRoute } from '@angular/router'
 import { BoardComponent } from '@components/board/board.component'
 import { GameActionsComponent } from '@components/game-actions/game-actions.component'
 import { QuarterWinnersComponent } from '@components/quarter-winners/quarter-winners.component'
+import { UserSquaresComponent } from '@components/user-squares/user-squares.component'
 import { supabase } from 'src/app/data-sources/supabase.client'
 
 @Component({
@@ -22,6 +23,7 @@ import { supabase } from 'src/app/data-sources/supabase.client'
     BoardComponent,
     GameActionsComponent,
     QuarterWinnersComponent,
+    UserSquaresComponent,
   ],
   templateUrl: './service-v3.component.html',
   styles: ``,

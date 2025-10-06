@@ -9,13 +9,13 @@ import { Pagination } from 'swiper/modules'
 // register Swiper custom elements
 register()
 @Component({
-  selector: 'current-user-games',
+  selector: 'pending-requests',
   standalone: true,
   imports: [SwiperDirective],
   templateUrl: './guides.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class CurrentUserGamesComponent {
+export class PendingRequestsComponent {
   allGuide: GuidesType[] = influenceGuides
   selectedCurrency = currency
   swiperConfig: SwiperOptions = {
