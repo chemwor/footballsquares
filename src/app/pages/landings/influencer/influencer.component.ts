@@ -8,16 +8,19 @@ import { ResultsComponent } from './components/results/results.component'
 import { TestimonialsComponent } from './components/testimonials/testimonials.component'
 import { SubscriptionComponent } from './components/subscription/subscription.component'
 import { InstagramComponent } from './components/instagram/instagram.component'
-import {PendingRequestsComponent } from './components/pending-squares/guides.component'
+import {PendingRequestsComponent } from '../../../components/pending-requests/pending-requests.component'
 import { PendingApprovalsComponent } from './components/admin-list-squares/guides.component'
 import { AdminActiveGamesComponent } from './components/admin-active-games/guides.component'
 import { CtaComponent } from '../saas-v3/components/cta/cta.component'
 import { FooterComponent } from '../saas-v2/components/footer/footer.component'
+import { AuthService } from '../../../services/auth.service'
+import { CommonModule } from '@angular/common'
 
 @Component({
   selector: 'landings-influencer',
   standalone: true,
   imports: [
+    CommonModule,
     NavigationBar2Component,
     HeroComponent,
     PendingRequestsComponent,
@@ -30,4 +33,16 @@ import { FooterComponent } from '../saas-v2/components/footer/footer.component'
   templateUrl: './influencer.component.html',
   styles: ``,
 })
-export class InfluencerComponent {}
+export class InfluencerComponent {
+  constructor(public authService: AuthService) {}
+
+  // Helper method to check if user has standard or premium access
+  canAccessAdminFeatures(): boolean {
+    return this.authService.hasStandardAccess();
+  }
+
+  // Helper method to get membership level for display
+  getMembershipLevel(): string {
+    return this.authService.getMembershipLevel();
+  }
+}

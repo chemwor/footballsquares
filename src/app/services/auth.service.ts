@@ -3,15 +3,24 @@ import { Router } from '@angular/router';
 import { supabase } from '../data-sources/supabase.client';
 import { User, AuthError, AuthResponse, Provider } from '@supabase/supabase-js';
 
+interface UserProfile {
+  id: string;
+  membership: string;
+  created_at: string;
+  updated_at: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private _user = signal<User | null>(null);
+  private _profile = signal<UserProfile | null>(null);
   private _loading = signal<boolean>(false);
 
   // Public readonly signals
   user = this._user.asReadonly();
+  profile = this._profile.asReadonly();
   loading = this._loading.asReadonly();
 
   constructor(private router: Router) {
@@ -23,19 +32,59 @@ export class AuthService {
       const { data: { session } } = await supabase.auth.getSession();
       this._user.set(session?.user ?? null);
 
+      if (session?.user) {
+        await this.loadUserProfile(session.user.id);
+      }
+
       // Listen for auth state changes
-      supabase.auth.onAuthStateChange((event, session) => {
+      supabase.auth.onAuthStateChange(async (event, session) => {
         this._user.set(session?.user ?? null);
 
-        if (event === 'SIGNED_IN') {
+        if (event === 'SIGNED_IN' && session?.user) {
+          await this.loadUserProfile(session.user.id);
           this.router.navigate(['/']);
         } else if (event === 'SIGNED_OUT') {
+          this._profile.set(null);
           this.router.navigate(['/auth/signin']);
         }
       });
     } catch (error) {
       console.error('Error initializing auth:', error);
     }
+  }
+
+  private async loadUserProfile(userId: string) {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error loading user profile:', error);
+        return;
+      }
+
+      this._profile.set(data);
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+    }
+  }
+
+  // Helper methods for membership checks
+  hasPremiumAccess(): boolean {
+    const membership = this._profile()?.membership;
+    return membership === 'premium' || membership === 'standard';
+  }
+
+  hasStandardAccess(): boolean {
+    const membership = this._profile()?.membership;
+    return membership === 'standard' || membership === 'premium';
+  }
+
+  getMembershipLevel(): string {
+    return this._profile()?.membership || 'free';
   }
 
   async signIn(email: string, password: string): Promise<{ success: boolean; error?: string }> {
@@ -49,6 +98,10 @@ export class AuthService {
 
       if (error) {
         return { success: false, error: error.message };
+      }
+
+      if (data.user) {
+        await this.loadUserProfile(data.user.id);
       }
 
       return { success: true };

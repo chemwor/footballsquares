@@ -7,9 +7,35 @@
 
 <!--  <influencer-features />-->
 
-  <pending-approvals />
+  <!-- Admin features - only visible for standard and premium members -->
+  @if (canAccessAdminFeatures()) {
+    <pending-approvals />
+    <admin-active-games />
+  }
 
-  <admin-active-games />
+  <!-- Show upgrade message for free users -->
+  @if (!canAccessAdminFeatures() && authService.user()) {
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card bg-gradient-primary text-white text-center p-4">
+            <div class="card-body">
+              <h3 class="card-title mb-3">🔒 Premium Features</h3>
+              <p class="card-text mb-4">
+                Unlock admin features like pending approvals and active games management with a Standard or Premium membership.
+              </p>
+              <p class="small mb-3">
+                Current membership: <strong>{{ getMembershipLevel() | titlecase }}</strong>
+              </p>
+              <a href="/pricing" class="btn btn-light btn-lg">
+                Upgrade to Standard
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
 
   <current-user-games />
 

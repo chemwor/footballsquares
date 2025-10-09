@@ -32,16 +32,27 @@
                 <label class="form-label fs-base text-white" for="sport">Sport</label>
                 <select class="form-select form-select-lg text-white" required [(ngModel)]="formData['sport']" name="sport" id="sport" (change)="onSportChange($event)">
                   <option value="" disabled>Select</option>
-                  <option *ngFor="let s of sports" [value]="s">{{ s }}</option>
+                  <option *ngFor="let s of sports" [value]="s.id">{{ s.name }}</option>
                 </select>
               </div>
 
-              <!-- Match / Games Dropdown -->
+              <!-- League Dropdown -->
+              <div class="mb-3">
+                <label class="form-label fs-base text-white" for="league">League</label>
+                <select class="form-select form-select-lg text-white" required [(ngModel)]="formData['league']" name="league" id="league" (change)="onLeagueChange($event)" [disabled]="!filteredLeagues.length">
+                  <option value="" disabled>Select</option>
+                  <option *ngFor="let league of filteredLeagues" [value]="league.id">{{ league.name }}</option>
+                </select>
+              </div>
+
+              <!-- Match / Game Dropdown -->
               <div class="mb-3">
                 <label class="form-label fs-base text-white" for="match">Match / Game</label>
-                <select class="form-select form-select-lg text-white" required [(ngModel)]="formData['match']" name="match" id="match" [disabled]="!formData['sport']">
+                <select class="form-select form-select-lg text-white" required [(ngModel)]="formData['match']" name="match" id="match" [disabled]="!filteredGames.length">
                   <option value="" disabled>Select</option>
-                  <option *ngFor="let m of matches" [value]="m">{{ m }}</option>
+                  <option *ngFor="let game of filteredGames" [value]="game.id">
+                    {{ game.home_team_name }} vs {{ game.away_team_name }} ({{ game.starts_at | date:'short' }})
+                  </option>
                 </select>
               </div>
 

@@ -1,11 +1,12 @@
 import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { GameInfoComponent } from '../game-info/game-info.component';
 import { supabase } from '../../data-sources/supabase.client';
 
 @Component({
   selector: 'sq-game-actions',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, GameInfoComponent],
   templateUrl: './game-actions.component.html',
   styles: [`
     .game-actions-container {

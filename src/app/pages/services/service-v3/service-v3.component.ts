@@ -7,6 +7,7 @@ import type { JarallaxOptions } from 'jarallax'
 import { RouterModule, ActivatedRoute } from '@angular/router'
 import { BoardComponent } from '@components/board/board.component'
 import { GameActionsComponent } from '@components/game-actions/game-actions.component'
+import { GameInfoComponent } from '@components/game-info/game-info.component'
 import { QuarterWinnersComponent } from '@components/quarter-winners/quarter-winners.component'
 import { UserSquaresComponent } from '@components/user-squares/user-squares.component'
 import { supabase } from 'src/app/data-sources/supabase.client'
@@ -22,6 +23,7 @@ import { supabase } from 'src/app/data-sources/supabase.client'
     RouterModule,
     BoardComponent,
     GameActionsComponent,
+    GameInfoComponent,
     QuarterWinnersComponent,
     UserSquaresComponent,
   ],

@@ -34,14 +34,10 @@ export class HeroComponent {
           iconSrc: 'assets/img/services/v3/icons/time-white.svg',
           headingText: this.gameData.sport + ': ' + this.gameData.team1_name + ' vs ' + this.gameData.team2_name || 'Date TBD',
         },
-        {
-          iconSrc: 'assets/img/services/v3/icons/time-white.svg',
-          headingText: this.formatGameDate(),
-        },
-        {
-          iconSrc: 'assets/img/services/v3/icons/cog-white.svg',
-          headingText: `Status: ${this.gameData.status || 'Unknown'}`,
-        },
+        // {
+        //   iconSrc: 'assets/img/services/v3/icons/time-white.svg',
+        //   headingText: this.formatGameDate(),
+        // },
         {
           iconSrc: 'assets/img/services/v3/icons/monitor-white.svg',
           headingText: `Host: ${this.gameData.owner_name || 'Unknown'}`,

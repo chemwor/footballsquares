@@ -12,9 +12,21 @@ import { supabase } from '../../data-sources/supabase.client';
   imports: [CommonModule, FormsModule, RequestModalComponent],
   template: `
 
+    <!-- Winner Banner - Shows when game is closed and winners exist -->
+    <div *ngIf="shouldShowWinnerBanner()" class="winner-banner">
+      <div class="banner-content">
+        <h2>🎉 Congratulations to the winner! This game is now complete. 🎉</h2>
+        <div *ngIf="getWinnerNames().length > 0" class="winner-names">
+          <strong>Winners:</strong> {{ getWinnerNames().join(', ') }}
+        </div>
+      </div>
+    </div>
+
+
+
     <div class="board-container">
-<!--      <div class="axis-label x-axis">{{ gameData?.team2_name || 'Away Team' }}</div>-->
-      <div class="axis-label y-axis">{{ gameData?.team1_name || 'Home Team' }}</div>
+      <div class="axis-label x-axis">{{ gameData?.team1_name || 'Home Team' }}</div>
+      <div class="axis-label y-axis">{{ gameData?.team2_name || 'Away Team' }}</div>
       <div class="board" [style.--cols]="size()">
         <div class="header corner"></div>
         <div *ngFor="let col of getDisplayCols()" class="header">
@@ -196,6 +208,135 @@ import { supabase } from '../../data-sources/supabase.client';
     button { background: #444; color: #fff; border: none; border-radius: 6px; padding: 0.3rem 0.8rem; cursor: pointer; }
     button:hover { background: #666; }
     select, input[type="checkbox"] { margin-left: 0.5rem; }
+    .winner-banner {
+      background: linear-gradient(135deg, #2ecc40, #27ae60);
+      color: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(46, 204, 64, 0.3);
+      border: 2px solid #27ae60;
+      animation: fadeInScale 0.5s ease-out;
+    }
+    .banner-content h2 {
+      margin: 0 0 1rem 0;
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    .winner-names {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      display: inline-block;
+    }
+    .game-info-panel {
+      background: #222;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      animation: fadeIn 0.5s ease-out;
+    }
+    .game-info-content h3 {
+      margin: 0 0 1rem 0;
+      font-size: 1.6rem;
+      font-weight: bold;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem;
+      background: #2a2d30;
+      border-radius: 8px;
+    }
+    .info-label {
+      font-weight: bold;
+      color: #f7c873;
+    }
+    .info-value {
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .status-badge {
+      padding: 0.4rem 0.8rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+    .status-badge.open { background: #3498db; color: #fff; }
+    .status-badge.active { background: #2ecc40; color: #fff; }
+    .status-badge.closed { background: #e74c3c; color: #fff; }
+    .info-badge {
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .info-badge.reverse { background: #f39c12; color: #000; }
+    .status-visible {
+      color: #2ecc40;
+      font-weight: bold;
+    }
+    .status-hidden {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+    .reverse-info {
+      background: #2c3136;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      border-left: 4px solid #f39c12;
+    }
+    .reverse-info p {
+      margin: 0;
+      color: #ddd;
+    }
+    @media (max-width: 768px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+      .info-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
   `]
 })
 export class BoardComponent implements OnInit {
@@ -419,5 +560,16 @@ export class BoardComponent implements OnInit {
 
     // Otherwise, check the hide_axes flag from game data
     return !this.gameData?.hide_axes;
+  }
+
+  shouldShowWinnerBanner(): boolean {
+    // Show the winner banner if the game is closed and there are winning squares
+    return this.gameData?.status === 'closed' && this.winningSquares.length > 0;
+  }
+
+  getWinnerNames(): string[] {
+    // Extract unique winner names from the winning squares data
+    const names = new Set(this.winningSquares.map(w => w.winner_name));
+    return Array.from(names);
   }
 }

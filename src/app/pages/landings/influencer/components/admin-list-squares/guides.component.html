@@ -1,70 +1,157 @@
 <section class="position-relative py-2 py-sm-3 py-md-4 py-lg-5">
-  <div
-    class="bg-secondary position-absolute top-0 start-0 w-100 h-100 d-none d-xxl-block"
-    style="border-top-left-radius: 8rem; border-bottom-right-radius: 8rem"
-  ></div>
-  <div
-    class="bg-secondary position-absolute top-0 start-0 w-100 h-100 d-none d-lg-block d-xxl-none"
-    style="border-top-left-radius: 4rem; border-bottom-right-radius: 4rem"
-  ></div>
-  <div
-    class="bg-secondary position-absolute top-0 start-0 w-100 h-100 d-lg-none"
-    style="border-top-left-radius: 2.25rem; border-bottom-right-radius: 2.25rem"
-  ></div>
-  <div
-    class="container position-relative z-2 py-5 mt-xl-2 mb-lg-2 mb-xl-3 mb-xxl-5 mt-xxl-4"
-  >
-    <h2 class="h1 pt-xxl-1 pb-4 mb-2 mb-lg-3">Pending Approvals</h2>
-
-    <div class="swiper">
-      <swiper-container
-        [config]="swiperConfig"
-        init="false"
-        class="swiper-wrapper"
-      >
-        @for (item of allGuide; track $index) {
-          <swiper-slide class="swiper-slide h-auto">
-            <div class="card h-100 border-0 rounded-4 pb-3">
-              <div class="position-relative" data-bs-theme="light">
-                <div class="card-body position-absolute start-0 bottom-0 py-4">
-                  <div class="d-table badge bg-danger rounded-pill mb-2">
-                    {{ item.programs }}
-                  </div>
-                  <div class="d-table badge bg-light text-nav rounded-pill">
-                    {{ item.exercises }}
-                  </div>
-                </div>
-                <img
-                  class="rounded-4 rounded-bottom-0"
-                  src="{{ item.image }}"
-                  alt="Guide"
-                />
-              </div>
-              <div class="card-body pb-4">
-                <div class="text-primary fw-bold pb-2 mb-1">
-                  {{ selectedCurrency }}{{ item.price }}
-                </div>
-                <h3 class="h4">{{ item.title }}</h3>
-                <ul class="fs-sm ps-4 mb-0">
-                  @for (data of item.details; track $index) {
-                    <li class="mb-2">{{ data }}</li>
-                  }
-                </ul>
-              </div>
-              <div class="card-footer border-0 pt-0">
-                <button class="btn btn-outline-primary w-100" type="button">
-                  Buy now
-                </button>
-              </div>
-            </div>
-          </swiper-slide>
+  <div class="container py-5">
+    <!-- Header with notification count -->
+    <div class="d-flex justify-content-between align-items-center section-header">
+      <div class="position-relative">
+        <h2 class="h1 mb-0">Pending Approvals</h2>
+        @if (totalPendingCount > 0) {
+          <span class="notification-badge">{{ totalPendingCount }}</span>
         }
-      </swiper-container>
-
-      <div
-        id="pagination"
-        class="swiper-pagination position-relative bottom-0 mt-2 pt-4 d-lg-none"
-      ></div>
+      </div>
+      <button
+        class="btn refresh-btn"
+        (click)="loadPendingApprovals()"
+        [disabled]="loading"
+      >
+        @if (loading) {
+          <div class="spinner-border spinner-border-sm me-2" role="status">
+            <span class="visually-hidden">Refreshing...</span>
+          </div>
+        } @else {
+          <i class="bi bi-arrow-clockwise me-2"></i>
+        }
+        Refresh
+      </button>
     </div>
+
+    <!-- Loading state -->
+    @if (loading && displayedSquares.length === 0) {
+      <div class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading pending approvals...</span>
+        </div>
+      </div>
+    }
+
+    <!-- Error state -->
+    @if (error) {
+      <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Error Loading Approvals</h4>
+        <p>{{ error }}</p>
+        <button class="btn btn-outline-danger" (click)="loadPendingApprovals()">
+          Try Again
+        </button>
+      </div>
+    }
+
+    <!-- Empty state -->
+    @if (!loading && !error && displayedSquares.length === 0) {
+      <div class="empty-state">
+        <i class="bi bi-check-circle text-success" style="font-size: 4rem;"></i>
+        <h3 class="mt-3 mb-2">All Caught Up!</h3>
+        <p class="text-muted mb-4">
+          There are no pending square requests to approve at this time.
+        </p>
+        <p class="small text-muted">
+          This page will automatically refresh every 30 seconds to check for new requests.
+        </p>
+      </div>
+    }
+
+    <!-- Swiper Slides -->
+    @if (!loading && !error && displayedSquares.length > 0) {
+      <div class="position-relative">
+        <div class="swiper">
+          <swiper-container
+            [config]="swiperConfig"
+            init="false"
+            class="swiper-wrapper"
+          >
+            <!-- Individual pending request slides -->
+            @for (square of displayedSquares; track square.id) {
+              <swiper-slide class="swiper-slide pending-slide">
+                <div class="card pending-card">
+                  <!-- Pending Request Header -->
+                  <div class="pending-header">
+                    <div class="square-badge">
+                      Square {{ getSquarePosition(square) }}
+                    </div>
+                    <div class="game-title">{{ square.game_title }}</div>
+                    <div class="request-date">
+                      <i class="bi bi-clock me-1"></i>
+                      {{ formatDate(square.requested_at) }}
+                    </div>
+                  </div>
+
+                  <!-- Requester Information -->
+                  <div class="requester-info">
+                    <div class="requester-name">{{ square.name }}</div>
+                    <div class="requester-email">
+                      <i class="bi bi-envelope me-1"></i>
+                      {{ square.email }}
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                      <button
+                        class="btn-approve"
+                        (click)="approveSquare(square)"
+                        [disabled]="processingSquareId === square.id"
+                      >
+                        @if (processingSquareId === square.id) {
+                          <div class="spinner-border spinner-border-sm" role="status">
+                            <span class="visually-hidden">Processing...</span>
+                          </div>
+                        } @else {
+                          <i class="bi bi-check-lg"></i>
+                        }
+                        Approve
+                      </button>
+
+                      <button
+                        class="btn-decline"
+                        (click)="declineSquare(square)"
+                        [disabled]="processingSquareId === square.id"
+                      >
+                        @if (processingSquareId === square.id) {
+                          <div class="spinner-border spinner-border-sm" role="status">
+                            <span class="visually-hidden">Processing...</span>
+                          </div>
+                        } @else {
+                          <i class="bi bi-x-lg"></i>
+                        }
+                        Decline
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </swiper-slide>
+            }
+
+            <!-- View More slide (when there are more than 5 requests) -->
+            @if (showViewMore) {
+              <swiper-slide class="swiper-slide pending-slide">
+                <div class="view-more-card" (click)="viewAllPendingRequests()">
+                  <div class="view-more-number">+{{ getRemainingCount() }}</div>
+                  <div class="view-more-text">View More Requests</div>
+                  <div class="mt-2">
+                    <i class="bi bi-arrow-right-circle fs-3"></i>
+                  </div>
+                </div>
+              </swiper-slide>
+            }
+          </swiper-container>
+        </div>
+
+        <!-- Navigation buttons -->
+        @if (displayedSquares.length > 1 || showViewMore) {
+          <div class="swiper-button-next"></div>
+          <div class="swiper-button-prev"></div>
+        }
+
+        <!-- Pagination -->
+        <div class="swiper-pagination"></div>
+      </div>
+    }
   </div>
 </section>

@@ -1,0 +1,113 @@
+<div class="game-info-container">
+  <!-- Winner Banner (shown when game is complete and has winner) -->
+  @if (isGameComplete && hasWinner) {
+    <div class="winner-banner">
+      <h3>🎉 Congratulations to the winner! 🎉</h3>
+      <p>This game is now complete.</p>
+      @if (gameData?.winner_name) {
+        <p><strong>Winner:</strong> {{ gameData.winner_name }}</p>
+      }
+    </div>
+  }
+
+  <div class="info-header">
+    <h2 class="info-title">Game Information</h2>
+<!--    <div class="game-status-badge" [ngClass]="gameStatusClass">-->
+<!--      {{ gameStatusText }}-->
+<!--    </div>-->
+  </div>
+
+  <div class="info-grid">
+    <!-- Game Mode Card -->
+    <div class="info-card">
+      <div class="info-card-title">
+        <svg class="icon" viewBox="0 0 24 24">
+          <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4V12L16.2,16.2L17.6,14.8L14,11.2V4H12Z"/>
+        </svg>
+        Game Mode
+      </div>
+      <div class="info-card-content">
+        <div class="feature-indicator" [ngClass]="isReverseSquares ? 'feature-enabled' : 'feature-disabled'">
+          <span class="status-dot" [ngClass]="isReverseSquares ? 'dot-enabled' : 'dot-disabled'"></span>
+          {{ isReverseSquares ? 'Reverse Squares Enabled' : 'Standard Squares' }}
+        </div>
+        @if (isReverseSquares) {
+          <p style="margin-top: 0.8rem; font-size: 0.85rem; color: #bbb;">
+            When Reverse Squares is enabled, winning combinations count in both directions. So if the final digits are 4 for Team A and 5 for Team B, the squares for 4×5 and 5×4 both win.
+          </p>
+        }
+      </div>
+    </div>
+
+    <!-- Axes Visibility Card -->
+    <div class="info-card">
+      <div class="info-card-title">
+        <svg class="icon" viewBox="0 0 24 24">
+          <path d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
+        </svg>
+        Board Numbers
+      </div>
+      <div class="info-card-content">
+        <div class="feature-indicator" [ngClass]="areAxesVisible ? 'feature-enabled' : 'feature-disabled'">
+          <span class="status-dot" [ngClass]="areAxesVisible ? 'dot-enabled' : 'dot-disabled'"></span>
+          {{ areAxesVisible ? 'Numbers Visible' : 'Numbers Hidden' }}
+        </div>
+        @if (!areAxesVisible) {
+          <p style="margin-top: 0.8rem; font-size: 0.85rem; color: #bbb;">
+            Numbers stay hidden until kickoff, then appear automatically.          </p>
+        } @else {
+          <p style="margin-top: 0.8rem; font-size: 0.85rem; color: #bbb;">
+            You can see the row and column numbers on the board.
+          </p>
+        }
+      </div>
+    </div>
+
+    <!-- Game Status Card -->
+    <div class="info-card">
+      <div class="info-card-title">
+        <svg class="icon" viewBox="0 0 24 24">
+          <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z"/>
+        </svg>
+        Current Status
+      </div>
+      <div class="info-card-content">
+        @if (isGameComplete) {
+          <p>🏆 The game has ended and a winner has been determined.</p>
+        } @else if (isGameClosed) {
+          <p>🔒 The game is closed. No more squares can be requested.</p>
+        } @else {
+          <p>🟢 The game is open and accepting square requests.</p>
+        }
+
+        @if (gameData?.game_time) {
+          <p style="margin-top: 0.5rem; font-size: 0.85rem; color: #bbb;">
+            <strong>Game Time:</strong> {{ gameData.game_time | date:'medium' }}
+          </p>
+        }
+      </div>
+    </div>
+
+    <!-- Additional Game Info -->
+    @if (gameData?.description || gameData?.rules) {
+      <div class="info-card">
+        <div class="info-card-title">
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"/>
+          </svg>
+          Game Details
+        </div>
+        <div class="info-card-content">
+          @if (gameData?.description) {
+            <p>{{ gameData.description }}</p>
+          }
+          @if (gameData?.rules) {
+            <p style="margin-top: 0.5rem; font-size: 0.85rem; color: #bbb;">
+              {{ gameData.rules }}
+            </p>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>
