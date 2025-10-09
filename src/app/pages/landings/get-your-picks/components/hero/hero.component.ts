@@ -46,7 +46,8 @@ export class HeroComponent {
     match: '',
     boardSize: '10x10',
     boardName: '',
-    reverseSquares: false
+    reverseSquares: false,
+    hideAxes: false
   };
 
   sports: any[] = [];
@@ -175,6 +176,7 @@ export class HeroComponent {
       owner_id: user?.id || null,
       owner_name: ownerName,
       reverse_squares: this.formData['reverseSquares'] || false,
+      hide_axes: this.formData['hideAxes'] || false,
       x_axis_numbers: xAxisNumbers,
       y_axis_numbers: yAxisNumbers,
       axes_randomized_at: new Date().toISOString(),

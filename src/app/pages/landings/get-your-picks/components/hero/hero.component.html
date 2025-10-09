@@ -79,7 +79,21 @@
                     Reverse Squares
                   </label>
                   <div class="form-text text-white-50 small mt-1">
-                    When enabled, a score’s last digits win in both directions. If the result is 4 and 5, the squares for 4×5 and 5×4 are both winners.                  </div>
+                    When enabled, a score’s last digits win in both directions. If the result is 4 and 5, the squares for 4×5 and 5×4 are both winners.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Hide Axes Option -->
+              <div class="mb-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" [(ngModel)]="formData['hideAxes']" name="hideAxes" id="hideAxes">
+                  <label class="form-check-label text-white fs-base" for="hideAxes">
+                    Hide Axes
+                  </label>
+                  <div class="form-text text-white-50 small mt-1">
+                    When enabled, the board will not display the axis numbers to participants. Use this for extra challenge or privacy.
+                  </div>
                 </div>
               </div>
 
