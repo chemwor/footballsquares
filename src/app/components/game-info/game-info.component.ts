@@ -261,6 +261,10 @@ export class GameInfoComponent {
     return this.gameData?.status === GameStatus.Cancel;
   }
 
+  get hasWinner(): boolean {
+    return this.gameData?.winner_name || this.gameData?.has_winner || false;
+  }
+
   get isReverseSquares(): boolean {
     return this.gameData?.reverse_squares || false;
   }
