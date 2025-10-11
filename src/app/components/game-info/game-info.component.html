@@ -72,10 +72,20 @@
         Current Status
       </div>
       <div class="info-card-content">
-        @if (isGameComplete) {
+        @if (hasWinner && isGameComplete) {
           <p>🏆 The game has ended and a winner has been determined.</p>
+        } @else if (isGameComplete) {
+          <p>🏁 The game has ended.</p>
+        } @else if (isGameCancelled) {
+          <p>❌ This game has been cancelled.</p>
+        } @else if (isGameActive) {
+          <p>🔴 The game is currently in progress.</p>
+        } @else if (gameData?.status === 'locked') {
+          <p>🔒 Registration is locked. No more squares can be requested.</p>
         } @else if (isGameClosed) {
           <p>🔒 The game is closed. No more squares can be requested.</p>
+        } @else if (isGameJoinable) {
+          <p>🟢 The game is open and accepting square requests.</p>
         } @else {
           <p>🟢 The game is open and accepting square requests.</p>
         }
