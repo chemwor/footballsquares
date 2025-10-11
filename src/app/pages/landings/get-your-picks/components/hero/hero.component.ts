@@ -85,15 +85,25 @@ export class HeroComponent {
     if (!this.sports.length) {
       console.warn('⚠️ No sports found in the database.');
     }
+
     const { data: leaguesData, error: leaguesError } = await supabase.from('leagues').select();
     if (leaguesError) {
       console.error('❌ Error fetching leagues:', leaguesError);
     }
     this.leagues = leaguesData || [];
-    const { data: gamesData, error: gamesError } = await supabase.from('v_scheduled_games_with_teams').select();
+
+    // Fetch only scheduled games and order by start date (closest first)
+    const { data: gamesData, error: gamesError } = await supabase
+      .from('v_scheduled_games_with_teams')
+      .select('*')
+      .eq('status', 'scheduled') // Only get scheduled games
+      .gte('starts_at', new Date().toISOString()) // Only future games
+      .order('starts_at', { ascending: true }); // Closest first
+
     if (gamesError) {
       console.error('❌ Error fetching games:', gamesError);
     }
+    console.log('Fetched scheduled games:', gamesData);
     this.games = gamesData || [];
   }
 
@@ -110,8 +120,14 @@ export class HeroComponent {
 
   onLeagueChange(event: Event) {
     const leagueId = (event.target as HTMLSelectElement).value;
-    this.filteredGames = this.games.filter(g => g.league_id == leagueId);
+    // Filter games by league and ensure they're still scheduled/upcoming
+    this.filteredGames = this.games.filter(g =>
+      g.league_id == leagueId &&
+      g.status === 'scheduled' &&
+      new Date(g.starts_at) > new Date()
+    ).sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime());
     this.formData['match'] = '';
+    console.log('Filtered games for league:', this.filteredGames);
   }
 
   async submitForm() {

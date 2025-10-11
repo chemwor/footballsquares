@@ -1,6 +1,14 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+export enum GameStatus {
+  Open = 'open',
+  Cancel = 'cancel',
+  Locked = 'locked',
+  Started = 'started',
+  Complete = 'complete',
+}
+
 @Component({
   selector: 'sq-game-info',
   standalone: true,
@@ -48,16 +56,40 @@ import { CommonModule } from '@angular/common';
       box-shadow: 0 2px 4px rgba(46, 204, 64, 0.3);
     }
 
-    .status-closed {
+    .status-cancel {
+      background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+      color: white;
+      box-shadow: 0 2px 4px rgba(149, 165, 166, 0.3);
+    }
+
+    .status-locked {
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      color: white;
+      box-shadow: 0 2px 4px rgba(243, 156, 18, 0.3);
+    }
+
+    .status-started {
       background: linear-gradient(135deg, #e74c3c, #c0392b);
       color: white;
       box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+      animation: pulse 2s ease-in-out infinite;
     }
 
     .status-complete {
       background: linear-gradient(135deg, #9b59b6, #8e44ad);
       color: white;
       box-shadow: 0 2px 4px rgba(155, 89, 182, 0.3);
+    }
+
+    .status-closed {
+      background: linear-gradient(135deg, #34495e, #2c3e50);
+      color: white;
+      box-shadow: 0 2px 4px rgba(52, 73, 94, 0.3);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
     }
 
     .info-grid {
@@ -184,16 +216,49 @@ import { CommonModule } from '@angular/common';
 export class GameInfoComponent {
   @Input() gameData: any;
 
+  get gameStatusClass(): string {
+    const status = this.gameData?.status;
+    return `game-status-badge status-${status}`;
+  }
+
+  get gameStatusText(): string {
+    const status = this.gameData?.status;
+    switch (status) {
+      case GameStatus.Open:
+        return 'Open for Registration';
+      case GameStatus.Cancel:
+        return 'Cancelled';
+      case GameStatus.Locked:
+        return 'Registration Locked';
+      case GameStatus.Started:
+        return 'Game in Progress';
+      case GameStatus.Complete:
+        return 'Game Complete';
+      case 'closed': // Legacy status
+        return 'Closed';
+      default:
+        return 'Unknown Status';
+    }
+  }
+
   get isGameClosed(): boolean {
-    return this.gameData?.status === 'closed' || this.gameData?.is_closed || false;
+    return this.gameData?.status === 'closed' || this.gameData?.status === GameStatus.Complete;
   }
 
   get isGameComplete(): boolean {
-    return this.gameData?.status === 'complete' || this.gameData?.has_winner || false;
+    return this.gameData?.status === GameStatus.Complete;
   }
 
-  get hasWinner(): boolean {
-    return this.gameData?.winner_name || this.gameData?.has_winner || false;
+  get isGameActive(): boolean {
+    return this.gameData?.status === GameStatus.Started;
+  }
+
+  get isGameJoinable(): boolean {
+    return this.gameData?.status === GameStatus.Open;
+  }
+
+  get isGameCancelled(): boolean {
+    return this.gameData?.status === GameStatus.Cancel;
   }
 
   get isReverseSquares(): boolean {
@@ -202,17 +267,5 @@ export class GameInfoComponent {
 
   get areAxesVisible(): boolean {
     return !this.gameData?.hide_axes; // If hide_axes is true, axes are NOT visible
-  }
-
-  get gameStatusText(): string {
-    if (this.isGameComplete) return 'Complete';
-    if (this.isGameClosed) return 'Closed';
-    return 'Open';
-  }
-
-  get gameStatusClass(): string {
-    if (this.isGameComplete) return 'status-complete';
-    if (this.isGameClosed) return 'status-closed';
-    return 'status-open';
   }
 }
