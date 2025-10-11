@@ -8,8 +8,8 @@ import { supabase } from '../../data-sources/supabase.client';
   imports: [CommonModule],
   template: `
     <div class="board-container">
-      <div class="axis-label x-axis">{{ gameData?.team2_name || 'Eagles' }}</div>
-      <div class="axis-label y-axis">{{ gameData?.team1_name || 'Falcons' }}</div>
+      <div class="axis-label x-axis">{{ gameData?.team1_name || 'Home' }}</div>
+      <div class="axis-label y-axis">{{ gameData?.team2_name || 'Away' }}</div>
       <div class="board" [style.--cols]="gridSize">
         <div class="header corner"></div>
         <div *ngFor="let col of cols" class="header">{{ shouldShowAxisNumbers() ? col : '?' }}</div>
