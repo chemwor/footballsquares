@@ -6,6 +6,14 @@ import { RequestModalComponent } from '../request-modal/request-modal.component'
 import { Square, SquareStatus } from '../../models/square.model';
 import { supabase } from '../../data-sources/supabase.client';
 
+export enum GameStatus {
+  Open = 'open',
+  Cancel = 'cancel',
+  Locked = 'locked',
+  Started = 'started',
+  Complete = 'complete',
+}
+
 @Component({
   selector: 'sq-board',
   standalone: true,
@@ -564,12 +572,16 @@ export class BoardComponent implements OnInit {
 
   shouldShowWinnerBanner(): boolean {
     // Show the winner banner if the game is closed and there are winning squares
-    return this.gameData?.status === 'closed' && this.winningSquares.length > 0;
+    return this.gameData?.status === GameStatus.Complete && this.getWinnerNames().length > 0;
   }
 
   getWinnerNames(): string[] {
     // Extract unique winner names from the winning squares data
     const names = new Set(this.winningSquares.map(w => w.winner_name));
     return Array.from(names);
+  }
+
+  isBoardAvailable(): boolean {
+    return this.gameData?.status === GameStatus.Open || this.gameData?.status === GameStatus.Started;
   }
 }

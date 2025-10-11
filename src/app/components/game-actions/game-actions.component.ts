@@ -3,6 +3,14 @@ import { CommonModule } from '@angular/common';
 import { GameInfoComponent } from '../game-info/game-info.component';
 import { supabase } from '../../data-sources/supabase.client';
 
+export enum GameStatus {
+  Open = 'open',
+  Cancel = 'cancel',
+  Locked = 'locked',
+  Started = 'started',
+  Complete = 'complete',
+}
+
 @Component({
   selector: 'sq-game-actions',
   standalone: true,
@@ -425,6 +433,19 @@ export class GameActionsComponent implements OnInit, OnDestroy, OnChanges {
 
   isGameClosed(): boolean {
     return this.gameData?.status === 'closed';
+  }
+
+  isGameJoinable(): boolean {
+    // Allow joining only if game is open and not locked/canceled/started/complete
+    return this.gameData?.status === GameStatus.Open;
+  }
+
+  isGameLive(): boolean {
+    return this.gameData?.status === GameStatus.Started;
+  }
+
+  isGameComplete(): boolean {
+    return this.gameData?.status === GameStatus.Complete;
   }
 
   formatStartTime(): string {

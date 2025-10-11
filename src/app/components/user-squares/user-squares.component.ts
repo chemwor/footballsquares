@@ -2,6 +2,14 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { supabase } from '../../data-sources/supabase.client';
 
+export enum GameStatus {
+  Open = 'open',
+  Cancel = 'cancel',
+  Locked = 'locked',
+  Started = 'started',
+  Complete = 'complete',
+}
+
 @Component({
   selector: 'sq-user-squares',
   standalone: true,
@@ -247,6 +255,7 @@ export class UserSquaresComponent implements OnInit {
       }
 
       // Fetch squares belonging to the current user for this game
+      // Accept squares for all relevant statuses
       const { data: squares, error } = await supabase
         .from('squares')
         .select('*')
@@ -258,19 +267,22 @@ export class UserSquaresComponent implements OnInit {
 
       if (error) {
         console.error('Error fetching user squares:', error);
-        this.error = 'Failed to load your squares.';
-        this.userSquares = [];
-      } else {
-        this.userSquares = squares || [];
-        console.log('Loaded user squares:', this.userSquares);
+        this.error = 'Could not load your squares.';
+        this.loading = false;
+        return;
       }
-    } catch (err) {
-      console.error('Unexpected error loading user squares:', err);
-      this.error = 'An unexpected error occurred.';
-      this.userSquares = [];
-    }
 
-    this.loading = false;
+      this.userSquares = squares || [];
+      this.loading = false;
+    } catch (err) {
+      this.error = 'Unexpected error loading your squares.';
+      this.loading = false;
+    }
+  }
+
+  // Add helper to check if game is active for user actions
+  isGameActive(): boolean {
+    return this.gameData?.status === GameStatus.Open || this.gameData?.status === GameStatus.Started;
   }
 
   shouldShowCoordinates(): boolean {

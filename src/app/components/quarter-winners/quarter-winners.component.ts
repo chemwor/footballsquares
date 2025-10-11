@@ -3,6 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { supabase } from '../../data-sources/supabase.client';
 
+export enum GameStatus {
+  Open = 'open',
+  Cancel = 'cancel',
+  Locked = 'locked',
+  Started = 'started',
+  Complete = 'complete',
+}
+
 interface QuarterWinner {
   quarter: string;
   homeScore: number | null;
@@ -237,7 +245,7 @@ interface QuarterWinner {
   `]
 })
 export class QuarterWinnersComponent implements OnInit, OnChanges {
-  @Input() gameData: any = null;
+  @Input() gameData: any;
   @Input() showAdminControls: boolean = false;
 
   showWinners = false;
@@ -447,19 +455,8 @@ export class QuarterWinnersComponent implements OnInit, OnChanges {
   }
 
   shouldShowWinners(): boolean {
-    // Show winners if:
-    // 1. Game is in progress or completed
-    // 2. At least one quarter has been declared
-    // 3. Admin wants to see the component for testing
-
-    const gameStatus = this.gameData?.status;
-    const hasActiveQuarters = this.quarters.some(q => q.isActive);
-
-    return gameStatus === 'locked' ||
-           gameStatus === 'drawn' ||
-           gameStatus === 'closed' ||
-           hasActiveQuarters ||
-           this.showAdminControls;
+    // Only show winners if the game is complete
+    return this.gameData?.status === GameStatus.Complete;
   }
 
   // Template methods (used in HTML template)
