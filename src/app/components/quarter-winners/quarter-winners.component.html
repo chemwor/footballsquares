@@ -10,7 +10,9 @@
       <div class="quarter-header">
         <h3>{{ quarter.quarter }}</h3>
         <div class="score" *ngIf="quarter.homeScore !== null && quarter.awayScore !== null">
-          Winning Numbers: {{ quarter.homeScore }} - {{ quarter.awayScore }}
+          Winning Numbers:
+          <span *ngIf="quarter.homeTeamAbbr">{{ quarter.homeTeamAbbr }}: </span>{{ quarter.homeScore }} -
+          <span *ngIf="quarter.awayTeamAbbr">{{ quarter.awayTeamAbbr }}: </span>{{ quarter.awayScore }}
         </div>
       </div>
 

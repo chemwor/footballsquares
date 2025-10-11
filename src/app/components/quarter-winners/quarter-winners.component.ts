@@ -7,6 +7,8 @@ interface QuarterWinner {
   quarter: string;
   homeScore: number | null;
   awayScore: number | null;
+  homeTeamAbbr?: string;
+  awayTeamAbbr?: string;
   winners: Array<{
     winnerName: string;
     winnerEmail: string;
@@ -290,11 +292,71 @@ export class QuarterWinnersComponent implements OnInit, OnChanges {
       }
     ];
 
+    // Load team abbreviations
+    await this.loadTeamAbbreviations();
+
     // Load actual winners from database
     await this.loadWinnersFromDatabase();
 
     // Show winners section if game status is appropriate
     this.showWinners = this.shouldShowWinners();
+  }
+
+  async loadTeamAbbreviations() {
+    if (!this.gameData) return;
+
+    try {
+      let homeTeamAbbr = '';
+      let awayTeamAbbr = '';
+
+      // If we have scheduled_game_id, fetch team data from the scheduled games view
+      if (this.gameData.scheduled_game_id) {
+        const { data: gameData, error } = await supabase
+          .from('v_scheduled_games_with_teams')
+          .select('home_team_abbr, away_team_abbr')
+          .eq('id', this.gameData.scheduled_game_id)
+          .single();
+
+        if (!error && gameData) {
+          homeTeamAbbr = gameData.home_team_abbr || '';
+          awayTeamAbbr = gameData.away_team_abbr || '';
+        }
+      }
+      // Fallback: use team names from game data to look up abbreviations
+      else if (this.gameData.team1_name && this.gameData.team2_name) {
+        // Look up teams by name (assuming team1 is home, team2 is away)
+        const { data: homeTeam } = await supabase
+          .from('teams')
+          .select('abbreviation')
+          .eq('name', this.gameData.team1_name)
+          .single();
+
+        const { data: awayTeam } = await supabase
+          .from('teams')
+          .select('abbreviation')
+          .eq('name', this.gameData.team2_name)
+          .single();
+
+        homeTeamAbbr = homeTeam?.abbreviation || this.gameData.team1_name?.substring(0, 3).toUpperCase() || '';
+        awayTeamAbbr = awayTeam?.abbreviation || this.gameData.team2_name?.substring(0, 3).toUpperCase() || '';
+      }
+
+      // Update all quarters with team abbreviations
+      this.quarters.forEach(quarter => {
+        quarter.homeTeamAbbr = homeTeamAbbr;
+        quarter.awayTeamAbbr = awayTeamAbbr;
+      });
+
+    } catch (error) {
+      console.error('Error loading team abbreviations:', error);
+      // Fallback to team names if available
+      if (this.gameData.team1_name && this.gameData.team2_name) {
+        this.quarters.forEach(quarter => {
+          quarter.homeTeamAbbr = this.gameData.team1_name?.substring(0, 3).toUpperCase() || '';
+          quarter.awayTeamAbbr = this.gameData.team2_name?.substring(0, 3).toUpperCase() || '';
+        });
+      }
+    }
   }
 
   async loadWinnersFromDatabase() {
@@ -352,11 +414,12 @@ export class QuarterWinnersComponent implements OnInit, OnChanges {
 
           // Map all winners for this quarter
           const quarterWinners = winners.map(winner => {
-            const squareData = winner.squares as any;
             return {
               winnerName: winner.winner_name || '',
               winnerEmail: winner.winner_email || '',
-              squarePosition: squareData ? `[${squareData.row_idx}, ${squareData.col_idx}]` : undefined
+              squarePosition: winner.home_digit !== null && winner.away_digit !== null
+                ? `[${winner.home_digit}, ${winner.away_digit}]`
+                : undefined
             };
           });
 
