@@ -76,7 +76,7 @@ export class CompleteGamesComponent implements OnInit {
         `)
         .eq('owner_id', user.id)
         .in('status', [GameStatus.Complete, GameStatus.Cancel])
-        .order('closed_at', { ascending: false, nullsLast: true })
+        .order('closed_at', { ascending: false })
         .order('created_at', { ascending: false })
 
       if (error) {
