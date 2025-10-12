@@ -691,8 +691,10 @@ export class BoardComponent implements OnInit {
   }
 
   shouldShowAxisNumbers(): boolean {
-    // Always show axis numbers if the game is closed (final reveal)
-    if (this.gameData?.status === 'closed') {
+    // Always show axis numbers if the game is closed, complete, or started (final reveal or game in progress)
+    if (this.gameData?.status === 'closed' ||
+        this.gameData?.status === 'complete' ||
+        this.gameData?.status === 'started') {
       return true;
     }
 

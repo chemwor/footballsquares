@@ -9,10 +9,11 @@ import { CommonModule } from '@angular/common'
 
 export enum GameStatus {
   Open = 'open',
-  Cancel = 'cancel',
+  Closed = 'closed',
   Locked = 'locked',
   Started = 'started',
-  Complete = 'complete',
+  Completed = 'completed',
+  Canceled = 'canceled',
 }
 
 @Component({
@@ -52,7 +53,22 @@ export class CompleteGamesComponent implements OnInit {
         return
       }
 
-      // Fetch games where user is the owner and status is Complete or Cancel
+      console.log('Fetching historical games for user:', user.id)
+
+      // First, let's see ALL games for this user to debug what statuses exist
+      const { data: allGames, error: allGamesError } = await supabase
+        .from('games')
+        .select('id, title, status')
+        .eq('owner_id', user.id)
+
+      if (allGamesError) {
+        console.error('Error fetching all games:', allGamesError)
+      } else {
+        console.log('All games for user:', allGames)
+        console.log('Unique statuses found:', [...new Set(allGames?.map(g => g.status) || [])])
+      }
+
+      // Fetch games where user is the owner and status is Completed, Closed, or Canceled
       const { data: gamesData, error } = await supabase
         .from('games')
         .select(`
@@ -75,9 +91,11 @@ export class CompleteGamesComponent implements OnInit {
           pending_count
         `)
         .eq('owner_id', user.id)
-        .in('status', [GameStatus.Complete, GameStatus.Cancel])
+        .in('status', [GameStatus.Completed, GameStatus.Closed, GameStatus.Canceled])
         .order('closed_at', { ascending: false })
         .order('created_at', { ascending: false })
+
+      console.log('Historical games query result:', { data: gamesData, error })
 
       if (error) {
         console.error('Error fetching historical games:', error)
@@ -85,6 +103,9 @@ export class CompleteGamesComponent implements OnInit {
         this.loading = false
         return
       }
+
+      console.log('Raw games data:', gamesData)
+      console.log('Looking for statuses:', [GameStatus.Completed, GameStatus.Closed, GameStatus.Canceled])
 
       // Transform the data to match the expected format
       this.games = (gamesData || []).map(game => ({
@@ -114,9 +135,11 @@ export class CompleteGamesComponent implements OnInit {
 
   private getStatusDisplay(status: string): string {
     switch (status) {
-      case GameStatus.Complete:
+      case GameStatus.Completed:
         return 'Completed'
-      case GameStatus.Cancel:
+      case GameStatus.Closed:
+        return 'Closed'
+      case GameStatus.Canceled:
         return 'Cancelled'
       default:
         return status
@@ -125,9 +148,11 @@ export class CompleteGamesComponent implements OnInit {
 
   private getExcerpt(game: any): string {
     switch (game.status) {
-      case GameStatus.Complete:
+      case GameStatus.Completed:
         return `This game is finished. See results and winners! Final participation: ${game.claimed_count || 0} squares claimed.`
-      case GameStatus.Cancel:
+      case GameStatus.Closed:
+        return `This game has been closed. Final participation: ${game.claimed_count || 0} squares claimed.`
+      case GameStatus.Canceled:
         return `This game was cancelled by the admin. No squares were finalized.`
       default:
         return 'Historical squares game.'

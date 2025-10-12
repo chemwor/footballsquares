@@ -460,27 +460,11 @@ export class GameActionsComponent implements OnInit, OnDestroy, OnChanges {
 
   getStatusText(): string {
     switch (this.gameData?.status) {
-      case GameStatus.Open:
-      case 'open':
-        return 'Open';
-      case GameStatus.Locked:
-      case 'locked':
-        return 'Locked';
-      case GameStatus.Started:
-      case 'started':
-        return 'Started';
-      case GameStatus.Complete:
-      case 'complete':
-        return 'Complete';
-      case GameStatus.Cancel:
-      case 'cancel':
-        return 'Cancelled';
-      case 'drawn':
-        return 'Drawn';
-      case 'closed':
-        return 'Closed';
-      default:
-        return 'Unknown';
+      case 'open': return 'Open';
+      case 'locked': return 'Locked';
+      case 'drawn': return 'Drawn';
+      case 'closed': return 'Closed';
+      default: return 'Unknown';
     }
   }
 

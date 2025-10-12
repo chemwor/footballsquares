@@ -65,13 +65,34 @@ export class ListBlogComponent implements OnInit {
       this.error = 'No user found.';
       return;
     }
+
+    console.log('Current user ID:', user.id);
+
+    // First, let's see ALL games for this user to debug what exists
+    const { data: allUserGames, error: allError } = await supabase
+      .from('games')
+      .select('id, title, status, owner_id')
+      .eq('owner_id', user.id);
+
+    if (allError) {
+      console.error('Error fetching all user games:', allError);
+    } else {
+      console.log('ALL games for this user:', allUserGames);
+      const uniqueStatuses = [...new Set(allUserGames?.map(g => g.status) || [])];
+      console.log('Unique statuses in database for this user:', uniqueStatuses);
+    }
+
     // Fetch ALL games for owner_id = user.id, status = 'closed' (remove limit for proper pagination)
     const { data, error } = await supabase
       .from('games')
       .select('id,title,sport,team1_name,team2_name,grid_size,status,claimed_count,pending_count,created_at')
       .eq('owner_id', user.id)
-      .eq('status', ['closed', 'canceled', 'completed']) // Only closed, canceled, or completed games
+      .in('status', ['closed', 'canceled', 'complete']) // Only closed, canceled, or completed games
       .order('created_at', { ascending: false });
+
+    console.log('Filtered games query result:', { data, error });
+    console.log('Looking for statuses:', ['closed', 'canceled', 'complete']);
+
     if (error) {
       this.games = [];
       this.filteredGames = [];
@@ -81,6 +102,9 @@ export class ListBlogComponent implements OnInit {
       console.error('Error fetching games:', error);
       return;
     }
+
+    console.log('Found games with target statuses:', data);
+
     // Map games to UI format
     this.games = (data || []).map(g => ({
       id: g.id,

@@ -456,13 +456,8 @@ export class AdminBoardViewComponent implements OnInit, OnChanges {
   }
 
   shouldShowAxisNumbers(): boolean {
-    // Always show axis numbers if the game is closed (final reveal)
-    if (this.gameData?.status === 'closed') {
-      return true;
-    }
-
-    // Otherwise, check the hide_axes flag from game data
-    return !this.gameData?.hide_axes;
+    // Admin view should always show axis numbers for coordinate reference
+    return true;
   }
 
   isWinningSquare(row: number, col: number): boolean {
