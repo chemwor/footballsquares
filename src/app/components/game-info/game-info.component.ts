@@ -1,5 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Subscription, interval } from 'rxjs';
+import { calculateGameCountdown, CountdownTime } from '@core/services/gameCountdown';
 
 export enum GameStatus {
   Open = 'open',
@@ -200,6 +202,72 @@ export enum GameStatus {
       background: #95a5a6;
     }
 
+    .countdown-container {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 1.2rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .countdown-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #f7c873;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .countdown-display {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .countdown-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 60px;
+    }
+
+    .countdown-value {
+      background: rgba(247, 200, 115, 0.1);
+      border: 1px solid rgba(247, 200, 115, 0.3);
+      border-radius: 8px;
+      padding: 0.8rem 1rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #f7c873;
+      min-width: 50px;
+      margin-bottom: 0.5rem;
+    }
+
+    .countdown-label {
+      font-size: 0.8rem;
+      color: #ccc;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .countdown-separator {
+      font-size: 1.5rem;
+      color: #f7c873;
+      align-self: center;
+      margin-top: -1rem;
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0.3; }
+    }
+
     @media (max-width: 768px) {
       .info-grid {
         grid-template-columns: 1fr;
@@ -213,8 +281,53 @@ export enum GameStatus {
     }
   `]
 })
-export class GameInfoComponent {
+export class GameInfoComponent implements OnInit, OnDestroy {
   @Input() gameData: any;
+
+  private countdownSubscription: Subscription = new Subscription();
+  countdownTime: CountdownTime | null = null;
+
+  ngOnInit() {
+    this.updateCountdown();
+    if (this.shouldShowCountdown) {
+      this.countdownSubscription = interval(1000).subscribe(() => {
+        this.updateCountdown();
+      });
+    }
+  }
+
+  ngOnDestroy() {
+    this.countdownSubscription.unsubscribe();
+  }
+
+  private updateCountdown() {
+    if (this.shouldShowCountdown && this.gameData?.game_time) {
+      this.countdownTime = calculateGameCountdown(this.gameData.game_time);
+    } else {
+      this.countdownTime = null;
+    }
+  }
+
+  get shouldShowCountdown(): boolean {
+    const status = this.gameData?.status;
+    // Only show countdown for Open and Locked games
+    // Explicitly exclude Complete, Started, Cancel, and legacy 'closed' status
+    return (status === GameStatus.Open || status === GameStatus.Locked) &&
+           status !== GameStatus.Complete &&
+           status !== GameStatus.Started &&
+           status !== GameStatus.Cancel &&
+           status !== 'closed';
+  }
+
+  get countdownTitle(): string {
+    const status = this.gameData?.status;
+    if (status === GameStatus.Open) {
+      return '⏰ Game Starts In';
+    } else if (status === GameStatus.Locked) {
+      return '🔒 Countdown to Kickoff';
+    }
+    return 'Countdown';
+  }
 
   get gameStatusClass(): string {
     const status = this.gameData?.status;

@@ -20,14 +20,14 @@ export enum GameStatus {
   imports: [CommonModule, FormsModule, RequestModalComponent],
   template: `
     <!-- Winner Banner - Shows when game is closed and winners exist -->
-    <div *ngIf="shouldShowWinnerBanner()" class="winner-banner">
-      <div class="banner-content">
-        <h2>🎉 Congratulations to the winner! This game is now complete. 🎉</h2>
-        <div *ngIf="getWinnerNames().length > 0" class="winner-names">
-          <strong>Winners:</strong> {{ getWinnerNames().join(', ') }}
-        </div>
-      </div>
-    </div>
+<!--    <div *ngIf="shouldShowWinnerBanner()" class="winner-banner">-->
+<!--      <div class="banner-content">-->
+<!--        <h2>🎉 Congratulations to the winner! This game is now complete. 🎉</h2>-->
+<!--        <div *ngIf="getWinnerNames().length > 0" class="winner-names">-->
+<!--          <strong>Winners:</strong> {{ getWinnerNames().join(', ') }}-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
 
     <div class="board-wrapper">
       <div class="axis-label x-axis">{{ gameData?.team1_name || 'Home Team' }}</div>

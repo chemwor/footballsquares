@@ -67,12 +67,12 @@ export class ListBlogComponent implements OnInit {
       return;
     }
 
-    // Fetch ALL games for owner_id = user.id, status = 'open' (remove limit for proper pagination)
+    // Fetch ALL games for owner_id = user.id with multiple status values
     const { data, error } = await supabase
       .from('games')
       .select('id,title,sport,team1_name,team2_name,grid_size,status,claimed_count,pending_count,created_at')
       .eq('owner_id', user.id)
-      .eq('status', 'open')
+      .in('status', ['open', 'locked', 'started']) // Include multiple statuses
       .order('created_at', { ascending: false });
 
     if (error) {

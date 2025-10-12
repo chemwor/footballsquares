@@ -70,7 +70,7 @@ export class ListBlogComponent implements OnInit {
       .from('games')
       .select('id,title,sport,team1_name,team2_name,grid_size,status,claimed_count,pending_count,created_at')
       .eq('owner_id', user.id)
-      .eq('status', 'closed')
+      .eq('status', ['closed', 'canceled', 'completed']) // Only closed, canceled, or completed games
       .order('created_at', { ascending: false });
     if (error) {
       this.games = [];

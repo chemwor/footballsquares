@@ -10,6 +10,44 @@
     </div>
   }
 
+  <!-- Countdown Clock (shown for Open and Locked games) -->
+  @if (shouldShowCountdown && countdownTime && !countdownTime.isExpired) {
+    <div class="countdown-container">
+      <div class="countdown-title">
+        <svg class="icon" viewBox="0 0 24 24">
+          <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4V12L16.2,16.2L17.6,14.8L14,11.2V4H12Z"/>
+        </svg>
+        {{ countdownTitle }}
+      </div>
+      <div class="countdown-display">
+        @if (countdownTime.days > 0) {
+          <div class="countdown-unit">
+            <div class="countdown-value">{{ countdownTime.days }}</div>
+            <div class="countdown-label">Days</div>
+          </div>
+          <div class="countdown-separator">:</div>
+        }
+
+        <div class="countdown-unit">
+          <div class="countdown-value">{{ countdownTime.hours }}</div>
+          <div class="countdown-label">Hours</div>
+        </div>
+        <div class="countdown-separator">:</div>
+
+        <div class="countdown-unit">
+          <div class="countdown-value">{{ countdownTime.minutes }}</div>
+          <div class="countdown-label">Minutes</div>
+        </div>
+        <div class="countdown-separator">:</div>
+
+        <div class="countdown-unit">
+          <div class="countdown-value">{{ countdownTime.seconds }}</div>
+          <div class="countdown-label">Seconds</div>
+        </div>
+      </div>
+    </div>
+  }
+
   <div class="info-header">
     <h2 class="info-title">Game Information</h2>
     <div class="game-status-badge" [ngClass]="gameStatusClass">

@@ -61,12 +61,18 @@ import { supabase } from '../../data-sources/supabase.client';
     </div>
   `,
   styles: [`
-    :host { display: block; background: #181a1b; color: #eee; font-family: system-ui, sans-serif; padding: 2rem 0 2rem 2rem; }
+    :host {
+      display: block;
+      background: #181a1b;
+      color: #eee;
+      font-family: system-ui, sans-serif;
+      padding: 1rem 0; /* Reduced padding and removed left padding */
+    }
 
     .board-wrapper {
       position: relative;
-      padding: 3rem 0 0 0; /* Changed left padding from 3rem to 0 */
-      margin: 0 0 0 2rem; /* Changed from "0 2rem" to remove right margin */
+      padding: 3rem 1rem 1rem 0; /* Added padding top/bottom/left, removed left padding */
+      margin: 0; /* Removed margins */
     }
 
     .axis-label {
@@ -80,14 +86,14 @@ import { supabase } from '../../data-sources/supabase.client';
     }
 
     .x-axis {
-      top: -2.5rem; /* Changed from 0.5rem to -2.5rem */
+      top: -2.5rem;
       left: 58%;
       transform: translateX(-50%);
       text-align: center;
     }
 
     .y-axis {
-      left: 0;
+      left: -1rem; /* Adjusted to account for removed padding */
       top: 75%;
       transform: rotate(-90deg) translateY(-50%);
       transform-origin: left center;
@@ -103,6 +109,7 @@ import { supabase } from '../../data-sources/supabase.client';
       border-radius: 12px;
       overflow: hidden;
       max-height: 80vh;
+      border: 1px solid #333; /* Added border for better definition */
     }
 
     .corner-header {
@@ -131,13 +138,13 @@ import { supabase } from '../../data-sources/supabase.client';
       left: 0;
       z-index: 15;
       display: grid;
-      grid-template-rows: 50px repeat(var(--cols, 10), 58px); /* Match cell height + gap */
+      grid-template-rows: 50px repeat(var(--cols, 10), 60px); /* Increased to match cell height exactly */
     }
 
     .row-header-spacer {
       background: #1a1a1a;
       border-bottom: 2px solid #333;
-      height: 50px; /* Match column header height exactly */
+      height: 50px;
     }
 
     .row-header {
@@ -146,7 +153,7 @@ import { supabase } from '../../data-sources/supabase.client';
       justify-content: center;
       font-weight: bold;
       color: #aaa;
-      height: 58px; /* Match cell height + gap */
+      height: 60px; /* Match exact cell height */
       border-bottom: 1px solid #333;
     }
 
@@ -163,8 +170,7 @@ import { supabase } from '../../data-sources/supabase.client';
       position: sticky;
       top: 0;
       z-index: 10;
-      gap: 2px;
-      padding: 2px;
+      padding: 0; /* Removed padding */
     }
 
     .col-header {
@@ -176,16 +182,15 @@ import { supabase } from '../../data-sources/supabase.client';
       width: 60px;
       height: 50px;
       border-right: 1px solid #333;
-      box-sizing: border-box; /* Ensure consistent sizing */
+      box-sizing: border-box;
     }
 
     .grid-content {
       display: grid;
       grid-template-columns: repeat(var(--cols, 10), 60px);
-      grid-template-rows: repeat(var(--cols, 10), 56px);
-      gap: 2px;
-      padding: 2px;
+      grid-template-rows: repeat(var(--cols, 10), 60px); /* Match row header height exactly */
       background: #222;
+      padding: 0; /* Removed padding */
     }
 
     .cell {
@@ -198,13 +203,14 @@ import { supabase } from '../../data-sources/supabase.client';
       outline: none;
       flex-direction: column;
       gap: 0.25rem;
-      padding: 0.5rem; /* Consistent padding */
+      padding: 0.5rem;
       cursor: default;
       position: relative;
-      border-radius: 4px;
-      box-sizing: border-box; /* Ensure consistent sizing */
-      width: 60px; /* Explicit width */
-      height: 56px; /* Explicit height */
+      border-radius: 0; /* Removed border radius for perfect alignment */
+      box-sizing: border-box;
+      width: 60px;
+      height: 60px; /* Match row header height exactly */
+      border: 1px solid #333; /* Added consistent border */
     }
 
     .cell.empty {

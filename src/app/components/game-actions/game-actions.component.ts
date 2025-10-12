@@ -286,37 +286,82 @@ export class GameActionsComponent implements OnInit, OnDestroy, OnChanges {
   updateCountdown() {
     if (!this.gameData?.starts_at) return;
 
-    const now = new Date().getTime();
-    const startTime = new Date(this.gameData.starts_at).getTime();
-    const timeDiff = startTime - now;
+    // Check game status first - if game is complete, started, or cancelled, show appropriate message
+    if (this.gameData.status === GameStatus.Complete) {
+      this.countdownText = 'Game Complete';
+      this.countdownClass = '';
+      return;
+    }
 
-    if (timeDiff > 0) {
-      // Game hasn't started yet
-      const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+    if (this.gameData.status === GameStatus.Started) {
+      const now = new Date().getTime();
+      const startTime = new Date(this.gameData.starts_at).getTime();
+      const elapsed = now - startTime;
 
-      if (days > 0) {
-        this.countdownText = `Starts in ${days}d ${hours}h ${minutes}m`;
-      } else if (hours > 0) {
-        this.countdownText = `Starts in ${hours}h ${minutes}m ${seconds}s`;
-      } else if (minutes > 0) {
-        this.countdownText = `Starts in ${minutes}m ${seconds}s`;
+      if (elapsed > 0) {
+        const hours = Math.floor(elapsed / (1000 * 60 * 60));
+        const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
+        this.countdownText = `Live - ${hours}h ${minutes}m elapsed`;
       } else {
-        this.countdownText = `Starting in ${seconds}s`;
+        this.countdownText = 'Game Started';
       }
 
-      this.countdownClass = 'upcoming';
-    } else {
-      // Game has started
-      const elapsed = Math.abs(timeDiff);
-      const hours = Math.floor(elapsed / (1000 * 60 * 60));
-      const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
-
-      this.countdownText = `Live - ${hours}h ${minutes}m elapsed`;
       this.countdownClass = 'live';
+      return;
     }
+
+    if (this.gameData.status === GameStatus.Cancel) {
+      this.countdownText = 'Game Cancelled';
+      this.countdownClass = '';
+      return;
+    }
+
+    if (this.gameData.status === 'closed') {
+      this.countdownText = 'Game Closed';
+      this.countdownClass = '';
+      return;
+    }
+
+    // For Open and Locked games, show countdown to start time
+    if (this.gameData.status === GameStatus.Open || this.gameData.status === GameStatus.Locked) {
+      const now = new Date().getTime();
+      const startTime = new Date(this.gameData.starts_at).getTime();
+      const timeDiff = startTime - now;
+
+      if (timeDiff > 0) {
+        // Game hasn't started yet
+        const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+        if (days > 0) {
+          this.countdownText = `Starts in ${days}d ${hours}h ${minutes}m`;
+        } else if (hours > 0) {
+          this.countdownText = `Starts in ${hours}h ${minutes}m ${seconds}s`;
+        } else if (minutes > 0) {
+          this.countdownText = `Starts in ${minutes}m ${seconds}s`;
+        } else {
+          this.countdownText = `Starting in ${seconds}s`;
+        }
+
+        this.countdownClass = 'upcoming';
+      } else {
+        // Time has passed but game hasn't been marked as started yet
+        if (this.gameData.status === GameStatus.Locked) {
+          this.countdownText = 'Ready to Start';
+          this.countdownClass = 'upcoming';
+        } else {
+          this.countdownText = 'Start time reached';
+          this.countdownClass = '';
+        }
+      }
+      return;
+    }
+
+    // Fallback for any unknown status
+    this.countdownText = `Status: ${this.getStatusText()}`;
+    this.countdownClass = '';
   }
 
   async copyShareLink() {
@@ -415,11 +460,27 @@ export class GameActionsComponent implements OnInit, OnDestroy, OnChanges {
 
   getStatusText(): string {
     switch (this.gameData?.status) {
-      case 'open': return 'Open';
-      case 'locked': return 'Locked';
-      case 'drawn': return 'Drawn';
-      case 'closed': return 'Closed';
-      default: return 'Unknown';
+      case GameStatus.Open:
+      case 'open':
+        return 'Open';
+      case GameStatus.Locked:
+      case 'locked':
+        return 'Locked';
+      case GameStatus.Started:
+      case 'started':
+        return 'Started';
+      case GameStatus.Complete:
+      case 'complete':
+        return 'Complete';
+      case GameStatus.Cancel:
+      case 'cancel':
+        return 'Cancelled';
+      case 'drawn':
+        return 'Drawn';
+      case 'closed':
+        return 'Closed';
+      default:
+        return 'Unknown';
     }
   }
 
