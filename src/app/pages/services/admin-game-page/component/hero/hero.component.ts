@@ -121,7 +121,7 @@ export class HeroComponent implements OnInit, OnChanges {
 
       // Format sport display
       const sportDisplay = this.gameData.sport
-        ? `${this.gameData.sport}: ${teamsDisplay}`
+        ? `${this.gameData.sport.charAt(0).toUpperCase() + this.gameData.sport.slice(1)}: ${teamsDisplay}`
         : teamsDisplay;
 
       // Format board size

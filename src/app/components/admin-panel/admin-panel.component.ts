@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BoardService } from '../../services/board.service';
-import { signal } from '@angular/core';
+import { signal, computed } from '@angular/core';
 import { supabase } from '../../data-sources/supabase.client';
 
 @Component({
@@ -10,20 +10,43 @@ import { supabase } from '../../data-sources/supabase.client';
   imports: [CommonModule],
   template: `
     <div class="admin-panel">
-      <h3>Pending Requests</h3>
-      <div *ngIf="pendingSquares().length === 0">No pending squares.</div>
-      <div *ngFor="let sq of pendingSquares()">
-        <span>{{sq.name}}</span>
-        <span>{{obfuscateEmail(sq.email!)}}</span>
-        <span>[{{sq.row_idx}},{{sq.col_idx}}]</span>
-        <button (click)="approve(sq.id)" class="approve">Approve</button>
-        <button (click)="decline(sq.id)" class="decline">Decline</button>
+      <!-- Pending Requests Accordion -->
+      <div class="accordion-section">
+        <div class="accordion-header" (click)="togglePending()">
+          <h3>
+            <span class="accordion-icon" [class.open]="isPendingOpen()">▶</span>
+            Pending Requests ({{pendingSquares().length}})
+          </h3>
+        </div>
+        <div class="accordion-content" [class.open]="isPendingOpen()">
+          <div *ngIf="pendingSquares().length === 0" class="empty-message">No pending squares.</div>
+          <div *ngFor="let sq of pendingSquares()" class="square-item">
+            <span>{{sq.name}}</span>
+            <a href="mailto:{{sq.email}}" class="email-link">{{sq.email}}</a>
+            <span>[{{sq.row_idx}},{{sq.col_idx}}]</span>
+            <button (click)="approve(sq.id)" class="approve">Approve</button>
+            <button (click)="decline(sq.id)" class="decline">Decline</button>
+          </div>
+        </div>
       </div>
-      <h3>Approved Squares</h3>
-      <div *ngFor="let sq of approvedSquares()">
-        <span>{{sq.name}}</span>
-        <span>[{{sq.row_idx}},{{sq.col_idx}}]</span>
+
+      <!-- Approved Squares Accordion -->
+      <div class="accordion-section">
+        <div class="accordion-header" (click)="toggleApproved()">
+          <h3>
+            <span class="accordion-icon" [class.open]="isApprovedOpen()">▶</span>
+            Approved Squares ({{approvedSquares().length}})
+          </h3>
+        </div>
+        <div class="accordion-content" [class.open]="isApprovedOpen()">
+          <div *ngIf="approvedSquares().length === 0" class="empty-message">No approved squares yet.</div>
+          <div *ngFor="let sq of approvedSquares()" class="square-item">
+            <span>{{sq.name}}</span>
+            <span>[{{sq.row_idx}},{{sq.col_idx}}]</span>
+          </div>
+        </div>
       </div>
+
       <div *ngIf="actionConfirmed()" class="confirmation-modal" (click)="actionConfirmed.set(null)">
         {{actionConfirmed()}}
       </div>
@@ -40,17 +63,64 @@ import { supabase } from '../../data-sources/supabase.client';
       margin-left: auto;
       margin-right: auto;
     }
-    .admin-panel h3 {
-      margin-top: 0;
+    .accordion-section {
+      margin-bottom: 1rem;
+      border: 1px solid #333;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .accordion-header {
+      background: #2a2d2e;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s;
+    }
+    .accordion-header:hover {
+      background: #333638;
+    }
+    .accordion-header h3 {
+      margin: 0;
       color: #f7c873;
       font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-    .admin-panel div {
+    .accordion-icon {
+      font-size: 0.8rem;
+      transition: transform 0.2s ease;
+      color: #ccc;
+    }
+    .accordion-icon.open {
+      transform: rotate(90deg);
+    }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+      background: #1e2021;
+    }
+    .accordion-content.open {
+      max-height: 1000px;
+      transition: max-height 0.3s ease-in;
+    }
+    .empty-message {
+      padding: 1rem;
+      color: #888;
+      font-style: italic;
+    }
+    .square-item {
       display: flex;
       gap: 1rem;
       align-items: center;
       margin-bottom: 0.5rem;
       flex-wrap: wrap;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #333;
+    }
+    .square-item:last-child {
+      border-bottom: none;
     }
     button {
       border: none;
@@ -93,6 +163,20 @@ import { supabase } from '../../data-sources/supabase.client';
       max-width: 90vw;
       word-break: break-word;
     }
+    .email-link {
+      color: #4a9eff;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s;
+      border-radius: 4px;
+      padding: 0.2rem 0.4rem;
+      background: rgba(74, 158, 255, 0.1);
+    }
+    .email-link:hover {
+      color: #66b3ff;
+      background: rgba(74, 158, 255, 0.2);
+      text-decoration: underline;
+    }
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -104,14 +188,15 @@ import { supabase } from '../../data-sources/supabase.client';
         border-radius: 8px;
         max-width: 100vw;
       }
-      .admin-panel h3 {
+      .accordion-header h3 {
         font-size: 1rem;
       }
-      .admin-panel div {
+      .square-item {
         flex-direction: column;
         align-items: stretch;
         gap: 0.5rem;
         margin-bottom: 0.8rem;
+        padding: 0.5rem;
       }
       button {
         font-size: 1rem;
@@ -134,6 +219,14 @@ export class AdminPanelComponent implements OnInit, OnChanges {
   approvedSquares = signal<any[]>([]);
   actionConfirmed = signal<string | null>(null);
   loading = signal<boolean>(false);
+
+  // Accordion state signals
+  private pendingOpen = signal<boolean>(false);
+  private approvedOpen = signal<boolean>(false);
+
+  // Computed signals for accordion state
+  isPendingOpen = computed(() => this.pendingOpen());
+  isApprovedOpen = computed(() => this.approvedOpen());
 
   constructor(public board: BoardService) {}
 
@@ -181,11 +274,24 @@ export class AdminPanelComponent implements OnInit, OnChanges {
       this.pendingSquares.set(pending);
       this.approvedSquares.set(approved);
 
+      // Auto-open pending accordion if there are pending items
+      if (pending.length > 0) {
+        this.pendingOpen.set(true);
+      }
+
     } catch (err) {
       console.error('Unexpected error loading squares:', err);
     } finally {
       this.loading.set(false);
     }
+  }
+
+  togglePending() {
+    this.pendingOpen.set(!this.pendingOpen());
+  }
+
+  toggleApproved() {
+    this.approvedOpen.set(!this.approvedOpen());
   }
 
   async approve(squareId: string) {
@@ -239,13 +345,6 @@ export class AdminPanelComponent implements OnInit, OnChanges {
     } catch (err) {
       console.error('Error declining square:', err);
     }
-  }
-
-  obfuscateEmail(email: string): string {
-    const [user, domain] = email.split('@');
-    if (!user || !domain) return email;
-    const visible = user.slice(0, 3);
-    return `${visible}${'*'.repeat(Math.max(0, user.length - 3))}@${domain}`;
   }
 
   private hideConfirmationAfterDelay() {

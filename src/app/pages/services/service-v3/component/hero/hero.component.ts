@@ -29,10 +29,15 @@ export class HeroComponent {
 
   get servicesv3(): servicev3Type[] {
     if (this.gameData) {
+      // Format sport display with capitalization
+      const sportDisplay = this.gameData.sport
+        ? `${this.gameData.sport.charAt(0).toUpperCase() + this.gameData.sport.slice(1)}: ${this.gameData.team1_name} vs ${this.gameData.team2_name}`
+        : 'Date TBD';
+
       return [
         {
           iconSrc: 'assets/img/services/v3/icons/time-white.svg',
-          headingText: this.gameData.sport + ': ' + this.gameData.team1_name + ' vs ' + this.gameData.team2_name || 'Date TBD',
+          headingText: sportDisplay,
         },
         // {
         //   iconSrc: 'assets/img/services/v3/icons/time-white.svg',

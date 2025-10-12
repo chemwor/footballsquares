@@ -7,68 +7,68 @@ import { supabase } from '../../data-sources/supabase.client';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="board-container">
+    <div class="board-wrapper">
       <div class="axis-label x-axis">{{ gameData?.team1_name || 'Home' }}</div>
       <div class="axis-label y-axis">{{ gameData?.team2_name || 'Away' }}</div>
-      <div class="board" [style.--cols]="gridSize">
-        <div class="header corner"></div>
-        <div *ngFor="let col of cols" class="header">{{ shouldShowAxisNumbers() ? col : '?' }}</div>
-        <ng-container *ngFor="let row of rows">
-          <div class="header">{{ shouldShowAxisNumbers() ? row : '?' }}</div>
-          <ng-container *ngFor="let col of cols">
-            <div
-              class="cell"
-              [ngClass]="getCellClass(row, col)"
-            >
-              <ng-container [ngSwitch]="getCellStatus(row, col)">
-                <span *ngSwitchCase="'empty'">-</span>
-                <span *ngSwitchCase="'pending'" class="user-info">
-                  <span class="pill pending">Pending</span>
-                  <span class="name">{{getSquareName(row, col)}}</span>
-                </span>
-                <span *ngSwitchCase="'approved'" class="user-info">
-                  <span class="pill" [ngClass]="isWinningSquare(row, col) ? 'winner' : 'approved'">
-                    {{ isWinningSquare(row, col) ? 'Winner' : 'Locked' }}
-                  </span>
-                  <span class="name">{{getSquareName(row, col)}}</span>
-                </span>
+
+      <div class="table-container">
+        <!-- Fixed corner -->
+        <div class="corner-header"></div>
+
+        <!-- Scrollable content area that includes both headers and grid -->
+        <div class="scrollable-area">
+          <!-- Row headers (sticky) -->
+          <div class="row-headers">
+            <div class="row-header-spacer"></div> <!-- Spacer for column headers -->
+            <div *ngFor="let row of rows" class="row-header">{{ shouldShowAxisNumbers() ? row : '?' }}</div>
+          </div>
+
+          <!-- Content area with column headers and grid -->
+          <div class="content-area">
+            <!-- Column headers -->
+            <div class="column-headers">
+              <div *ngFor="let col of cols" class="col-header">{{ shouldShowAxisNumbers() ? col : '?' }}</div>
+            </div>
+
+            <!-- Grid content -->
+            <div class="grid-content" [style.--cols]="gridSize">
+              <ng-container *ngFor="let row of rows">
+                <ng-container *ngFor="let col of cols">
+                  <div
+                    class="cell"
+                    [ngClass]="getCellClass(row, col)"
+                  >
+                    <ng-container [ngSwitch]="getCellStatus(row, col)">
+                      <span *ngSwitchCase="'empty'">-</span>
+                      <span *ngSwitchCase="'pending'" class="user-info">
+                        <span class="pill pending">Pending</span>
+                        <span class="name">{{getSquareName(row, col)}}</span>
+                      </span>
+                      <span *ngSwitchCase="'approved'" class="user-info">
+                        <span class="pill" [ngClass]="isWinningSquare(row, col) ? 'winner' : 'approved'">
+                          {{ isWinningSquare(row, col) ? 'Winner' : 'Locked' }}
+                        </span>
+                        <span class="name">{{getSquareName(row, col)}}</span>
+                      </span>
+                    </ng-container>
+                  </div>
+                </ng-container>
               </ng-container>
             </div>
-          </ng-container>
-        </ng-container>
+          </div>
+        </div>
       </div>
     </div>
   `,
   styles: [`
-    :host { display: block; background: #181a1b; color: #eee; font-family: system-ui, sans-serif; padding: 2rem; }
-    .toolbar { display: flex; gap: 2rem; align-items: center; margin-bottom: 1.5rem; }
-    .price-indicator {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      padding: 0.5rem;
-      background: #2a2d30;
-      border-radius: 8px;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
+    :host { display: block; background: #181a1b; color: #eee; font-family: system-ui, sans-serif; padding: 2rem 0 2rem 2rem; }
+
+    .board-wrapper {
       position: relative;
-      left: 50%;
-      transform: translateX(-50%);
+      padding: 3rem 0 0 0; /* Changed left padding from 3rem to 0 */
+      margin: 0 0 0 2rem; /* Changed from "0 2rem" to remove right margin */
     }
-    .price {
-      color: #2ecc40;
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-    .per-square {
-      color: #aaa;
-      font-size: 1rem;
-    }
-    .board-container {
-      position: relative;
-      padding: 3rem 0 0 3rem;
-      margin: 0 2rem;
-    }
+
     .axis-label {
       position: absolute;
       color: #f7c873;
@@ -76,56 +76,137 @@ import { supabase } from '../../data-sources/supabase.client';
       font-size: 1.4rem;
       text-transform: uppercase;
       letter-spacing: 1px;
+      z-index: 25;
     }
+
     .x-axis {
-      top: 0.5rem;
-      width: 100%;
+      top: -2.5rem; /* Changed from 0.5rem to -2.5rem */
+      left: 58%;
+      transform: translateX(-50%);
       text-align: center;
-      left: 40px; /* Account for the left header column */
-      right: 0;
     }
+
     .y-axis {
       left: 0;
-      top: 50%;
-      transform: rotate(-90deg) translateX(-50%);
-      transform-origin: 0 0;
+      top: 75%;
+      transform: rotate(-90deg) translateY(-50%);
+      transform-origin: left center;
       text-align: center;
       width: max-content;
     }
-    .board {
+
+    .table-container {
       display: grid;
-      grid-template-columns: 40px repeat(var(--cols, 10), 1fr);
-      grid-auto-rows: 56px;
-      gap: 2px;
+      grid-template-columns: 50px 1fr;
+      grid-template-rows: 1fr;
       background: #222;
       border-radius: 12px;
-      overflow: auto;
-      margin-bottom: 2rem;
+      overflow: hidden;
+      max-height: 80vh;
     }
-    .header {
-      background: #222;
-      color: #aaa;
+
+    .corner-header {
+      background: #1a1a1a;
+      border-right: 2px solid #333;
+      border-bottom: 2px solid #333;
+      z-index: 30;
+      grid-column: 1;
+      grid-row: 1;
+      height: 50px;
+    }
+
+    .scrollable-area {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      display: grid;
+      grid-template-columns: 50px 1fr;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .row-headers {
+      background: #2a2a2a;
+      border-right: 2px solid #333;
+      position: sticky;
+      left: 0;
+      z-index: 15;
+      display: grid;
+      grid-template-rows: 50px repeat(var(--cols, 10), 58px); /* Match cell height + gap */
+    }
+
+    .row-header-spacer {
+      background: #1a1a1a;
+      border-bottom: 2px solid #333;
+      height: 50px; /* Match column header height exactly */
+    }
+
+    .row-header {
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
+      color: #aaa;
+      height: 58px; /* Match cell height + gap */
+      border-bottom: 1px solid #333;
     }
-    .header.corner {
-      background: #1a1a1a;
+
+    .content-area {
+      display: grid;
+      grid-template-rows: 50px 1fr;
     }
+
+    .column-headers {
+      display: grid;
+      grid-template-columns: repeat(var(--cols, 10), 60px);
+      background: #2a2a2a;
+      border-bottom: 2px solid #333;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      gap: 2px;
+      padding: 2px;
+    }
+
+    .col-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #aaa;
+      width: 60px;
+      height: 50px;
+      border-right: 1px solid #333;
+      box-sizing: border-box; /* Ensure consistent sizing */
+    }
+
+    .grid-content {
+      display: grid;
+      grid-template-columns: repeat(var(--cols, 10), 60px);
+      grid-template-rows: repeat(var(--cols, 10), 56px);
+      gap: 2px;
+      padding: 2px;
+      background: #222;
+    }
+
     .cell {
       background: #23272a;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
+      font-size: 1rem;
       transition: background 0.2s;
       outline: none;
       flex-direction: column;
       gap: 0.25rem;
-      padding: 0.5rem;
+      padding: 0.5rem; /* Consistent padding */
       cursor: default;
+      position: relative;
+      border-radius: 4px;
+      box-sizing: border-box; /* Ensure consistent sizing */
+      width: 60px; /* Explicit width */
+      height: 56px; /* Explicit height */
     }
+
     .cell.empty {
       background: #23272a;
       color: #666;
@@ -136,7 +217,11 @@ import { supabase } from '../../data-sources/supabase.client';
     .cell.approved {
       background: #1e3a24;
     }
-    .cell.winner { background: #2ecc40 !important; } /* Highlight winner squares */
+    .cell.winner {
+      background: #2ecc40 !important;
+      color: #fff;
+      font-weight: bold;
+    }
 
     .user-info {
       display: flex;
@@ -146,15 +231,16 @@ import { supabase } from '../../data-sources/supabase.client';
       text-align: center;
     }
     .name {
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       color: #fff;
       word-break: break-word;
       max-width: 100%;
+      line-height: 1.1;
     }
     .pill {
-      border-radius: 12px;
-      padding: 0.2em 0.8em;
-      font-size: 0.75rem;
+      border-radius: 8px;
+      padding: 0.1em 0.5em;
+      font-size: 0.6rem;
       white-space: nowrap;
     }
     .pill.pending {
@@ -172,7 +258,7 @@ import { supabase } from '../../data-sources/supabase.client';
     }
 
     @media (max-width: 768px) {
-      .board-container {
+      .board-wrapper {
         padding: 2rem 0.5rem 0.5rem;
         margin: 0 0.5rem;
       }
@@ -181,18 +267,47 @@ import { supabase } from '../../data-sources/supabase.client';
         font-size: 1.2rem;
       }
 
+      .table-container {
+        max-height: 70vh;
+      }
+
+      .column-headers {
+        grid-template-columns: repeat(var(--cols, 10), 50px); /* Match mobile cell width */
+      }
+
+      .grid-content {
+        grid-template-columns: repeat(var(--cols, 10), 50px);
+        grid-template-rows: repeat(var(--cols, 10), 48px); /* Adjust row height for mobile */
+      }
+
+      .col-header {
+        width: 50px; /* Match mobile cell width */
+        font-size: 0.9rem;
+      }
+
+      .row-headers {
+        grid-template-rows: 50px repeat(var(--cols, 10), 50px); /* Match mobile cell height + gap */
+      }
+
+      .row-header {
+        height: 50px; /* Match mobile cell height + gap */
+        font-size: 0.9rem;
+      }
+
       .cell {
-        font-size: 1rem;
-        grid-auto-rows: 48px;
+        font-size: 0.8rem;
+        width: 50px; /* Mobile cell width */
+        height: 48px; /* Mobile cell height */
+        padding: 0.25rem; /* Smaller padding for mobile */
       }
 
       .name {
-        font-size: 0.7rem;
+        font-size: 0.6rem;
       }
 
       .pill {
-        font-size: 0.6rem;
-        padding: 0.1em 0.6em;
+        font-size: 0.5rem;
+        padding: 0.1em 0.4em;
       }
     }
   `]

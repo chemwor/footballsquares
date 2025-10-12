@@ -19,7 +19,6 @@ export enum GameStatus {
   standalone: true,
   imports: [CommonModule, FormsModule, RequestModalComponent],
   template: `
-
     <!-- Winner Banner - Shows when game is closed and winners exist -->
     <div *ngIf="shouldShowWinnerBanner()" class="winner-banner">
       <div class="banner-content">
@@ -30,44 +29,60 @@ export enum GameStatus {
       </div>
     </div>
 
-
-
-    <div class="board-container">
+    <div class="board-wrapper">
       <div class="axis-label x-axis">{{ gameData?.team1_name || 'Home Team' }}</div>
       <div class="axis-label y-axis">{{ gameData?.team2_name || 'Away Team' }}</div>
-      <div class="board" [style.--cols]="size()">
-        <div class="header corner"></div>
-        <div *ngFor="let col of getDisplayCols()" class="header">
-          {{ shouldShowAxisNumbers() ? col : '?' }}
-        </div>
-        <ng-container *ngFor="let row of getDisplayRows()">
-          <div class="header">{{ shouldShowAxisNumbers() ? row : '?' }}</div>
-          <ng-container *ngFor="let col of getDisplayCols()">
-            <div
-              class="cell"
-              [ngClass]="cellClass(row, col)"
-              (click)="cellClick(row, col)"
-              tabindex="0"
-              [attr.aria-label]="ariaLabel(row, col)"
-            >
-              <ng-container [ngSwitch]="cellStatus(row, col)">
-                <span *ngSwitchCase="'empty'">+</span>
-                <span *ngSwitchCase="'pending'" class="user-info">
-                  <span class="pill pending">Pending</span>
-                  <span class="name">{{getSquareName(row, col)}}</span>
-                </span>
-                <span *ngSwitchCase="'approved'" class="user-info">
-                  <span class="pill" [ngClass]="isWinningSquare(row, col) ? 'winner' : 'approved'">
-                    {{ isWinningSquare(row, col) ? 'Winner' : 'Locked' }}
-                  </span>
-                  <span class="name">{{getSquareName(row, col)}}</span>
-                </span>
+
+      <div class="table-container">
+        <!-- Fixed corner -->
+        <div class="corner-header"></div>
+
+        <!-- Scrollable content area that includes both headers and grid -->
+        <div class="scrollable-area">
+          <!-- Row headers (sticky) -->
+          <div class="row-headers">
+            <div class="row-header-spacer"></div> <!-- Spacer for column headers -->
+            <div *ngFor="let row of getDisplayRows()" class="row-header">{{ shouldShowAxisNumbers() ? row : '?' }}</div>
+          </div>
+
+          <!-- Content area with column headers and grid -->
+          <div class="content-area">
+            <!-- Column headers -->
+            <div class="column-headers">
+              <div *ngFor="let col of getDisplayCols()" class="col-header">{{ shouldShowAxisNumbers() ? col : '?' }}</div>
+            </div>
+
+            <!-- Grid content -->
+            <div class="grid-content" [style.--cols]="size()">
+              <ng-container *ngFor="let row of getDisplayRows()">
+                <ng-container *ngFor="let col of getDisplayCols()">
+                  <div
+                    class="cell"
+                    [ngClass]="cellClass(row, col)"
+                    (click)="cellClick(row, col)"
+                    tabindex="0"
+                    [attr.aria-label]="ariaLabel(row, col)"
+                  >
+                    <ng-container [ngSwitch]="cellStatus(row, col)">
+                      <span *ngSwitchCase="'empty'">+</span>
+                      <span *ngSwitchCase="'pending'" class="user-info">
+                        <span class="pill pending">Pending</span>
+                        <span class="name">{{getSquareName(row, col)}}</span>
+                      </span>
+                      <span *ngSwitchCase="'approved'" class="user-info">
+                        <span class="pill" [ngClass]="isWinningSquare(row, col) ? 'winner' : 'approved'">
+                          {{ isWinningSquare(row, col) ? 'Winner' : 'Locked' }}
+                        </span>
+                        <span class="name">{{getSquareName(row, col)}}</span>
+                      </span>
+                    </ng-container>
+                  </div>
+                </ng-container>
               </ng-container>
             </div>
-          </ng-container>
-        </ng-container>
-      </div>
-    </div> <!-- end .board-container -->
+          </div>
+        </div>
+      </div> <!-- end .board-wrapper -->
 
     <!-- Modal should always be rendered at the top level for visibility -->
     <sq-request-modal
@@ -98,35 +113,14 @@ export enum GameStatus {
     </div>
   `,
   styles: [`
-    :host { display: block; background: #181a1b; color: #eee; font-family: system-ui, sans-serif; padding: 2rem; }
-    .toolbar { display: flex; gap: 2rem; align-items: center; margin-bottom: 1.5rem; }
-    .price-indicator {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      padding: 0.5rem;
-      background: #2a2d30;
-      border-radius: 8px;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
+    :host { display: block; background: #181a1b; color: #eee; font-family: system-ui, sans-serif; padding: 2rem 0 2rem 2rem; }
+
+    .board-wrapper {
       position: relative;
-      left: 50%;
-      transform: translateX(-50%);
+      padding: 3rem 0 0 0;
+      margin: 0 0 0 2rem;
     }
-    .price {
-      color: #2ecc40;
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-    .per-square {
-      color: #aaa;
-      font-size: 1rem;
-    }
-    .board-container {
-      position: relative;
-      padding: 3rem 0 0 3rem;
-      //margin: 0 2rem;
-    }
+
     .axis-label {
       position: absolute;
       color: #f7c873;
@@ -134,43 +128,118 @@ export enum GameStatus {
       font-size: 1.4rem;
       text-transform: uppercase;
       letter-spacing: 1px;
+      z-index: 25;
     }
+
     .x-axis {
-      top: 0.5rem;
-      width: 100%;
+      top: -2.5rem;
+      left: 58%;
+      transform: translateX(-50%);
       text-align: center;
-      left: 40px; /* Account for the left header column */
-      right: 0;
     }
+
     .y-axis {
       left: 0;
-      top: 50%;
-      transform: rotate(-90deg) translateX(-50%);
-      transform-origin: 0 0;
+      top: 75%;
+      transform: rotate(-90deg) translateY(-50%);
+      transform-origin: left center;
       text-align: center;
       width: max-content;
     }
-    .board {
+
+    .table-container {
       display: grid;
-      grid-template-columns: 40px repeat(var(--cols, 10), 1fr);
-      grid-auto-rows: 56px;
-      gap: 2px;
+      grid-template-columns: 50px 1fr;
+      grid-template-rows: 1fr;
       background: #222;
       border-radius: 12px;
-      overflow: auto;
-      margin-bottom: 2rem;
+      overflow: hidden;
+      max-height: 80vh;
     }
-    .header {
-      background: #222;
-      color: #aaa;
+
+    .corner-header {
+      background: #1a1a1a;
+      border-right: 2px solid #333;
+      border-bottom: 2px solid #333;
+      z-index: 30;
+      grid-column: 1;
+      grid-row: 1;
+      height: 50px;
+    }
+
+    .scrollable-area {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      display: grid;
+      grid-template-columns: 50px 1fr;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .row-headers {
+      background: #2a2a2a;
+      border-right: 2px solid #333;
+      position: sticky;
+      left: 0;
+      z-index: 15;
+      display: grid;
+      grid-template-rows: 50px repeat(var(--cols, 10), 58px);
+    }
+
+    .row-header-spacer {
+      background: #1a1a1a;
+      border-bottom: 2px solid #333;
+      height: 50px;
+    }
+
+    .row-header {
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
+      color: #aaa;
+      height: 58px;
+      border-bottom: 1px solid #333;
     }
-    .header.corner {
-      background: #1a1a1a;
+
+    .content-area {
+      display: grid;
+      grid-template-rows: 50px 1fr;
     }
+
+    .column-headers {
+      display: grid;
+      grid-template-columns: repeat(var(--cols, 10), 60px);
+      background: #2a2a2a;
+      border-bottom: 2px solid #333;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      gap: 2px;
+      padding: 2px;
+    }
+
+    .col-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #aaa;
+      width: 60px;
+      height: 50px;
+      border-right: 1px solid #333;
+      box-sizing: border-box;
+    }
+
+    .grid-content {
+      display: grid;
+      grid-template-columns: repeat(var(--cols, 10), 60px);
+      grid-template-rows: repeat(var(--cols, 10), 56px);
+      gap: 2px;
+      padding: 2px;
+      background: #222;
+    }
+
     .cell {
       background: #23272a;
       display: flex;
@@ -183,11 +252,17 @@ export enum GameStatus {
       flex-direction: column;
       gap: 0.25rem;
       padding: 0.5rem;
+      border-radius: 4px;
+      box-sizing: border-box;
+      width: 60px;
+      height: 56px;
     }
+
     .cell.empty:hover, .cell.empty:focus { background: #2c3136; }
     .cell.pending { background: #524726; }
     .cell.approved { background: #1e3a24; }
-    .cell.winner { background: #2ecc40 !important; } /* Highlight winner squares */
+    .cell.winner { background: #2ecc40 !important; color: #fff; font-weight: bold; }
+
     .user-info {
       display: flex;
       flex-direction: column;
@@ -196,20 +271,22 @@ export enum GameStatus {
       text-align: center;
     }
     .name {
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       color: #fff;
       word-break: break-word;
       max-width: 100%;
+      line-height: 1.1;
     }
     .pill {
-      border-radius: 12px;
-      padding: 0.2em 0.8em;
-      font-size: 0.75rem;
+      border-radius: 8px;
+      padding: 0.1em 0.5em;
+      font-size: 0.6rem;
       white-space: nowrap;
     }
     .pill.pending { background: #f7c873; color: #000; }
     .pill.approved { background: #2ecc40; color: #fff; }
-    .pill.winner { background: #FFD700; color: #000; font-weight: bold; } /* Gold background for winners */
+    .pill.winner { background: #ffcc00; color: #000; font-weight: bold; }
+
     .admin-panel { background: #222; border-radius: 12px; padding: 1rem; margin-top: 2rem; }
     .admin-panel h3 { margin-top: 0; }
     .admin-panel div { display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem; }
@@ -316,6 +393,58 @@ export enum GameStatus {
       color: #ddd;
     }
     @media (max-width: 768px) {
+      .board-wrapper {
+        padding: 2rem 0.5rem 0.5rem;
+        margin: 0 0.5rem;
+      }
+
+      .axis-label {
+        font-size: 1.2rem;
+      }
+
+      .table-container {
+        max-height: 70vh;
+      }
+
+      .column-headers {
+        grid-template-columns: repeat(var(--cols, 10), 50px);
+      }
+
+      .grid-content {
+        grid-template-columns: repeat(var(--cols, 10), 50px);
+        grid-template-rows: repeat(var(--cols, 10), 48px);
+      }
+
+      .col-header {
+        width: 50px;
+        font-size: 0.9rem;
+      }
+
+      .row-headers {
+        grid-template-rows: 50px repeat(var(--cols, 10), 50px);
+      }
+
+      .row-header {
+        height: 50px;
+        font-size: 0.9rem;
+      }
+
+      .cell {
+        font-size: 0.8rem;
+        width: 50px;
+        height: 48px;
+        padding: 0.25rem;
+      }
+
+      .name {
+        font-size: 0.6rem;
+      }
+
+      .pill {
+        font-size: 0.5rem;
+        padding: 0.1em 0.4em;
+      }
+
       .info-grid {
         grid-template-columns: 1fr;
       }
@@ -325,6 +454,7 @@ export enum GameStatus {
         gap: 0.5rem;
       }
     }
+
     @keyframes fadeIn {
       from {
         opacity: 0;
