@@ -11,6 +11,14 @@ export const routes: Routes = [
     title: 'SaaS V3 | Home',
   },
   {
+    path: 'dashboard',
+    loadComponent: () =>
+      import('./pages/landings/influencer/influencer.component').then(
+        (mod) => mod.InfluencerComponent
+      ),
+    title: 'BlitzSquares | Dashboard',
+  },
+  {
     path: 'landings',
     loadChildren: () =>
       import('./pages/landings/landings.route').then(
