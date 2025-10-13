@@ -30,7 +30,7 @@ export class TitleService {
 
     if (route.snapshot.data['title']) {
       this.titleService.setTitle(
-        `My BJJ Gameplan | ${route.snapshot.data['title']} `
+        `BlitzSquares | ${route.snapshot.data['title']} `
       )
     }
   }
