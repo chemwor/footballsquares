@@ -477,7 +477,7 @@ export class GameActionsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   isGameClosed(): boolean {
-    return this.gameData?.status === 'closed';
+    return this.gameData?.status === 'canceled';
   }
 
   isGameJoinable(): boolean {

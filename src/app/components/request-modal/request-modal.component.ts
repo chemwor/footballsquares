@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, OnChanges, SimpleChanges, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { supabase } from '../../data-sources/supabase.client';
 
 @Component({
@@ -8,7 +9,8 @@ import { supabase } from '../../data-sources/supabase.client';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div *ngIf="open" class="modal-backdrop debug-modal" (click)="onBackdrop($event)" tabindex="-1">
+    <!-- Main Request Modal -->
+    <div *ngIf="open && !showSignupPrompt" class="modal-backdrop debug-modal" (click)="onBackdrop($event)" tabindex="-1">
       <div class="modal" role="dialog" aria-modal="true" (keydown.escape)="close()"
         (click)="$event.stopPropagation()">
         <h2>
@@ -63,6 +65,40 @@ import { supabase } from '../../data-sources/supabase.client';
         </form>
       </div>
     </div>
+
+    <!-- Signup Prompt Modal -->
+    <div *ngIf="showSignupPrompt" class="modal-backdrop debug-modal" (click)="onSignupBackdrop($event)" tabindex="-1">
+      <div class="modal signup-modal" role="dialog" aria-modal="true" (keydown.escape)="declineSignup()"
+        (click)="$event.stopPropagation()">
+        <h2>🎉 Square Claimed Successfully!</h2>
+        <div class="signup-content">
+          <p>Your square has been claimed! Would you like to create a free account to unlock additional features?</p>
+
+          <div class="benefits">
+            <h3>With a free account, you can:</h3>
+            <ul>
+              <li>✓ Track all your squares across games</li>
+              <li>✓ Get notifications about game updates</li>
+              <li>✓ Access your game history</li>
+              <li>✓ Priority access to new games</li>
+            </ul>
+          </div>
+
+          <div class="signup-note">
+            <small>Creating an account is completely free and optional. You can continue playing without one!</small>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="button" (click)="declineSignup()" class="secondary">
+            No Thanks, Continue
+          </button>
+          <button type="button" (click)="acceptSignup()" class="primary">
+            Create Account
+          </button>
+        </div>
+      </div>
+    </div>
   `,
   styles: [`
     .modal-backdrop {
@@ -84,10 +120,50 @@ import { supabase } from '../../data-sources/supabase.client';
       box-shadow: 0 2px 16px #0008;
       z-index: 100000;
     }
+    .signup-modal {
+      max-width: 500px;
+    }
     h2 {
       margin: 0 0 1.5rem;
       font-size: 1.4rem;
       color: #f7c873;
+    }
+    .signup-content {
+      margin-bottom: 2rem;
+    }
+    .signup-content p {
+      margin-bottom: 1.5rem;
+      color: #eee;
+      font-size: 1.1rem;
+    }
+    .benefits {
+      background: #1a1d20;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+    .benefits h3 {
+      margin: 0 0 1rem;
+      color: #f7c873;
+      font-size: 1.1rem;
+    }
+    .benefits ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .benefits li {
+      padding: 0.5rem 0;
+      color: #ddd;
+      font-size: 0.95rem;
+    }
+    .signup-note {
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .signup-note small {
+      color: #999;
+      font-style: italic;
     }
     .form-group {
       margin-bottom: 1.5rem;
@@ -136,6 +212,13 @@ import { supabase } from '../../data-sources/supabase.client';
     button[type="button"]:hover {
       background: #555;
     }
+    button.secondary {
+      background: #444;
+      color: #fff;
+    }
+    button.secondary:hover {
+      background: #555;
+    }
     button.primary {
       background: #f7c873;
       color: #000;
@@ -156,12 +239,16 @@ export class RequestModalComponent implements OnChanges, OnInit {
   @Input() gameData: any = null;
   @Output() closed = new EventEmitter<void>();
   @Output() requested = new EventEmitter<{ name: string; email: string; userId?: string }>();
+  @Output() signupRequested = new EventEmitter<{ name: string; email: string }>();
 
   name = '';
   email = '';
   userId?: string; // Store the current user's ID
+  showSignupPrompt = false;
 
   @ViewChild('nameField') nameField!: ElementRef;
+
+  constructor(private router: Router) {}
 
   async ngOnInit() {
     await this.loadUserInfo();
@@ -169,6 +256,7 @@ export class RequestModalComponent implements OnChanges, OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['open'] && this.open) {
+      this.showSignupPrompt = false; // Reset signup prompt when modal opens
       this.loadUserInfo(); // Reload user info when modal opens
       setTimeout(() => {
         this.nameField?.nativeElement?.focus();
@@ -202,7 +290,7 @@ export class RequestModalComponent implements OnChanges, OnInit {
           user.user_metadata?.['full_name'] ||
           user.user_metadata?.['display_name'] ||
           user.user_metadata?.['name'] ||
-          this.name // Keep existing value if no metadata
+          this.name; // Keep existing value if no metadata
         this.email = user.email || this.email; // Keep existing value if no email
         console.log('Auto-populated user info:', { name: this.name, email: this.email, userId: this.userId });
       } else {
@@ -215,6 +303,7 @@ export class RequestModalComponent implements OnChanges, OnInit {
   }
 
   close() {
+    this.showSignupPrompt = false;
     this.closed.emit();
     // Don't clear the fields immediately - they might want to reopen
   }
@@ -223,11 +312,31 @@ export class RequestModalComponent implements OnChanges, OnInit {
     event.preventDefault();
     if (this.name && this.email) {
       this.requested.emit({ name: this.name, email: this.email, userId: this.userId });
-      this.close();
+
+      // If user is not logged in, show signup prompt after successful submission
+      if (!this.userId) {
+        this.showSignupPrompt = true;
+      } else {
+        this.close();
+      }
     }
+  }
+
+  acceptSignup() {
+    // Navigate to the signup page
+    this.router.navigate(['/auth/signup']);
+  }
+
+  declineSignup() {
+    // User declined signup, just close the modal
+    this.close();
   }
 
   onBackdrop(event: MouseEvent) {
     if (event.target === event.currentTarget) this.close();
+  }
+
+  onSignupBackdrop(event: MouseEvent) {
+    if (event.target === event.currentTarget) this.declineSignup();
   }
 }
