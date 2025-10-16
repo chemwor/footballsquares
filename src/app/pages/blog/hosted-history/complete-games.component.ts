@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core'
 import { Breadcrumb1Component } from '@components/breadcrumb/breadcrumb-1/breadcrumb-1.component'
 import { NavigationBar2Component } from '@components/navigation-bars'
 import { SubscriptionComponent } from '../current-games/component/subscription/subscription.component'
-import { FooterComponent } from '../current-games/component/footer/footer.component'
 import { ListBlogComponent } from './component/list-blog/list-blog.component'
 import { supabase } from '../../../data-sources/supabase.client'
 import { CommonModule } from '@angular/common'
+import { FooterComponent } from '../../landings/saas-v2/components/footer/footer.component'
 
 export enum GameStatus {
   Open = 'open',
@@ -26,6 +26,7 @@ export enum GameStatus {
     FooterComponent,
     ListBlogComponent,
     CommonModule,
+    FooterComponent,
   ],
   templateUrl: './complete-games.component.html',
   styles: ``,
@@ -45,7 +46,9 @@ export class CompleteGamesComponent implements OnInit {
 
     try {
       // Get current user
-      const { data: { user } } = await supabase.auth.getUser()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
 
       if (!user) {
         this.games = []
@@ -65,13 +68,16 @@ export class CompleteGamesComponent implements OnInit {
         console.error('Error fetching all games:', allGamesError)
       } else {
         console.log('All games for user:', allGames)
-        console.log('Unique statuses found:', [...new Set(allGames?.map(g => g.status) || [])])
+        console.log('Unique statuses found:', [
+          ...new Set(allGames?.map((g) => g.status) || []),
+        ])
       }
 
       // Fetch games where user is the owner and status is Completed, Closed, or Canceled
       const { data: gamesData, error } = await supabase
         .from('games')
-        .select(`
+        .select(
+          `
           id,
           title,
           sport,
@@ -89,9 +95,14 @@ export class CompleteGamesComponent implements OnInit {
           winner_announced_at,
           claimed_count,
           pending_count
-        `)
+        `
+        )
         .eq('owner_id', user.id)
-        .in('status', [GameStatus.Completed, GameStatus.Closed, GameStatus.Canceled])
+        .in('status', [
+          GameStatus.Completed,
+          GameStatus.Closed,
+          GameStatus.Canceled,
+        ])
         .order('closed_at', { ascending: false })
         .order('created_at', { ascending: false })
 
@@ -105,10 +116,14 @@ export class CompleteGamesComponent implements OnInit {
       }
 
       console.log('Raw games data:', gamesData)
-      console.log('Looking for statuses:', [GameStatus.Completed, GameStatus.Closed, GameStatus.Canceled])
+      console.log('Looking for statuses:', [
+        GameStatus.Completed,
+        GameStatus.Closed,
+        GameStatus.Canceled,
+      ])
 
       // Transform the data to match the expected format
-      this.games = (gamesData || []).map(game => ({
+      this.games = (gamesData || []).map((game) => ({
         id: game.id,
         image: game.team1_logo_url || 'assets/img/card.png',
         title: game.title,
@@ -122,7 +137,7 @@ export class CompleteGamesComponent implements OnInit {
         comments: game.pending_count || 0,
         date: this.getDisplayDate(game),
         category: game.sport || 'Unknown',
-        gameData: game
+        gameData: game,
       }))
 
       this.loading = false
@@ -161,11 +176,12 @@ export class CompleteGamesComponent implements OnInit {
 
   private getDisplayDate(game: any): string {
     // Use closed_at for completed games, created_at as fallback
-    const dateToUse = game.closed_at || game.winner_announced_at || game.created_at
+    const dateToUse =
+      game.closed_at || game.winner_announced_at || game.created_at
     return new Date(dateToUse).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
-      year: 'numeric'
+      year: 'numeric',
     })
   }
 }

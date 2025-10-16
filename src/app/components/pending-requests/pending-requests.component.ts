@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { BoardService } from '../../services/board.service';
 import { AuthService } from '../../services/auth.service';
 import { Square } from '../../models/square.model';
+import { supabase } from '../../data-sources/supabase.client';
 
 @Component({
   selector: 'pending-requests',
@@ -83,14 +84,14 @@ import { Square } from '../../models/square.model';
                           <div class="d-flex align-items-center justify-content-between mb-4">
                             <div class="d-flex align-items-center">
                               <div
-                                *ngIf="shouldShowCoordinates()"
+                                *ngIf="shouldShowActualCoordinates(square)"
                                 class="square-position-badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold">
                                 [{{ getDisplayRow(square.row_idx) }}, {{ getDisplayCol(square.col_idx) }}]
                               </div>
                               <div
-                                *ngIf="!shouldShowCoordinates()"
+                                *ngIf="!shouldShowActualCoordinates(square)"
                                 class="square-position-badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold">
-                                Square
+                                [?, ?]
                               </div>
                             </div>
                             <span class="badge bg-warning text-dark fs-6">
@@ -104,19 +105,19 @@ import { Square } from '../../models/square.model';
                               <div class="col-12">
                                 <div class="detail-item text-center">
                                   <small class="text-muted d-block mb-2">Game</small>
-                                  <h6 class="mb-0 fw-bold">{{ getGameName() }}</h6>
+                                  <h6 class="mb-0 fw-bold">{{ getGameName(square) }}</h6>
                                 </div>
                               </div>
                               <div class="col-6">
                                 <div class="detail-item text-center">
                                   <small class="text-muted d-block mb-1">Home Team</small>
-                                  <p class="mb-0 fw-medium">{{ getHomeTeam() }}</p>
+                                  <p class="mb-0 fw-medium">{{ getHomeTeam(square) }}</p>
                                 </div>
                               </div>
                               <div class="col-6">
                                 <div class="detail-item text-center">
                                   <small class="text-muted d-block mb-1">Away Team</small>
-                                  <p class="mb-0 fw-medium">{{ getAwayTeam() }}</p>
+                                  <p class="mb-0 fw-medium">{{ getAwayTeam(square) }}</p>
                                 </div>
                               </div>
                               <div class="col-12" *ngIf="square.requestedAt">
@@ -280,9 +281,10 @@ import { Square } from '../../models/square.model';
   `]
 })
 export class PendingRequestsComponent implements OnInit {
-  @Input() gameData: any = null;
+  @Input() gameData: any = null; // Keep for backward compatibility but we'll fetch per square
 
   currentSlide = 0;
+  gameCache = new Map<string, any>(); // Cache games by game_id
 
   constructor(
     public boardService: BoardService,
@@ -295,13 +297,68 @@ export class PendingRequestsComponent implements OnInit {
     if (!user) return [];
 
     const pendingRequests = this.boardService.pendingRequests();
-    return pendingRequests.filter((square: Square) =>
-      square.user_id === user.id || square.email === user.email
-    );
+    console.log('All pending requests:', pendingRequests);
+    console.log('Current user:', user);
+
+    const userRequests = pendingRequests.filter((square: Square) => {
+      const matchesUserId = square.user_id === user.id;
+      const matchesEmail = square.email === user.email;
+      console.log(`Square ${square.id}: user_id=${square.user_id}, email=${square.email}, requestedAt=${square.requestedAt}, matches=${matchesUserId || matchesEmail}`);
+      return matchesUserId || matchesEmail;
+    });
+
+    console.log('Filtered user requests (before sorting):', userRequests.length, userRequests);
+
+    // Sort by requestedAt descending (most recent first)
+    const sortedRequests = userRequests.sort((a, b) => {
+      const dateA = a.requestedAt ? new Date(a.requestedAt).getTime() : 0;
+      const dateB = b.requestedAt ? new Date(b.requestedAt).getTime() : 0;
+      return dateB - dateA; // Descending order (newest first)
+    });
+
+    console.log('Sorted user requests:', sortedRequests.length, sortedRequests);
+
+    // Automatically load game data for each square
+    sortedRequests.forEach(square => {
+      if (square.game_id && !this.gameCache.has(square.game_id)) {
+        this.loadGameDataForSquare(square);
+      }
+    });
+
+    return sortedRequests;
   });
 
+  async loadGameDataForSquare(square: Square): Promise<void> {
+    if (!square.game_id) {
+      console.warn('Square has no game_id:', square);
+      return;
+    }
+
+    // Check cache first
+    if (this.gameCache.has(square.game_id)) {
+      return;
+    }
+
+    try {
+      // Fetch game data for this specific square
+      const { data: game, error } = await supabase
+        .from('games')
+        .select('*')
+        .eq('id', square.game_id)
+        .single();
+
+      if (error) throw error;
+
+      // Cache the result
+      this.gameCache.set(square.game_id, game);
+      console.log(`Loaded game data for square ${square.id}:`, game);
+    } catch (error) {
+      console.error(`Error loading game data for square ${square.id}:`, error);
+    }
+  }
+
   ngOnInit() {
-    // Load squares when component initializes
+    // Load squares - pending requests will update automatically via computed property
     this.boardService.loadSquares();
   }
 
@@ -332,12 +389,78 @@ export class PendingRequestsComponent implements OnInit {
   }
 
   shouldShowCoordinates(): boolean {
-    // Always show coordinates if the game is closed (final reveal)
-    if (this.gameData?.status === 'closed') {
+    // Never show coordinates if axes are hidden, unless game is completely finished
+    if (this.gameData?.hide_axes) {
+      // Only show coordinates if game status is 'closed' or 'completed'
+      return this.gameData?.status === 'closed' || this.gameData?.status === 'completed';
+    }
+    // If axes aren't hidden, always show coordinates
+    return true;
+  }
+
+  async getGameDataForSquare(square: Square): Promise<any> {
+    if (!square.game_id) {
+      console.warn('Square has no game_id:', square);
+      return this.gameData; // fallback to global gameData
+    }
+
+    // Check cache first
+    if (this.gameCache.has(square.game_id)) {
+      return this.gameCache.get(square.game_id);
+    }
+
+    try {
+      // Fetch game data for this specific square
+      const { data: game, error } = await supabase
+        .from('games')
+        .select('*')
+        .eq('id', square.game_id)
+        .single();
+
+      if (error) throw error;
+
+      // Cache the result
+      this.gameCache.set(square.game_id, game);
+      console.log(`Loaded game data for square ${square.id}:`, game);
+
+      return game;
+    } catch (error) {
+      console.error(`Error loading game data for square ${square.id}:`, error);
+      return this.gameData; // fallback to global gameData
+    }
+  }
+
+  shouldShowActualCoordinates(square: Square): boolean {
+    const gameData = this.gameCache.get(square.game_id!) || this.gameData;
+
+    // Debug logging
+    console.log('=== shouldShowActualCoordinates Debug ===');
+    console.log('square.game_id:', square.game_id);
+    console.log('gameData:', gameData);
+    console.log('gameData.hide_axes:', gameData?.hide_axes);
+    console.log('gameData.status:', gameData?.status);
+
+    // If no gameData is available, default to showing coordinates
+    if (!gameData) {
+      console.log('No gameData available, showing coordinates');
       return true;
     }
-    // Otherwise, check the hide_axes flag from game data
-    return !this.gameData?.hide_axes;
+
+    // Show actual coordinates if axes are not hidden
+    if (!gameData.hide_axes) {
+      console.log('Axes not hidden, showing actual coordinates');
+      return true;
+    }
+
+    // If axes are hidden, only show coordinates if game is closed or completed
+    const shouldShow = gameData.status === 'complete' ||
+           gameData.status === 'closed' ||
+           gameData.status === 'canceled';
+
+    console.log('Axes hidden, game finished?', shouldShow);
+    console.log('=== End Debug ===');
+
+    return shouldShow;
   }
 
   nextSlide() {
@@ -356,18 +479,18 @@ export class PendingRequestsComponent implements OnInit {
     this.currentSlide = slideIndex;
   }
 
-  getGameName(): string {
-    // Assuming gameData contains a 'name' property for the game
-    return this.gameData?.name || 'N/A';
+  getGameName(square: Square): string {
+    const gameData = this.gameCache.get(square.game_id!) || this.gameData;
+    return gameData?.title || 'Game';
   }
 
-  getHomeTeam(): string {
-    // Assuming gameData contains home team information
-    return this.gameData?.homeTeam?.name || 'N/A';
+  getHomeTeam(square: Square): string {
+    const gameData = this.gameCache.get(square.game_id!) || this.gameData;
+    return gameData?.team1_name || 'Team 1';
   }
 
-  getAwayTeam(): string {
-    // Assuming gameData contains away team information
-    return this.gameData?.awayTeam?.name || 'N/A';
+  getAwayTeam(square: Square): string {
+    const gameData = this.gameCache.get(square.game_id!) || this.gameData;
+    return gameData?.team2_name || 'Team 2';
   }
 }

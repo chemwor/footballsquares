@@ -54,11 +54,6 @@ export const MENU_ITEMS: MenuItemType[] = [
     ]
   },
   {
-    key: 'game-management',
-    label: 'Game Page',
-    url: '/services/v3',
-  },
-  {
     key: 'create-game',
     label: 'Create Your Game',
     url: '/landings/get-your-picks',

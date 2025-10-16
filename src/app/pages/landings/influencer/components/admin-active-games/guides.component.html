@@ -3,20 +3,6 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center section-header">
       <h2 class="h1 mb-0">My Admin Games</h2>
-      <button
-        class="btn refresh-btn"
-        (click)="loadAdminGames()"
-        [disabled]="loading"
-      >
-        @if (loading) {
-          <div class="spinner-border spinner-border-sm me-2" role="status">
-            <span class="visually-hidden">Refreshing...</span>
-          </div>
-        } @else {
-          <i class="bi bi-arrow-clockwise me-2"></i>
-        }
-        Refresh
-      </button>
     </div>
 
     <!-- Loading state -->

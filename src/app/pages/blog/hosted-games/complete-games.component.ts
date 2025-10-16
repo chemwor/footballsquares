@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core'
 import { Breadcrumb1Component } from '@components/breadcrumb/breadcrumb-1/breadcrumb-1.component'
 import { NavigationBar2Component } from '@components/navigation-bars'
 import { SubscriptionComponent } from '../current-games/component/subscription/subscription.component'
-import { FooterComponent } from '../current-games/component/footer/footer.component'
 import { ListBlogComponent } from './component/list-blog/list-blog.component'
 import { supabase } from '../../../data-sources/supabase.client'
 import { CommonModule } from '@angular/common'
+import { FooterComponent } from '../../landings/saas-v2/components/footer/footer.component'
 
 export enum GameStatus {
   Open = 'open',
@@ -25,6 +25,7 @@ export enum GameStatus {
     FooterComponent,
     ListBlogComponent,
     CommonModule,
+    FooterComponent,
   ],
   templateUrl: './complete-games.component.html',
   styles: ``,
@@ -44,7 +45,9 @@ export class CompleteGamesComponent implements OnInit {
 
     try {
       // Get current user
-      const { data: { user } } = await supabase.auth.getUser()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
 
       if (!user) {
         this.games = []
@@ -55,7 +58,8 @@ export class CompleteGamesComponent implements OnInit {
       // Fetch games where user is the owner and status is Open, Locked, or Started
       const { data: gamesData, error } = await supabase
         .from('games')
-        .select(`
+        .select(
+          `
           id,
           title,
           sport,
@@ -71,7 +75,8 @@ export class CompleteGamesComponent implements OnInit {
           starts_at,
           claimed_count,
           pending_count
-        `)
+        `
+        )
         .eq('owner_id', user.id)
         .in('status', [GameStatus.Open, GameStatus.Locked, GameStatus.Started])
         .order('created_at', { ascending: false })
@@ -84,7 +89,7 @@ export class CompleteGamesComponent implements OnInit {
       }
 
       // Transform the data to match the expected format
-      this.games = (gamesData || []).map(game => ({
+      this.games = (gamesData || []).map((game) => ({
         id: game.id,
         image: game.team1_logo_url || 'assets/img/card.png',
         title: game.title,
@@ -99,10 +104,10 @@ export class CompleteGamesComponent implements OnInit {
         date: new Date(game.created_at).toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric',
-          year: 'numeric'
+          year: 'numeric',
         }),
         category: game.sport || 'Unknown',
-        gameData: game
+        gameData: game,
       }))
 
       this.loading = false

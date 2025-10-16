@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { Component, Input } from '@angular/core'
+import { Component, Input, Output, EventEmitter } from '@angular/core'
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap'
 import type { MenuItemType } from 'src/app/common/menu-items'
 import { VerticalMenuItemComponent } from './vertical-menu-item.component'
@@ -42,12 +42,14 @@ import { VerticalMenuItemComponent } from './vertical-menu-item.component'
                 [activeMenuItems]="activeMenuItems"
                 [itemClassName]="'nav-item pe-0 ps-3'"
                 [linkClassName]="'nav-link px-0 pt-1' + getActiveClass(child)"
+                (itemClicked)="onChildItemClicked()"
               />
             } @else {
               <vertical-menu-item
                 [item]="child"
                 [itemClassName]="'nav-item px-3 pt-1'"
                 [linkClassName]="'nav-link px-0 pt-1' + getActiveClass(child)"
+                (itemClicked)="onChildItemClicked()"
               />
             }
           }
@@ -61,12 +63,15 @@ export class VerticalMenuItemWithChildrenComponent {
   @Input() activeMenuItems?: string[]
   @Input() itemClassName?: string
   @Input() linkClassName?: string
+  @Output() itemClicked = new EventEmitter<unknown>()
 
   isCollapsed = true
 
-  ngOnInit() {}
-
   getActiveClass(item: MenuItemType) {
     return this.activeMenuItems?.includes(item.key) ? ' show' : ''
+  }
+
+  onChildItemClicked() {
+    this.itemClicked.emit()
   }
 }

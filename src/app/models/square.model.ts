@@ -10,6 +10,7 @@ export interface Square {
   name?: string;
   email?: string;
   user_id?: string; // Optional - for logged in users
+  game_id?: string; // Game this square belongs to
   requestedAt?: string; // ISO
   approved_at?: string; // ISO, for Supabase compatibility
 }

@@ -8,7 +8,7 @@ export const routes: Routes = [
       import('./pages/landings/saas-v3/saas-v3.component').then(
         (mod) => mod.SaasV3Component
       ),
-    title: 'SaaS V3 | Home',
+    title: 'BlitzSquares | Home',
   },
   {
     path: 'dashboard',

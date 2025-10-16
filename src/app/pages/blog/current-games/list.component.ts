@@ -3,7 +3,7 @@ import { Breadcrumb1Component } from '@components/breadcrumb/breadcrumb-1/breadc
 import { NavigationBar2Component } from '@components/navigation-bars'
 import { SubscriptionComponent } from './component/subscription/subscription.component'
 import { ListBlogComponent } from './component/list-blog/list-blog.component'
-import { FooterComponent } from './component/footer/footer.component'
+import { FooterComponent } from '../../landings/saas-v2/components/footer/footer.component'
 
 @Component({
   selector: 'app-list',

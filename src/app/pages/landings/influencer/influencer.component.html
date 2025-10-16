@@ -39,9 +39,12 @@
 
   <current-user-games />
 
-  <pending-requests />
+  <pending-requests [gameData]="gameData" />
 
-  <saas-v3-cta/>
+  <!-- CTA - only visible for free members -->
+  @if (hasFreeMembership() && authService.user()) {
+    <saas-v3-cta/>
+  }
 
 
 <!--  <influencer-results />-->
