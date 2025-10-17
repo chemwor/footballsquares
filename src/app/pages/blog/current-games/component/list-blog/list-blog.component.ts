@@ -1,7 +1,7 @@
 import { Component } from '@angular/core'
 import { blogPostList, BlogPostType } from '../../../list-sidebar/data'
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap'
-import { RouterModule } from '@angular/router'
+import { RouterModule, Router } from '@angular/router'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { supabase } from '../../../../../data-sources/supabase.client'
@@ -22,11 +22,14 @@ export class ListBlogComponent {
   selectedSport: string = '';
   loading: boolean = false;
   error: string = '';
+  showSignInPrompt: boolean = false;
 
   // Pagination properties
   currentPage: number = 1;
   pageSize: number = 10;
   totalItems: number = 0;
+
+  constructor(private router: Router) {}
 
   async ngOnInit() {
     await this.loadSports();
@@ -54,6 +57,7 @@ export class ListBlogComponent {
   async loadGames() {
     this.loading = true;
     this.error = '';
+    this.showSignInPrompt = false;
     // Get current user
     const { data: { session } } = await supabase.auth.getSession();
     const user = session?.user;
@@ -63,6 +67,7 @@ export class ListBlogComponent {
       this.paginatedGames = [];
       this.loading = false;
       this.error = 'No user found.';
+      this.showSignInPrompt = true;
       return;
     }
     // 1. Get all squares claimed by the user
@@ -166,5 +171,9 @@ export class ListBlogComponent {
 
   getMaxItemsShown(): number {
     return Math.min(this.currentPage * this.pageSize, this.totalItems);
+  }
+
+  navigateToSignIn() {
+    this.router.navigate(['/account/signin']);
   }
 }

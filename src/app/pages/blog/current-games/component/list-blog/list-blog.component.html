@@ -20,7 +20,15 @@
   </div>
 }
 
-@if (error) {
+@if (showSignInPrompt) {
+  <div class="alert alert-info text-center" role="alert">
+    <h5 class="alert-heading">Sign In Required</h5>
+    <p class="mb-3">Please sign in to view your current games and participate in squares.</p>
+    <button type="button" class="btn btn-primary" (click)="navigateToSignIn()">
+      <i class="ai-user me-2"></i>Sign In
+    </button>
+  </div>
+} @else if (error) {
   <div class="alert alert-danger" role="alert">
     {{ error }}
   </div>
