@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { Component, inject, OnInit } from '@angular/core'
+import { Component, inject, OnInit, effect } from '@angular/core'
 import { RouterModule } from '@angular/router'
 import { splitArray } from 'src/app/utils/array'
 import { findAllParent, getMenuItemFromURL } from '@helpers/menu'
@@ -48,6 +48,23 @@ export class HorizontalAppMenu implements OnInit {
         ...findAllParent(this.menuItems, this.matchingMenuItem),
       ]
     }
+
+    // Use effect to watch for auth state changes and regenerate menu
+    effect(() => {
+      // Reading the signal value triggers reactivity
+      this.authService.user()
+
+      this.generateMenuItems()
+      this.megaMenuItems = this.menuItems.filter((item) => item.isMega)
+      this.normalMenuItems = this.menuItems.filter((item) => !item.isMega)
+      this.matchingMenuItem = getMenuItemFromURL(this.menuItems, this.trimmedURL)
+
+      if (this.matchingMenuItem) {
+        this.activeMenuItems = [
+          ...findAllParent(this.menuItems, this.matchingMenuItem),
+        ]
+      }
+    })
   }
 
   private generateMenuItems(): void {
