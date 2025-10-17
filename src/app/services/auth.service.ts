@@ -28,9 +28,14 @@ export class AuthService {
   }
 
   private async initAuth() {
+    console.log('🚀 AuthService: Initializing authentication...')
     try {
       const { data: { session } } = await supabase.auth.getSession();
+      console.log('📋 AuthService: Initial session:', session)
+      console.log('👤 AuthService: Initial user:', session?.user)
+
       this._user.set(session?.user ?? null);
+      console.log('✅ AuthService: User signal set to:', this._user())
 
       if (session?.user) {
         await this.loadUserProfile(session.user.id);
@@ -38,18 +43,25 @@ export class AuthService {
 
       // Listen for auth state changes
       supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log('🔄 AuthService: Auth state change detected!')
+        console.log('📝 AuthService: Event:', event)
+        console.log('👤 AuthService: New session user:', session?.user)
+
         this._user.set(session?.user ?? null);
+        console.log('✅ AuthService: User signal updated to:', this._user())
 
         if (event === 'SIGNED_IN' && session?.user) {
+          console.log('🎉 AuthService: User signed in, loading profile...')
           await this.loadUserProfile(session.user.id);
           this.router.navigate(['/']);
         } else if (event === 'SIGNED_OUT') {
+          console.log('👋 AuthService: User signed out, clearing profile...')
           this._profile.set(null);
           this.router.navigate(['/auth/signin']);
         }
       });
     } catch (error) {
-      console.error('Error initializing auth:', error);
+      console.error('❌ AuthService: Error initializing auth:', error);
     }
   }
 

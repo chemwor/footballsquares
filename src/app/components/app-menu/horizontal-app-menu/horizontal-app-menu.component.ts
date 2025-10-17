@@ -23,8 +23,12 @@ export class HorizontalAppMenu implements OnInit {
     const user = this.authService.user()
     const profile = this.authService.profile()
 
-    console.log('Computing menu items - User:', user ? 'authenticated' : 'not authenticated')
-    console.log('Profile:', profile)
+    console.log('=== MENU COMPUTATION ===')
+    console.log('User object:', user)
+    console.log('User exists:', !!user)
+    console.log('Profile object:', profile)
+    console.log('Profile membership:', profile?.membership)
+    console.log('========================')
 
     return this.generateMenuItems(user !== null, profile)
   })
@@ -70,20 +74,34 @@ export class HorizontalAppMenu implements OnInit {
   ngOnInit() {
     // All setup is now handled by computed signals
     console.log('HorizontalAppMenu initialized')
+
+    // Let's also check the initial state
+    console.log('Initial user state:', this.authService.user())
+    console.log('Initial profile state:', this.authService.profile())
+
+    // Add a test method to manually check if computed signals are working
+    setTimeout(() => {
+      console.log('🧪 TEST: Checking computed signals after 2 seconds...')
+      console.log('menuItems():', this.menuItems().map(i => i.label))
+      console.log('normalMenuItems():', this.normalMenuItems().map(i => i.label))
+      console.log('megaMenuItems():', this.megaMenuItems().map(i => i.label))
+    }, 2000)
   }
 
   private generateMenuItems(isAuthenticated: boolean, profile: any): MenuItemType[] {
-    console.log('Generating menu items - isAuthenticated:', isAuthenticated)
+    console.log('=== GENERATING MENU ITEMS ===')
+    console.log('isAuthenticated:', isAuthenticated)
+    console.log('Profile passed:', profile)
 
     if (!isAuthenticated) {
       const items = [...PRE_SIGNIN_MENU_ITEMS]
-      console.log('Using PRE_SIGNIN_MENU_ITEMS:', items)
+      console.log('Returning PRE_SIGNIN_MENU_ITEMS:', items.map(i => i.label))
       return items
     }
 
     // User is signed in - build dynamic menu
     let items = [...SIGNED_IN_MENU_ITEMS]
-    console.log('Base signed-in menu items:', items)
+    console.log('Base SIGNED_IN_MENU_ITEMS:', items.map(i => i.label))
 
     // Check if user should see Host menu
     const shouldShowHostMenu = this.shouldShowHostMenuForUser(profile)
@@ -92,14 +110,19 @@ export class HorizontalAppMenu implements OnInit {
     if (shouldShowHostMenu) {
       // Insert Host menu after Home but before Games
       const gamesIndex = items.findIndex(item => item.key === 'games')
+      console.log('Games index found at:', gamesIndex)
+
       if (gamesIndex > -1) {
         items.splice(gamesIndex, 0, ...HOST_MENU_ITEMS)
       } else {
         // If Games not found, add Host menu after Home
         items.splice(1, 0, ...HOST_MENU_ITEMS)
       }
-      console.log('Final menu items with host menu:', items)
+      console.log('Final menu with host items:', items.map(i => i.label))
     }
+
+    console.log('Final menu items being returned:', items.map(i => i.label))
+    console.log('==============================')
 
     return items
   }
