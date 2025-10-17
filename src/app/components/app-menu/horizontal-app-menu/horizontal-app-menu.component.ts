@@ -30,46 +30,20 @@ export class HorizontalAppMenu implements OnInit {
   )
 
   ngOnInit() {
-    // Generate dynamic menu based on authentication status
-    this.generateMenuItems()
-
-    // Initialize other properties based on the generated menu
-    this.megaMenuItems = this.menuItems.filter((item) => item.isMega)
-    this.normalMenuItems = this.menuItems.filter((item) => !item.isMega)
-
-    if (this.megaMenuItems.length > 0 && this.megaMenuItems[0].children) {
-      this.splitMegaMenuItems = splitArray(this.megaMenuItems[0].children, 10)
-    }
-
-    this.matchingMenuItem = getMenuItemFromURL(this.menuItems, this.trimmedURL)
-
-    if (this.matchingMenuItem) {
-      this.activeMenuItems = [
-        ...findAllParent(this.menuItems, this.matchingMenuItem),
-      ]
-    }
-
     // Use effect to watch for auth state changes and regenerate menu
     effect(() => {
       // Reading the signal value triggers reactivity
-      this.authService.user()
+      const user = this.authService.user()
 
-      this.generateMenuItems()
-      this.megaMenuItems = this.menuItems.filter((item) => item.isMega)
-      this.normalMenuItems = this.menuItems.filter((item) => !item.isMega)
-      this.matchingMenuItem = getMenuItemFromURL(this.menuItems, this.trimmedURL)
+      // Generate menu based on current user state
+      this.generateMenuItems(user !== null)
 
-      if (this.matchingMenuItem) {
-        this.activeMenuItems = [
-          ...findAllParent(this.menuItems, this.matchingMenuItem),
-        ]
-      }
+      // Update all derived properties
+      this.updateMenuProperties()
     })
   }
 
-  private generateMenuItems(): void {
-    const isAuthenticated = this.authService.isAuthenticated()
-
+  private generateMenuItems(isAuthenticated: boolean): void {
     if (!isAuthenticated) {
       this.menuItems = [...PRE_SIGNIN_MENU_ITEMS]
       return
@@ -90,6 +64,24 @@ export class HorizontalAppMenu implements OnInit {
         // If Games not found, add Host menu after Home
         this.menuItems.splice(1, 0, ...HOST_MENU_ITEMS)
       }
+    }
+  }
+
+  private updateMenuProperties(): void {
+    // Initialize other properties based on the generated menu
+    this.megaMenuItems = this.menuItems.filter((item) => item.isMega)
+    this.normalMenuItems = this.menuItems.filter((item) => !item.isMega)
+
+    if (this.megaMenuItems.length > 0 && this.megaMenuItems[0].children) {
+      this.splitMegaMenuItems = splitArray(this.megaMenuItems[0].children, 10)
+    }
+
+    this.matchingMenuItem = getMenuItemFromURL(this.menuItems, this.trimmedURL)
+
+    if (this.matchingMenuItem) {
+      this.activeMenuItems = [
+        ...findAllParent(this.menuItems, this.matchingMenuItem),
+      ]
     }
   }
 
