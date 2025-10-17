@@ -83,6 +83,11 @@ export class AuthService {
     return membership === 'standard' || membership === 'premium';
   }
 
+  hasFreeMembership(): boolean {
+    const membership = this._profile()?.membership;
+    return membership === 'free' || !membership;
+  }
+
   getMembershipLevel(): string {
     return this._profile()?.membership || 'free';
   }

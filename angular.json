@@ -25,24 +25,13 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets",
-              {
-                "glob": "_redirects",
-                "input": "src",
-                "output": "./dist/browser"
-              }
-
+              "src/assets"
             ],
             "styles": [
-              "node_modules/ngx-lightbox/lightbox.css",
-              "node_modules/leaflet/dist/leaflet.css",
-              "aos/dist/aos.css",
-              "src/assets/icons/around-icons.min.css",
               "src/assets/scss/theme.scss",
               "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/@lottiefiles/lottie-player/dist/lottie-player.js",
               "node_modules/jquery/dist/jquery.min.js"
             ],
             "allowedCommonJsDependencies": [
@@ -54,14 +43,9 @@
               "can-use-dom"
             ],
             "stylePreprocessorOptions": {
-              "sass": {
-                "silenceDeprecations": [
-                  "color-functions",
-                  "global-builtin",
-                  "import",
-                  "mixed-decls"
-                ]
-              }
+              "includePaths": [
+                "src/assets/scss"
+              ]
             }
           },
           "configurations": {
@@ -90,13 +74,19 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "fileReplacements": []
             }
           },
-          "defaultConfiguration": "production"
+          "defaultConfiguration": "development"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "liveReload": true,
+            "hmr": false,
+            "poll": 1000
+          },
           "configurations": {
             "production": {
               "buildTarget": "around:build:production"

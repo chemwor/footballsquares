@@ -29,12 +29,16 @@
       "@store/*": ["./src/app/store/*"],
       "@core/*": ["./src/app/core/*"],
       "@helpers/*": ["./src/app/helpers/*"]
-    }
+    },
+    "incremental": true,
+    "tsBuildInfoFile": "./dist/out-tsc/.tsbuildinfo"
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
-    "strictTemplates": true
+    "strictTemplates": true,
+    "enableIvy": true,
+    "preserveWhitespaces": false
   }
 }
