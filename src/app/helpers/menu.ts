@@ -15,11 +15,11 @@ export const getMenuItemFromURL = (
         return foundItem
       }
     }
-    return undefined // Move this line outside of the loop
+    return undefined
   } else {
     if (items.url == url) return items
     if (items.children != null) {
-      return getMenuItemFromURL(items.children, url) // Add return statement here
+      return getMenuItemFromURL(items.children, url)
     }
     return undefined
   }

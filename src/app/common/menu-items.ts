@@ -10,11 +10,41 @@ export type MenuItemType = {
   children?: MenuItemType[]
 }
 
-export const MENU_ITEMS: MenuItemType[] = [
+// Menu for users who are NOT signed in
+export const PRE_SIGNIN_MENU_ITEMS: MenuItemType[] = [
   {
     key: 'home',
     label: 'Home',
     url: '/',
+  },
+  {
+    key: 'signin',
+    label: 'Sign In',
+    url: '/auth/signin',
+  },
+  {
+    key: 'signup',
+    label: 'Sign Up',
+    url: '/auth/signup',
+  },
+  {
+    key: 'pricing',
+    label: 'Price',
+    url: '/pages/pricing',
+  },
+  {
+    key: 'contact',
+    label: 'Contact',
+    url: '/contacts/v2',
+  },
+]
+
+// Menu for users who ARE signed in
+export const SIGNED_IN_MENU_ITEMS: MenuItemType[] = [
+  {
+    key: 'home',
+    label: 'Home',
+    url: '/dashboard', // Dashboard route for signed-in users
   },
   {
     key: 'games',
@@ -26,30 +56,9 @@ export const MENU_ITEMS: MenuItemType[] = [
         url: '/blog/list-no-sidebar',
       },
       {
-        key: 'completed-games',
-        label: 'Completed Games',
+        key: 'past-games',
+        label: 'Past Games',
         url: '/blog/complete-games',
-      },
-    ]
-  },
-  {
-    key: 'admin',
-    label: 'Admin',
-    children: [
-      {
-        key: 'admin-dashboard',
-        label: 'Admin Dashboard',
-        url: '/services/admin-game-page',
-      },
-      {
-        key: 'hosted-games',
-        label: 'Hosted Games',
-        url: '/blog/hosted-games',
-      },
-      {
-        key: 'hosted-history',
-        label: 'Hosted History',
-        url: '/blog/hosted-history',
       },
     ]
   },
@@ -59,20 +68,9 @@ export const MENU_ITEMS: MenuItemType[] = [
     url: '/landings/get-your-picks',
   },
   {
-    key: 'auth',
-    label: 'Account',
-    children: [
-      {
-        key: 'signin',
-        label: 'Sign In',
-        url: '/auth/signin',
-      },
-      {
-        key: 'signup',
-        label: 'Sign Up',
-        url: '/auth/sign-up',
-      },
-    ]
+    key: 'settings',
+    label: 'Settings',
+    url: '/account/settings',
   },
   {
     key: 'contact',
@@ -80,3 +78,26 @@ export const MENU_ITEMS: MenuItemType[] = [
     url: '/contacts/v2',
   },
 ]
+
+// Host menu items (shown conditionally for non-free members or users with played squares)
+export const HOST_MENU_ITEMS: MenuItemType[] = [
+  {
+    key: 'host',
+    label: 'Host',
+    children: [
+      {
+        key: 'squares-hosting',
+        label: 'Squares Hosting',
+        url: '/blog/hosted-games',
+      },
+      {
+        key: 'hosted-history',
+        label: 'Hosted History',
+        url: '/blog/hosted-history',
+      },
+    ]
+  },
+]
+
+// Legacy menu items (keeping for backward compatibility)
+export const MENU_ITEMS: MenuItemType[] = PRE_SIGNIN_MENU_ITEMS
