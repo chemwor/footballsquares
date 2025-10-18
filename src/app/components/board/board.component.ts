@@ -637,7 +637,16 @@ export class BoardComponent implements OnInit {
 
   cellClick(row: number, col: number) {
     const status = this.cellStatus(row, col);
+
+    // Check if game is in open status before allowing square assignment
     if (status === 'empty' && !this.admin()) {
+      // Only allow square assignment if game is in open status
+      if (!this.isGameOpen()) {
+        // Show an alert or notification that the game is not open for square assignments
+        alert('This game is no longer accepting new square assignments. The game status is: ' + this.getGameStatus());
+        return;
+      }
+
       this.modalRow.set(row);
       this.modalCol.set(col);
       this.modalOpen.set(true);
@@ -645,6 +654,19 @@ export class BoardComponent implements OnInit {
       const sq = this.board.squares().find((s: Square) => Number(s.row_idx) === row && Number(s.col_idx) === col);
       if (sq) this.decline(sq.id);
     }
+  }
+
+  // Helper method to check if game is in open status
+  private isGameOpen(): boolean {
+    if (!this.gameData) return false;
+    const gameStatus = this.gameData.status?.toLowerCase();
+    return gameStatus === GameStatus.Open || gameStatus === 'open';
+  }
+
+  // Helper method to get the current game status for display
+  private getGameStatus(): string {
+    if (!this.gameData || !this.gameData.status) return 'unknown';
+    return this.gameData.status;
   }
 
   closeModal() {

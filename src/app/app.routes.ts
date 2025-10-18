@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router'
 import { AccountLayoutComponent } from './layouts/account-layout.component'
+import { AuthGuard } from './services/auth.guard'
 
 export const routes: Routes = [
   {
@@ -17,6 +18,7 @@ export const routes: Routes = [
         (mod) => mod.InfluencerComponent
       ),
     title: 'BlitzSquares | Dashboard',
+    canActivate: [AuthGuard],
   },
   {
     path: 'landings',

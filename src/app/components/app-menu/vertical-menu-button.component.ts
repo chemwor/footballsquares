@@ -1,8 +1,9 @@
-import { Component, inject, type OnInit } from '@angular/core'
+import { Component, inject, type OnInit, computed } from '@angular/core'
 import { VerticalAppMenuComponent } from './vertical-app-menu/vertical-app-menu.component'
-import { getMenuItems } from '@helpers/menu'
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap'
 import { LogoBoxComponent } from '@components/logo-box/logo-box.component'
+import { AuthService } from '../../services/auth.service'
+import { MenuItemType, PRE_SIGNIN_MENU_ITEMS, SIGNED_IN_MENU_ITEMS, HOST_MENU_ITEMS } from 'src/app/common/menu-items'
 
 @Component({
   selector: 'vertical-menu-button',
@@ -22,12 +23,11 @@ import { LogoBoxComponent } from '@components/logo-box/logo-box.component'
 
       <div class="offcanvas-body">
         <vertical-app-menu
-          [menuItems]="menuItems"
+          [menuItems]="menuItems()"
           [offcanvasRef]="offcanvas"
         ></vertical-app-menu>
       </div>
     </ng-template>
-
 
     <button
       class="navbar-toggler ms-sm-3"
@@ -43,15 +43,55 @@ import { LogoBoxComponent } from '@components/logo-box/logo-box.component'
   `,
 })
 export class VerticalMenuButtonComponent implements OnInit {
+  private authService = inject(AuthService)
   offcanvasService = inject(NgbOffcanvas)
+  isOffcanvasOpen = false
 
-  isOffcanvasOpen: boolean = false
+  // Computed signal for reactive menu items based on authentication
+  menuItems = computed(() => {
+    const user = this.authService.user()
+    const profile = this.authService.profile()
+
+    return this.generateMenuItems(user !== null, profile)
+  })
 
   ngOnInit(): void {
-    this.offcanvasService.activeInstance.subscribe((e) => {
-      this.isOffcanvasOpen = Boolean(e)
-    })
+    // Component is now fully reactive
   }
 
-  menuItems = getMenuItems()
+  private generateMenuItems(isAuthenticated: boolean, profile: any): MenuItemType[] {
+    if (!isAuthenticated) {
+      return [...PRE_SIGNIN_MENU_ITEMS]
+    }
+
+    // User is signed in - build dynamic menu
+    let menuItems = [...SIGNED_IN_MENU_ITEMS]
+
+    // Check if user should see Host menu
+    const shouldShowHostMenu = this.shouldShowHostMenuForUser(profile)
+
+    if (shouldShowHostMenu) {
+      // Insert Host menu after Home but before Games
+      const gamesIndex = menuItems.findIndex(item => item.key === 'games')
+      if (gamesIndex > -1) {
+        menuItems.splice(gamesIndex, 0, ...HOST_MENU_ITEMS)
+      } else {
+        // If Games not found, add Host menu after Home
+        menuItems.splice(1, 0, ...HOST_MENU_ITEMS)
+      }
+    }
+
+    return menuItems
+  }
+
+  // Helper method to determine if user should see Host menu
+  private shouldShowHostMenuForUser(profile: any): boolean {
+    // Show Host menu if user is not a free member OR has squares that have been played
+    const membership = profile?.membership || 'free'
+    const isFreeMember = membership === 'free' || !membership
+
+    // For now, we'll show Host menu for non-free members
+    // TODO: Add logic to check if user has played squares
+    return !isFreeMember
+  }
 }

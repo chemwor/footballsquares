@@ -15,11 +15,11 @@ export const SERVICE_ROUTES: Route[] = [
     component: ServiceV2Component,
     data: { title: 'Services v.2' },
   },
-  // {
-  //   path: 'v3',
-  //   component: ServiceV3Component,
-  //   data: { title: 'Services v.3' },
-  // },
+  {
+    path: 'v3',
+    component: ServiceV3Component,
+    data: { title: 'Services v.3' },
+  },
   {
     path: 'game-page/:id',
     component: ServiceV3Component,
@@ -29,5 +29,10 @@ export const SERVICE_ROUTES: Route[] = [
     path: 'admin-game-page/:id',
     component: AdminGamePageComponent,
     data: { title: 'Admin Game Page' },
+  },
+  {
+    path: 'single-v3/:id',
+    component: ServiceV3Component,
+    title: 'BlitzSquares | Game Details',
   },
 ]

@@ -1,14 +1,14 @@
-<nav class="collapse navbar-collapse" id="navbarNav">
+<nav class="collapse navbar-collapse justify-content-center" id="navbarNav">
   <ul
-    class="navbar-nav navbar-nav-scroll me-auto"
+    class="navbar-nav navbar-nav-scroll"
     style="--ar-scroll-height: 520px"
   >
-    @for (item of megaMenuItems; track item.key) {
+    @for (item of megaMenuItems(); track item.key) {
         <li class="nav-item dropdown">
           <a
             [ngClass]="[
               'nav-link dropdown-toggle',
-              activeMenuItems.includes(item.key) ? ' active' : '',
+              activeMenuItems().includes(item.key) ? ' active' : '',
             ]"
             href="javascript:void(0);"
             data-bs-toggle="dropdown"
@@ -20,7 +20,7 @@
           @if (item.children) {
             <div class="dropdown-menu overflow-hidden p-0">
               <div class="d-lg-flex">
-                @for (chunk of splitMegaMenuItems; track $index) {
+                @for (chunk of splitMegaMenuItems(); track $index) {
                   <div class="mega-dropdown-column pt-1 pt-lg-3 pb-lg-4">
                     <ul class="list-unstyled mb-0">
                       @for (
@@ -52,7 +52,7 @@
           }
         </li>
     }
-    @for (item of normalMenuItems; track item.key) {
+    @for (item of normalMenuItems(); track item.key) {
       @if (item.children) {
         <ng-container
           *ngTemplateOutlet="
@@ -62,7 +62,7 @@
               className: 'dropdown nav-item ',
               linkClassName:
                 'nav-link dropdown-toggle' +
-                (activeMenuItems.includes(item.key) ? ' active' : ''),
+                (activeMenuItems().includes(item.key) ? ' active' : ''),
               childLinkClassName: 'dropdown-item dropdown-toggle',
             }
           "
@@ -73,51 +73,58 @@
             menuItem;
             context: {
               item,
+              className: 'nav-item',
               linkClassName:
                 'nav-link' +
-                (activeMenuItems.includes(item.key) ? ' active' : ''),
+                (activeMenuItems().includes(item.key) ? ' active' : ''),
             }
           "
         />
       }
     }
   </ul>
-  <div class="d-sm-none p-3 mt-n3">
-    <a
-      class="btn btn-primary w-100 mb-1"
-      [href]="buyLink"
-      target="_blank"
-      rel="noopener"
-    >
-      <i class="ai-cart fs-xl me-2 ms-n1"></i>
-      Create Your Game
-    </a>
+  <div class="navbar-nav ms-auto">
+    <!-- Only show auth actions if NOT authenticated -->
+    @if (!authService.user()) {
+      <div class="nav-item">
+        <a class="nav-link" routerLink="/auth/signin">Sign In</a>
+      </div>
+      <div class="nav-item">
+        <a class="btn btn-primary btn-sm ms-2" routerLink="/auth/signup">Sign Up</a>
+      </div>
+    } @else {
+      <!-- Show user actions if authenticated -->
+      <div class="nav-item dropdown">
+        <a
+          class="nav-link dropdown-toggle"
+          href="javascript:void(0);"
+          data-bs-toggle="dropdown"
+        >
+          User
+        </a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" routerLink="/account/settings">Settings</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" (click)="authService.signOut()">Sign Out</a></li>
+        </ul>
+      </div>
+    }
   </div>
 </nav>
 
-<ng-template #megaMenuItem let-item="item" let-imageClassName="imageClassName">
-  <li>
-    <ng-container
-      *ngTemplateOutlet="
-        menuItemLink;
-        context: {
-          item,
-          linkClassName:
-            'dropdown-item' +
-            (activeMenuItems.includes(item.key) ? ' active' : ''),
-        }
-      "
-    />
-    <span
-      [ngClass]="[
-        'mega-dropdown-column position-absolute top-0 end-0 h-100 bg-size-cover bg-repeat-0 ',
-        imageClassName,
-      ]"
-      [style.background-image]="'url(' + item.image + ')'"
-    ></span>
+<!-- MenuItem template -->
+<ng-template #menuItem let-item="item" let-className="className" let-linkClassName="linkClassName">
+  <li [class]="className">
+    <a [class]="linkClassName" [routerLink]="item.url">
+      {{ item.label }}
+      <span *ngIf="item.badge" class="badge bg-danger fs-xs ms-2">{{
+        item.badge
+      }}</span>
+    </a>
   </li>
 </ng-template>
 
+<!-- MenuItem with children template -->
 <ng-template
   #menuItemWithChildren
   let-item="item"
@@ -125,74 +132,67 @@
   let-linkClassName="linkClassName"
   let-childLinkClassName="childLinkClassName"
 >
-  <li class="{{ className }}">
+  <li [class]="className">
     <a
-      class="{{ linkClassName }}"
+      [class]="linkClassName"
       href="javascript:void(0);"
       data-bs-toggle="dropdown"
-      data-bs-auto-close="outside"
       aria-expanded="false"
-      >{{ item.label }}</a
     >
-    <ul class="dropdown-menu">
+      {{ item.label }}
+      <span *ngIf="item.badge" class="badge bg-danger fs-xs ms-2">{{
+        item.badge
+      }}</span>
+    </a>
+    @if (item.children) {
+      <ul class="dropdown-menu">
+        @for (menuItem of item.children; track menuItem.key) {
+          @if (menuItem.children) {
+            <ng-container
+              *ngTemplateOutlet="
+                menuItemWithChildren;
+                context: {
+                  item: menuItem,
+                  className: 'dropdown dropend',
+                  linkClassName: childLinkClassName,
+                  childLinkClassName: childLinkClassName,
+                }
+              "
+            />
+          } @else {
+            <li>
+              <a
+                class="dropdown-item"
+                [routerLink]="menuItem.url"
+                [class.active]="activeMenuItems().includes(menuItem.key)"
+              >
+                {{ menuItem.label }}
+              </a>
+            </li>
+          }
+        }
+      </ul>
+    }
+  </li>
+</ng-template>
+
+<!-- Mega menu item template -->
+<ng-template #megaMenuItem let-item="item" let-imageClassName="imageClassName">
+  <li>
+    <a class="dropdown-item fw-medium" [routerLink]="item.url">
+      {{ item.label }}
+    </a>
+    @if (item.children) {
       @for (child of item.children; track child.key) {
-        @if (child.children) {
-          <ng-container
-            *ngTemplateOutlet="
-              menuItemWithChildren;
-              context: {
-                item: child,
-                className: 'dropdown',
-                linkClassName:
-                  childLinkClassName +
-                  (activeMenuItems.includes(child.key) ? ' active' : ''),
-              }
-            "
-          />
-        } @else {
-          <ng-container
-            *ngTemplateOutlet="
-              menuItem;
-              context: {
-                item: child,
-                linkClassName: activeMenuItems.includes(child.key)
-                  ? ' active'
-                  : '',
-              }
-            "
-          />
-        }
+        <a class="dropdown-item" [routerLink]="child.url">
+          <span class="fw-medium">{{ child.label }}</span>
+          @if (child.description) {
+            <small class="d-block text-body-secondary">
+              {{ child.description }}
+            </small>
+          }
+        </a>
       }
-    </ul>
+    }
   </li>
-</ng-template>
-
-<ng-template
-  #menuItem
-  let-item="item"
-  let-className="className"
-  let-linkClassName="linkClassName"
-  let-activeMenuItems="activeMenuItems"
->
-  <li [ngClass]="className">
-    <ng-container
-      *ngTemplateOutlet="
-        menuItemLink;
-        context: {
-          item,
-          linkClassName: 'dropdown-item ' + linkClassName,
-        }
-      "
-    />
-  </li>
-</ng-template>
-
-<ng-template #menuItemLink let-item="item" let-className="linkClassName">
-  <a
-    [ngClass]="className"
-    [routerLink]="item.url"
-    [target]="item.target ?? '_self'"
-  >
-    {{ item.label }}
-  </a>
 </ng-template>

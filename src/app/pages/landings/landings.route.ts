@@ -18,6 +18,7 @@ import { CoworkingSpaceComponent } from './get-your-picks/coworking-space.compon
 import { YogaStudioComponent } from './yoga-studio/yoga-studio.component'
 import { InfluencerComponent } from './influencer/influencer.component'
 import { BlogComponent } from './blog/blog.component'
+import { AuthGuard } from '../../services/auth.guard'
 
 export const LANDING_ROUTES: Route[] = [
   {
@@ -98,6 +99,7 @@ export const LANDING_ROUTES: Route[] = [
   {
     path: 'get-your-picks',
     component: CoworkingSpaceComponent,
+    canActivate: [AuthGuard],
     data: { title: 'Get Your Picks' },
   },
   {

@@ -1,0 +1,183 @@
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h1 class="h2 mb-0">Discover Games</h1>
+  <button class="btn btn-outline-primary btn-sm" (click)="refreshGames()" [disabled]="loading">
+    <i class="ai-refresh me-2"></i>Refresh
+  </button>
+</div>
+
+<p class="fs-lg text-muted mb-4">
+  Find and join open squares games created by other users. All games shown are currently accepting new players.
+</p>
+
+<!-- Sport Filter -->
+<div class="row mb-4">
+  <div class="col-md-6">
+    <label for="sportFilter" class="form-label">Filter by Sport</label>
+    <select
+      id="sportFilter"
+      class="form-select"
+      [(ngModel)]="selectedSport"
+      (change)="onSportFilterChange()"
+    >
+      <option value="">All Sports</option>
+      <option *ngFor="let sport of sports" [value]="sport.name">
+        {{ capitalizeFirstLetter(sport.name) }}
+      </option>
+    </select>
+  </div>
+  <div class="col-md-6">
+    <label for="pageSize" class="form-label">Games per page</label>
+    <select
+      id="pageSize"
+      class="form-select"
+      [value]="pageSize"
+      (change)="onPageSizeChange($event)"
+    >
+      <option value="5">5</option>
+      <option value="10">10</option>
+      <option value="20">20</option>
+      <option value="50">50</option>
+    </select>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="loading" class="text-center py-5">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading games...</span>
+  </div>
+  <p class="mt-3 text-muted">Loading available games...</p>
+</div>
+
+<!-- Error State -->
+<div *ngIf="error && !loading" class="alert alert-danger" role="alert">
+  <h4 class="alert-heading">Error Loading Games</h4>
+  <p>{{ error }}</p>
+  <button class="btn btn-outline-danger btn-sm" (click)="refreshGames()">
+    Try Again
+  </button>
+</div>
+
+<!-- Sign In Prompt -->
+<div *ngIf="showSignInPrompt && !loading" class="alert alert-info" role="alert">
+  <h4 class="alert-heading">Sign In Required</h4>
+  <p>Please sign in to discover and join games created by other users.</p>
+  <div class="d-flex gap-2">
+    <button class="btn btn-primary btn-sm" (click)="navigateToSignIn()">
+      Sign In
+    </button>
+    <button class="btn btn-outline-primary btn-sm" (click)="navigateToSignUp()">
+      Sign Up
+    </button>
+  </div>
+</div>
+
+<!-- Games List -->
+<div *ngIf="!loading && !error && !showSignInPrompt">
+  <!-- Results Info -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <p class="text-muted mb-0">
+      Showing {{ (currentPage - 1) * pageSize + 1 }}-{{ getMinValue(currentPage * pageSize, totalItems) }} of {{ totalItems }} games
+    </p>
+    <span class="badge bg-primary">{{ filteredGames.length }} available games</span>
+  </div>
+
+  <!-- No Games Message -->
+  <div *ngIf="paginatedGames.length === 0" class="text-center py-5">
+    <div class="mb-4">
+      <i class="ai-search display-4 text-muted"></i>
+    </div>
+    <h3 class="text-muted">No Games Found</h3>
+    <p class="text-muted mb-4">
+      <ng-container *ngIf="selectedSport">
+        No open {{ selectedSport }} games are currently available for you to join.
+      </ng-container>
+      <ng-container *ngIf="!selectedSport">
+        No open games are currently available for you to join.
+      </ng-container>
+    </p>
+    <button class="btn btn-primary" routerLink="/landings/get-your-picks">
+      Create Your Own Game
+    </button>
+  </div>
+
+  <!-- Games Grid -->
+  <div *ngIf="paginatedGames.length > 0">
+    @for (game of paginatedGames; track game.id) {
+      <article class="row g-0 border-0 mb-4">
+        <a
+          class="col-sm-5 col-lg-4 bg-repeat-0 bg-size-cover bg-position-center rounded-5"
+          [routerLink]="['/services/single-v3', game.id]"
+          style="background-image: url({{ game.image }}); min-height: 16rem"
+          aria-label="Game image"
+        ></a>
+        <div class="col-sm-7 col-lg-8">
+          <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
+            <h3>
+              <a [routerLink]="['/services/single-v3', game.id]">{{ game.title }}</a>
+            </h3>
+            <div class="mb-2">
+              <span class="badge bg-primary me-2">{{ capitalizeFirstLetter(game.sport) }}</span>
+              <span class="badge bg-success me-2">{{ game.status | titlecase }}</span>
+              <span class="badge bg-info text-dark">{{ game.boardSize }} Grid</span>
+            </div>
+            <p class="mb-3">{{ game.excerpt }}</p>
+
+            <!-- Game Details -->
+            <div class="mb-3">
+              <div class="row g-2 text-sm">
+                <div class="col-sm-6" *ngIf="game.match">
+                  <strong>Match:</strong> {{ game.match }}
+                </div>
+                <div class="col-sm-6">
+                  <strong>Host:</strong> {{ game.ownerName }}
+                </div>
+                <div class="col-sm-6">
+                  <strong>Claimed Squares:</strong> {{ game.shares }}
+                </div>
+                <div class="col-sm-6">
+                  <strong>Pending Requests:</strong> {{ game.comments }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center text-muted">
+                <i class="ai-calendar me-2"></i>
+                <span class="fs-sm">{{ game.date }}</span>
+              </div>
+              <div class="d-flex gap-2">
+                <a
+                  [routerLink]="['/services/single-v3', game.id]"
+                  class="btn btn-primary btn-sm"
+                >
+                  View Game
+                </a>
+<!--                <a-->
+<!--                  [routerLink]="['/services/single-v3', game.id]"-->
+<!--                  class="btn btn-outline-primary btn-sm"-->
+<!--                >-->
+<!--                  Join Game-->
+<!--                </a>-->
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    }
+
+    <!-- Pagination -->
+    <nav aria-label="Games pagination" *ngIf="totalItems > 0">
+      <ngb-pagination
+        [(page)]="currentPage"
+        [pageSize]="pageSize"
+        [collectionSize]="totalItems"
+        [maxSize]="5"
+        [rotate]="true"
+        (pageChange)="onPageChange($event)"
+        class="justify-content-center"
+      ></ngb-pagination>
+    </nav>
+  </div>
+</div>

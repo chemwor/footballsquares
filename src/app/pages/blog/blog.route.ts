@@ -3,6 +3,7 @@ import { GridSidebarComponent } from './grid-sidebar/grid-sidebar.component'
 import { GridComponent } from './grid/grid.component'
 import { ListSidebarComponent } from './list-sidebar/list-sidebar.component'
 import { ListComponent } from './current-games/list.component'
+import { DiscoverGamesComponent } from './discover-games/discover-games.component'
 import { SingleV1Component } from './single-v1/single-v1.component'
 import { SingleV2Component } from './single-v2/single-v2.component'
 import { SingleV3Component } from './single-v3/single-v3.component'
@@ -27,6 +28,11 @@ export const BLOG_ROUTES: Route[] = [
     path: 'list-no-sidebar',
     component: ListComponent,
     data: { title: 'Blog List no Sidebar' },
+  },
+  {
+    path: 'discover-games',
+    component: DiscoverGamesComponent,
+    data: { title: 'Discover Games' },
   },
   {
     path: 'post-1',

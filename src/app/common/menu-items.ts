@@ -56,6 +56,11 @@ export const SIGNED_IN_MENU_ITEMS: MenuItemType[] = [
         url: '/blog/list-no-sidebar',
       },
       {
+        key: 'discover-games',
+        label: 'Discover Games',
+        url: '/blog/discover-games',
+      },
+      {
         key: 'past-games',
         label: 'Past Games',
         url: '/blog/complete-games',

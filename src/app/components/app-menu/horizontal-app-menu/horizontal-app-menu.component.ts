@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { Component, inject, OnInit, computed } from '@angular/core'
+import { Component, inject, OnInit, computed, ChangeDetectorRef, effect } from '@angular/core'
 import { RouterModule } from '@angular/router'
 import { splitArray } from 'src/app/utils/array'
 import { findAllParent, getMenuItemFromURL } from '@helpers/menu'
@@ -14,7 +14,10 @@ import { AuthService } from '../../../services/auth.service'
   templateUrl: './horizontal-app-menu.component.html',
 })
 export class HorizontalAppMenu implements OnInit {
-  private authService = inject(AuthService)
+  private cdr = inject(ChangeDetectorRef)
+
+  // Make authService public so template can access it
+  public authService = inject(AuthService)
 
   buyLink = buyLink
 
@@ -28,9 +31,26 @@ export class HorizontalAppMenu implements OnInit {
     console.log('User exists:', !!user)
     console.log('Profile object:', profile)
     console.log('Profile membership:', profile?.membership)
+
+    // Direct signal check instead of isAuthenticated() method
+    const isAuthenticated = user !== null
+    console.log('Direct isAuthenticated check:', isAuthenticated)
+    console.log('AuthService isAuthenticated() method:', this.authService.isAuthenticated())
     console.log('========================')
 
-    return this.generateMenuItems(user !== null, profile)
+    const items = this.generateMenuItems(isAuthenticated, profile)
+    return items
+  })
+
+  // Create an effect to explicitly trigger change detection when menu items change
+  private menuUpdateEffect = effect(() => {
+    const items = this.menuItems()
+    console.log('🔄 Menu items effect triggered with items:', items.length)
+    // Use setTimeout to avoid ExpressionChangedAfterItHasBeenCheckedError
+    setTimeout(() => {
+      this.cdr.markForCheck()
+      this.cdr.detectChanges()
+    }, 0)
   })
 
   megaMenuItems = computed(() => {
@@ -51,89 +71,82 @@ export class HorizontalAppMenu implements OnInit {
     return []
   })
 
-  activeMenuItems = computed(() => {
-    const items = this.menuItems()
-    const matchingMenuItem = getMenuItemFromURL(items, this.trimmedURL)
-
-    if (matchingMenuItem) {
-      return [...findAllParent(items, matchingMenuItem)]
-    }
-    return []
-  })
+  // Computed properties for URL matching and active items
+  trimmedURL = location?.pathname?.replaceAll(
+    basePath !== '' ? basePath + '/' : '',
+    '/'
+  )
 
   matchingMenuItem = computed(() => {
     const items = this.menuItems()
     return getMenuItemFromURL(items, this.trimmedURL)
   })
 
-  trimmedURL = location?.pathname?.replaceAll(
-    basePath !== '' ? basePath + '/' : '',
-    '/'
-  )
+  activeMenuItems = computed(() => {
+    const matching = this.matchingMenuItem()
+    if (matching) {
+      return findAllParent(this.menuItems(), matching)
+    }
+    return []
+  })
+
+  // Debug computed signals for template display
+  menuItemKeys = computed(() => {
+    return this.menuItems().map(item => item.key).join(', ')
+  })
+
+  userAuthStatus = computed(() => {
+    return this.authService.user() ? 'YES' : 'NO'
+  })
+
+  profileMembership = computed(() => {
+    return this.authService.profile()?.membership || 'None'
+  })
 
   ngOnInit() {
-    // All setup is now handled by computed signals
-    console.log('HorizontalAppMenu initialized')
-
-    // Let's also check the initial state
-    console.log('Initial user state:', this.authService.user())
-    console.log('Initial profile state:', this.authService.profile())
-
-    // Add a test method to manually check if computed signals are working
-    setTimeout(() => {
-      console.log('🧪 TEST: Checking computed signals after 2 seconds...')
-      console.log('menuItems():', this.menuItems().map(i => i.label))
-      console.log('normalMenuItems():', this.normalMenuItems().map(i => i.label))
-      console.log('megaMenuItems():', this.megaMenuItems().map(i => i.label))
-    }, 2000)
+    // Component is now fully reactive - no need for imperative initialization
   }
 
   private generateMenuItems(isAuthenticated: boolean, profile: any): MenuItemType[] {
-    console.log('=== GENERATING MENU ITEMS ===')
-    console.log('isAuthenticated:', isAuthenticated)
-    console.log('Profile passed:', profile)
+    console.log('🔍 Generating menu items - User authenticated:', isAuthenticated)
+    console.log('📋 Profile data:', profile)
 
     if (!isAuthenticated) {
-      const items = [...PRE_SIGNIN_MENU_ITEMS]
-      console.log('Returning PRE_SIGNIN_MENU_ITEMS:', items.map(i => i.label))
-      return items
+      console.log('��� User not authenticated - showing PRE_SIGNIN_MENU_ITEMS:', PRE_SIGNIN_MENU_ITEMS)
+      return [...PRE_SIGNIN_MENU_ITEMS]
     }
 
     // User is signed in - build dynamic menu
-    let items = [...SIGNED_IN_MENU_ITEMS]
-    console.log('Base SIGNED_IN_MENU_ITEMS:', items.map(i => i.label))
+    console.log('✅ User authenticated - building SIGNED_IN_MENU_ITEMS')
+    let menuItems = [...SIGNED_IN_MENU_ITEMS]
+    console.log('📝 Base signed-in menu items:', menuItems)
 
     // Check if user should see Host menu
     const shouldShowHostMenu = this.shouldShowHostMenuForUser(profile)
-    console.log('Should show host menu:', shouldShowHostMenu)
+    console.log('🏠 Should show host menu:', shouldShowHostMenu)
 
     if (shouldShowHostMenu) {
       // Insert Host menu after Home but before Games
-      const gamesIndex = items.findIndex(item => item.key === 'games')
-      console.log('Games index found at:', gamesIndex)
-
+      const gamesIndex = menuItems.findIndex(item => item.key === 'games')
       if (gamesIndex > -1) {
-        items.splice(gamesIndex, 0, ...HOST_MENU_ITEMS)
+        menuItems.splice(gamesIndex, 0, ...HOST_MENU_ITEMS)
+        console.log('🎯 Inserted host menu before games at index:', gamesIndex)
       } else {
         // If Games not found, add Host menu after Home
-        items.splice(1, 0, ...HOST_MENU_ITEMS)
+        menuItems.splice(1, 0, ...HOST_MENU_ITEMS)
+        console.log('🎯 Inserted host menu after home')
       }
-      console.log('Final menu with host items:', items.map(i => i.label))
     }
 
-    console.log('Final menu items being returned:', items.map(i => i.label))
-    console.log('==============================')
-
-    return items
+    console.log('🎉 Final menu items:', menuItems)
+    return menuItems
   }
 
   // Helper method to determine if user should see Host menu
   private shouldShowHostMenuForUser(profile: any): boolean {
     // Show Host menu if user is not a free member OR has squares that have been played
-    const membership = profile?.membership
+    const membership = profile?.membership || 'free'
     const isFreeMember = membership === 'free' || !membership
-
-    console.log('Profile membership:', membership, 'isFreeMember:', isFreeMember)
 
     // For now, we'll show Host menu for non-free members
     // TODO: Add logic to check if user has played squares
