@@ -19,9 +19,9 @@ register();
     <div class="container py-5">
       <div class="row justify-content-center">
         <div class="col-lg-10">
-          <div class="card">
+          <div>
             <div class="card-header d-flex justify-content-between align-items-center">
-              <h5 class="mb-0">
+              <h5 class="mb-0" style="padding-bottom: 20px">
                 <i class="ai-clock me-2"></i>
                 My Pending Requests
               </h5>
@@ -130,7 +130,8 @@ register();
       </div>
     </div>
   `,
-  styles: [`
+  styles: [
+    `
     .square-position-badge {
       font-family: 'Courier New', monospace;
       font-size: 0.9rem;
@@ -139,15 +140,6 @@ register();
     .card {
       box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
       border: 1px solid rgba(0, 0, 0, 0.125);
-      overflow: visible !important;
-      width: 100% !important;
-      max-width: 100% !important;
-    }
-
-    .card-body {
-      overflow: visible !important;
-      width: 100% !important;
-      max-width: 100% !important;
     }
 
     .card.border-warning {
@@ -169,31 +161,47 @@ register();
       padding-bottom: 1rem;
       width: 100% !important;
       overflow: visible !important;
+      scroll-snap-type: x mandatory;
     }
     .swiper-wrapper {
       width: 100% !important;
       overflow: visible !important;
       display: flex;
+      align-items: center;
     }
-    .swiper-slide {
+    .swiper-slide, .pending-slide {
       display: flex;
       justify-content: center;
-      width: 100% !important;
+      align-items: center;
+      width: auto !important;
       max-width: none !important;
-      min-width: 320px;
+      min-width: 0;
       overflow: visible !important;
+      scroll-snap-align: center;
     }
-    .pending-slide {
-      flex: 1 1 320px;
-      width: 100% !important;
-      max-width: none !important;
+    .pending-slide > .card {
+      width: 350px;
+      margin: 0 auto;
       min-width: 320px;
+      max-width: 100%;
+      height: auto;
       overflow: visible !important;
+      box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+      border: 1px solid rgba(0,0,0,0.125);
+    }
+    .pending-slide .card.h-100 {
+      height: auto !important;
     }
     @media (max-width: 600px) {
-      .pending-slide {
-        min-width: 90vw;
+      .pending-slide > .card {
+        width: 90vw;
+        min-width: 0;
       }
+    }
+    .pending-requests-slide, .col-lg-10, .container {
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow: visible !important;
     }
 
     .detail-item {
@@ -213,13 +221,8 @@ register();
         padding: 0.5rem 1rem !important;
       }
     }
-    /* Ensure parent containers do not restrict width */
-    .pending-requests-slide, .col-lg-10, .container {
-      width: 100% !important;
-      max-width: 100% !important;
-      overflow: visible !important;
-    }
-  `]
+    `
+  ]
 })
 export class PendingRequestsComponent implements OnInit, AfterViewInit {
   @Input() gameData: any = null; // Keep for backward compatibility but we'll fetch per square
@@ -229,7 +232,8 @@ export class PendingRequestsComponent implements OnInit, AfterViewInit {
 
   swiperConfig: SwiperOptions = {
     spaceBetween: 24,
-    slidesPerView: 1,
+    slidesPerView: 'auto',
+    centeredSlides: true,
     pagination: {
       el: '.swiper-pagination',
       clickable: true,
