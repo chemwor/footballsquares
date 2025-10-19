@@ -25,7 +25,7 @@ register();
                 <i class="ai-clock me-2"></i>
                 My Pending Requests
               </h5>
-              <span class="badge bg-warning">{{ userPendingRequests().length }}</span>
+<!--              <span class="badge bg-warning">{{ userPendingRequests().length }}</span>-->
             </div>
 
             <div class="card-body">
@@ -294,12 +294,6 @@ export class PendingRequestsComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Move badge to right: -38px
-    const badge = document.querySelector('.card-header .badge.bg-warning') as HTMLElement;
-    if (badge) {
-      badge.style.position = 'absolute';
-      badge.style.right = '-38px';
-    }
     // Remove scroll and allow section to expand
     const slideSection = document.querySelector('.pending-requests-slide') as HTMLElement;
     if (slideSection) {
