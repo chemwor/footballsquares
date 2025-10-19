@@ -19,6 +19,7 @@ interface AdminGame {
   approved_squares: number;
   pending_squares: number;
   empty_squares: number;
+  pendingSquares?: any[]; // Add this to hold pending squares for the game
 }
 
 @Component({
@@ -340,6 +341,8 @@ export class AdminActiveGamesComponent implements OnInit, OnDestroy {
   adminGames: AdminGame[] = [];
   loading = true;
   error = '';
+  loadingApprove: boolean = false;
+  loadingDecline: boolean = false;
 
   swiperConfig: SwiperOptions = {
     modules: [Pagination],
@@ -356,76 +359,55 @@ export class AdminActiveGamesComponent implements OnInit, OnDestroy {
     },
   }
 
-  private refreshInterval: any;
-
   constructor(private authService: AuthService) {}
 
   async ngOnInit() {
     await this.loadAdminGames();
-
-    // Refresh data every 30 seconds
-    this.refreshInterval = setInterval(() => {
-      this.loadAdminGames();
-    }, 30000);
+    // Removed setInterval auto-refresh
   }
 
   ngOnDestroy() {
-    if (this.refreshInterval) {
-      clearInterval(this.refreshInterval);
-    }
+    // Removed auto-refresh cleanup
   }
 
   async loadAdminGames() {
     try {
       this.loading = true;
       this.error = '';
-
-      // Get current user ID
       const currentUser = this.authService.user();
       if (!currentUser) {
         this.adminGames = [];
         return;
       }
-
-      // Get all open/locked games first, then we'll filter by checking if user has admin permissions
-      // For now, we'll show all open games - you may need to add an admin relationship table
       const { data: games, error: gamesError } = await supabase
         .from('games')
         .select('id, title, status, starts_at')
-        .in('status', ['open', 'locked']) // Include both open and locked games
+        .in('status', ['open', 'locked'])
         .order('starts_at', { ascending: true });
-
       if (gamesError) {
         console.error('Error fetching games:', gamesError);
         this.error = 'Failed to load games';
         return;
       }
-
       if (!games || games.length === 0) {
         this.adminGames = [];
         return;
       }
-
-      // Get square statistics for each game
       const gamesWithStats: AdminGame[] = [];
-
       for (const game of games) {
-        // Get all squares for this game
         const { data: squares, error: squaresError } = await supabase
           .from('squares')
-          .select('id, status')
+          .select('id, status, user_id, email, requested_at')
           .eq('game_id', game.id);
-
         if (squaresError) {
           console.error('Error fetching squares for game:', game.id, squaresError);
           continue;
         }
-
         const totalSquares = squares?.length || 0;
         const approvedSquares = squares?.filter(s => s.status === 'approved').length || 0;
-        const pendingSquares = squares?.filter(s => s.status === 'pending').length || 0;
+        const pendingSquaresArr = squares?.filter(s => s.status === 'pending') || [];
+        const pendingSquares = pendingSquaresArr.length;
         const emptySquares = squares?.filter(s => s.status === 'empty').length || 0;
-
         gamesWithStats.push({
           id: game.id,
           title: game.title,
@@ -435,22 +417,66 @@ export class AdminActiveGamesComponent implements OnInit, OnDestroy {
           approved_squares: approvedSquares,
           pending_squares: pendingSquares,
           empty_squares: emptySquares,
+          pendingSquares: pendingSquaresArr, // Store pending squares for this game
         });
       }
-
-      // Sort games by starts_at descending (newest first)
       gamesWithStats.sort((a, b) => {
         const dateA = a.starts_at ? new Date(a.starts_at).getTime() : 0;
         const dateB = b.starts_at ? new Date(b.starts_at).getTime() : 0;
         return dateB - dateA;
       });
       this.adminGames = gamesWithStats;
-
     } catch (err) {
       console.error('Unexpected error loading admin games:', err);
       this.error = 'An unexpected error occurred';
     } finally {
       this.loading = false;
+    }
+  }
+
+  async approveRequest(square: any, game: AdminGame) {
+    this.loadingApprove = true;
+    console.log(`[APPROVE] Attempting for square ${square.id} in game ${game.id}`);
+    try {
+      const { data, error } = await supabase
+        .from('squares')
+        .update({ status: 'approved' })
+        .eq('id', square.id)
+        .select();
+      if (error) {
+        console.error(`[APPROVE] Failed for square ${square.id} in game ${game.id}:`, error);
+      } else {
+        console.log(`[APPROVE] Success for square ${square.id} in game ${game.id}:`, data);
+      }
+      await this.loadAdminGames();
+    } catch (err) {
+      console.error(`[APPROVE] Unexpected error for square ${square.id} in game ${game.id}:`, err);
+    } finally {
+      this.loadingApprove = false;
+      console.log(`[APPROVE] Finished for square ${square.id} in game ${game.id}`);
+    }
+  }
+
+  async declineRequest(square: any, game: AdminGame) {
+    this.loadingDecline = true;
+    console.log(`[DECLINE] Attempting for square ${square.id} in game ${game.id}`);
+    try {
+      const { data, error } = await supabase
+        .from('squares')
+        .update({ status: 'declined' })
+        .eq('id', square.id)
+        .select();
+      if (error) {
+        console.error(`[DECLINE] Failed for square ${square.id} in game ${game.id}:`, error);
+      } else {
+        console.log(`[DECLINE] Success for square ${square.id} in game ${game.id}:`, data);
+      }
+      await this.loadAdminGames();
+    } catch (err) {
+      console.error(`[DECLINE] Unexpected error for square ${square.id} in game ${game.id}:`, err);
+    } finally {
+      this.loadingDecline = false;
+      console.log(`[DECLINE] Finished for square ${square.id} in game ${game.id}`);
     }
   }
 

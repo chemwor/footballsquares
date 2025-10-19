@@ -436,8 +436,6 @@ export class PendingApprovalsComponent implements OnInit, OnDestroy {
     },
   }
 
-  private refreshInterval: any;
-
   constructor(
     private authService: AuthService,
     private router: Router
@@ -445,17 +443,9 @@ export class PendingApprovalsComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     await this.loadPendingApprovals();
-
-    // Refresh data every 30 seconds
-    this.refreshInterval = setInterval(() => {
-      this.loadPendingApprovals();
-    }, 30000);
   }
 
   ngOnDestroy() {
-    if (this.refreshInterval) {
-      clearInterval(this.refreshInterval);
-    }
   }
 
   async loadPendingApprovals() {

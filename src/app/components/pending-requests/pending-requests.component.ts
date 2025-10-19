@@ -256,35 +256,7 @@ export class PendingRequestsComponent implements OnInit, AfterViewInit {
     if (!user) return [];
 
     const pendingRequests = this.boardService.pendingRequests();
-    console.log('All pending requests:', pendingRequests);
-    console.log('Current user:', user);
-
-    const userRequests = pendingRequests.filter((square: Square) => {
-      const matchesUserId = square.user_id === user.id;
-      const matchesEmail = square.email === user.email;
-      console.log(`Square ${square.id}: user_id=${square.user_id}, email=${square.email}, requestedAt=${square.requestedAt}, matches=${matchesUserId || matchesEmail}`);
-      return matchesUserId || matchesEmail;
-    });
-
-    console.log('Filtered user requests (before sorting):', userRequests.length, userRequests);
-
-    // Sort by requestedAt descending (most recent first)
-    const sortedRequests = userRequests.sort((a, b) => {
-      const dateA = a.requestedAt ? new Date(a.requestedAt).getTime() : 0;
-      const dateB = b.requestedAt ? new Date(b.requestedAt).getTime() : 0;
-      return dateB - dateA; // Descending order (newest first)
-    });
-
-    console.log('Sorted user requests:', sortedRequests.length, sortedRequests);
-
-    // Automatically load game data for each square
-    sortedRequests.forEach(square => {
-      if (square.game_id && !this.gameCache.has(square.game_id)) {
-        this.loadGameDataForSquare(square);
-      }
-    });
-
-    return sortedRequests;
+    return pendingRequests.filter((req: any) => req.user_id === user.id && req.status === 'pending');
   });
 
   async loadGameDataForSquare(square: Square): Promise<void> {
@@ -408,22 +380,22 @@ export class PendingRequestsComponent implements OnInit, AfterViewInit {
   shouldShowActualCoordinates(square: Square): boolean {
     const gameData = this.gameCache.get(square.game_id!) || this.gameData;
 
-    // Debug logging
-    console.log('=== shouldShowActualCoordinates Debug ===');
-    console.log('square.game_id:', square.game_id);
-    console.log('gameData:', gameData);
-    console.log('gameData.hide_axes:', gameData?.hide_axes);
-    console.log('gameData.status:', gameData?.status);
+    // Removed debug logging
+    // console.log('=== shouldShowActualCoordinates Debug ===');
+    // console.log('square.game_id:', square.game_id);
+    // console.log('gameData:', gameData);
+    // console.log('gameData.hide_axes:', gameData?.hide_axes);
+    // console.log('gameData.status:', gameData?.status);
 
     // If no gameData is available, default to showing coordinates
     if (!gameData) {
-      console.log('No gameData available, showing coordinates');
+      // console.log('No gameData available, showing coordinates');
       return true;
     }
 
     // Show actual coordinates if axes are not hidden
     if (!gameData.hide_axes) {
-      console.log('Axes not hidden, showing actual coordinates');
+      // console.log('Axes not hidden, showing actual coordinates');
       return true;
     }
 
@@ -432,8 +404,8 @@ export class PendingRequestsComponent implements OnInit, AfterViewInit {
            gameData.status === 'closed' ||
            gameData.status === 'canceled';
 
-    console.log('Axes hidden, game finished?', shouldShow);
-    console.log('=== End Debug ===');
+    // console.log('Axes hidden, game finished?', shouldShow);
+    // console.log('=== End Debug ===');
 
     return shouldShow;
   }

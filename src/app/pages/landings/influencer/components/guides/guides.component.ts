@@ -314,24 +314,13 @@ export class CurrentUserGamesComponent implements OnInit, OnDestroy {
     },
   }
 
-  private refreshInterval: any;
-
   constructor(private authService: AuthService) {}
 
   async ngOnInit() {
     await this.loadUserGames();
-
-    // Refresh data every 30 seconds
-    this.refreshInterval = setInterval(() => {
-      this.loadUserGames();
-    }, 30000);
   }
 
-  ngOnDestroy() {
-    if (this.refreshInterval) {
-      clearInterval(this.refreshInterval);
-    }
-  }
+  ngOnDestroy() {}
 
   async loadUserGames() {
     try {
