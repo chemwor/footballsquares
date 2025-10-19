@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, Input, AfterViewInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, OnInit, computed, Input, AfterViewInit, CUSTOM_ELEMENTS_SCHEMA, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BoardService } from '../../services/board.service';
 import { AuthService } from '../../services/auth.service';
@@ -291,6 +291,17 @@ export class PendingRequestsComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     // Load squares - pending requests will update automatically via computed property
     this.boardService.loadSquares();
+
+    // Reactively load game data for each unique game_id in userPendingRequests
+    effect(() => {
+      const squares = this.userPendingRequests();
+      const loadedGameIds = new Set(this.gameCache.keys());
+      for (const square of squares) {
+        if (square.game_id && !loadedGameIds.has(square.game_id)) {
+          this.loadGameDataForSquare(square);
+        }
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -372,24 +383,11 @@ export class PendingRequestsComponent implements OnInit, AfterViewInit {
   }
 
   shouldShowActualCoordinates(square: Square): boolean {
-    const gameData = this.gameCache.get(square.game_id!) || this.gameData;
-
-    // Removed debug logging
-    // console.log('=== shouldShowActualCoordinates Debug ===');
-    // console.log('square.game_id:', square.game_id);
-    // console.log('gameData:', gameData);
-    // console.log('gameData.hide_axes:', gameData?.hide_axes);
-    // console.log('gameData.status:', gameData?.status);
-
-    // If no gameData is available, default to showing coordinates
-    if (!gameData) {
-      // console.log('No gameData available, showing coordinates');
-      return true;
-    }
+    const gameData = this.gameCache.get(square.game_id!);
+    if (!gameData) return false; // Show loading or hide coordinates until loaded
 
     // Show actual coordinates if axes are not hidden
     if (!gameData.hide_axes) {
-      // console.log('Axes not hidden, showing actual coordinates');
       return true;
     }
 
@@ -397,9 +395,6 @@ export class PendingRequestsComponent implements OnInit, AfterViewInit {
     const shouldShow = gameData.status === 'complete' ||
            gameData.status === 'closed' ||
            gameData.status === 'canceled';
-
-    // console.log('Axes hidden, game finished?', shouldShow);
-    // console.log('=== End Debug ===');
 
     return shouldShow;
   }
@@ -421,17 +416,20 @@ export class PendingRequestsComponent implements OnInit, AfterViewInit {
   }
 
   getGameName(square: Square): string {
-    const gameData = this.gameCache.get(square.game_id!) || this.gameData;
+    const gameData = this.gameCache.get(square.game_id!);
+    if (!gameData) return 'Loading...';
     return gameData?.title || 'Game';
   }
 
   getHomeTeam(square: Square): string {
-    const gameData = this.gameCache.get(square.game_id!) || this.gameData;
+    const gameData = this.gameCache.get(square.game_id!);
+    if (!gameData) return '...';
     return gameData?.team1_name || 'Team 1';
   }
 
   getAwayTeam(square: Square): string {
-    const gameData = this.gameCache.get(square.game_id!) || this.gameData;
+    const gameData = this.gameCache.get(square.game_id!);
+    if (!gameData) return '...';
     return gameData?.team2_name || 'Team 2';
   }
 }

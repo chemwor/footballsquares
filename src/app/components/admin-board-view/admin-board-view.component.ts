@@ -421,8 +421,8 @@ export class AdminBoardViewComponent implements OnInit, OnChanges {
 
       // Map the winning squares data using home_digit and away_digit as coordinates
       this.winningSquares = (data || []).map(winner => ({
-        row_idx: winner.home_digit, // home_digit is the row (Y-axis)
-        col_idx: winner.away_digit, // away_digit is the column (X-axis)
+        row_idx: winner.away_digit, // Invert: away_digit is now row (Y-axis)
+        col_idx: winner.home_digit, // Invert: home_digit is now col (X-axis)
         period_no: winner.period_no,
         winner_name: winner.winner_name || ''
       }));
