@@ -63,6 +63,9 @@
                       Square {{ getSquarePosition(square) }}
                     </div>
                     <div class="game-title">{{ square.game_title }}</div>
+                    <div class="teams-matchup">
+                      {{ square.team1_name }} <span class="vs">vs</span> {{ square.team2_name }}
+                    </div>
                     <div class="request-date">
                       <i class="bi bi-clock me-1"></i>
                       {{ formatDate(square.requested_at) }}
@@ -129,11 +132,11 @@
           </swiper-container>
         </div>
 
-        <!-- Navigation buttons -->
-        @if (displayedSquares.length > 1 || showViewMore) {
-          <div class="swiper-button-next"></div>
-          <div class="swiper-button-prev"></div>
-        }
+<!--        &lt;!&ndash; Navigation buttons &ndash;&gt;-->
+<!--        @if (displayedSquares.length > 1 || showViewMore) {-->
+<!--          <div class="swiper-button-next"></div>-->
+<!--          <div class="swiper-button-prev"></div>-->
+<!--        }-->
 
         <!-- Pagination -->
         <div class="swiper-pagination"></div>

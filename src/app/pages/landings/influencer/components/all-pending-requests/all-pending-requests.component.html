@@ -1,0 +1,65 @@
+<component-navigation-bar-2 />
+
+<section class="page-below-navbar position-relative py-2 py-sm-3 py-md-4 py-lg-5">
+  <div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center section-header">
+      <h2 class="h1 mb-0">All Pending Requests</h2>
+    </div>
+
+    <!-- Loading state -->
+    <div *ngIf="loading" class="loading-spinner">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading pending requests...</span>
+      </div>
+    </div>
+
+    <!-- Error state -->
+    <div *ngIf="error" class="alert alert-danger" role="alert">
+      <h4 class="alert-heading">Error Loading Requests</h4>
+      <p>{{ error }}</p>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!loading && !error && pendingSquares.length === 0" class="empty-state">
+      <i class="bi bi-check-circle text-success" style="font-size: 4rem;"></i>
+      <h3 class="mt-3 mb-2">All Caught Up!</h3>
+      <p class="text-muted mb-4">
+        There are no pending square requests to approve at this time.
+      </p>
+    </div>
+
+    <!-- Vertical Feed of Cards -->
+    <div *ngIf="!loading && !error && pendingSquares.length > 0" class="vertical-feed">
+      <div *ngFor="let square of pendingSquares" class="card pending-card mb-4">
+        <div class="pending-header">
+          <div class="game-title">{{ square.game_title }}</div>
+          <div class="teams-info" *ngIf="square.team1_name || square.team2_name">
+            <span class="team" *ngIf="square.team1_name">{{ square.team1_name }}</span>
+            <span *ngIf="square.team1_name && square.team2_name"> vs </span>
+            <span class="team" *ngIf="square.team2_name">{{ square.team2_name }}</span>
+          </div>
+          <div class="request-date">
+            <i class="bi bi-clock"></i>
+            {{ square.requested_at | date:'medium' }}
+          </div>
+          <span class="square-badge">{{ square.row_idx + 1 }}-{{ square.col_idx + 1 }}</span>
+        </div>
+        <div class="requester-info">
+          <div class="requester-name">{{ square.name }}</div>
+          <div class="requester-email">
+            <i class="bi bi-envelope"></i>
+            {{ square.email }}
+          </div>
+          <div class="action-buttons mt-3">
+            <button class="btn btn-approve" [disabled]="processingSquareId === square.id" (click)="approveSquare(square)">
+              <i class="bi bi-check-circle"></i> Accept
+            </button>
+            <button class="btn btn-decline" [disabled]="processingSquareId === square.id" (click)="declineSquare(square)">
+              <i class="bi bi-x-circle"></i> Decline
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

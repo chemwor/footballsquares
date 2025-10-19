@@ -438,6 +438,12 @@ export class AdminActiveGamesComponent implements OnInit, OnDestroy {
         });
       }
 
+      // Sort games by starts_at descending (newest first)
+      gamesWithStats.sort((a, b) => {
+        const dateA = a.starts_at ? new Date(a.starts_at).getTime() : 0;
+        const dateB = b.starts_at ? new Date(b.starts_at).getTime() : 0;
+        return dateB - dateA;
+      });
       this.adminGames = gamesWithStats;
 
     } catch (err) {

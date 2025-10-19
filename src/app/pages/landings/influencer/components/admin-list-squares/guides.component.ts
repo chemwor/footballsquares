@@ -6,6 +6,7 @@ import { register } from 'swiper/element/bundle'
 import { Pagination, Navigation } from 'swiper/modules'
 import { supabase } from '../../../../../data-sources/supabase.client'
 import { AuthService } from '../../../../../services/auth.service'
+import { Router } from '@angular/router'
 
 // register Swiper custom elements
 register()
@@ -19,6 +20,8 @@ interface PendingSquare {
   requested_at: string;
   game_id: string;
   game_title: string;
+  team1_name?: string;
+  team2_name?: string;
 }
 
 @Component({
@@ -214,7 +217,7 @@ interface PendingSquare {
     .notification-badge {
       position: absolute;
       top: -12px;
-      right: -12px;
+      right: -38px;
       background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
       color: white;
       border-radius: 50%;
@@ -435,7 +438,10 @@ export class PendingApprovalsComponent implements OnInit, OnDestroy {
 
   private refreshInterval: any;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   async ngOnInit() {
     await this.loadPendingApprovals();
@@ -460,7 +466,7 @@ export class PendingApprovalsComponent implements OnInit, OnDestroy {
       // First, get all games that are open
       const { data: games, error: gamesError } = await supabase
         .from('games')
-        .select('id, title, status, starts_at')
+        .select('id, title, status, starts_at, team1_name, team2_name')
         .eq('status', 'open')
         .order('starts_at', { ascending: true });
 
@@ -493,12 +499,14 @@ export class PendingApprovalsComponent implements OnInit, OnDestroy {
         return;
       }
 
-      // Map squares with game titles
+      // Map squares with game titles and teams
       const squaresWithGameTitles: PendingSquare[] = pendingSquares?.map(square => {
         const game = games.find(g => g.id === square.game_id);
         return {
           ...square,
-          game_title: game?.title || 'Unknown Game'
+          game_title: game?.title || 'Unknown Game',
+          team1_name: game?.team1_name || '',
+          team2_name: game?.team2_name || ''
         };
       }) || [];
 
@@ -591,9 +599,7 @@ export class PendingApprovalsComponent implements OnInit, OnDestroy {
   }
 
   viewAllPendingRequests() {
-    // Navigate to a full page view of all pending requests
-    // You can implement this route as needed
-    window.open('/admin/pending-approvals', '_blank');
+    this.router.navigate(['/all-pending-requests']);
   }
 
   formatDate(dateString: string): string {

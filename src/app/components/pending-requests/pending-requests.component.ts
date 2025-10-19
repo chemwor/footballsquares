@@ -1,14 +1,20 @@
-import { Component, OnInit, computed, Input } from '@angular/core';
+import { Component, OnInit, computed, Input, AfterViewInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BoardService } from '../../services/board.service';
 import { AuthService } from '../../services/auth.service';
 import { Square } from '../../models/square.model';
 import { supabase } from '../../data-sources/supabase.client';
+import { SwiperDirective } from '@components/swiper-directive.component';
+import { SwiperOptions } from 'swiper/types';
+import { register } from 'swiper/element/bundle';
+
+register();
 
 @Component({
   selector: 'pending-requests',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SwiperDirective],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div class="container py-5">
       <div class="row justify-content-center">
@@ -48,125 +54,75 @@ import { supabase } from '../../data-sources/supabase.client';
 
               <!-- Pending Requests Slide -->
               <div *ngIf="authService.user() && userPendingRequests().length > 0" class="pending-requests-slide">
-                <!-- Navigation Controls -->
-                <div class="d-flex justify-content-between align-items-center mb-3" *ngIf="userPendingRequests().length > 1">
-                  <div class="slide-info">
-                    <small class="text-muted">
-                      {{ currentSlide + 1 }} of {{ userPendingRequests().length }} requests
-                    </small>
-                  </div>
-                  <div class="slide-controls">
-                    <button
-                      class="btn btn-outline-secondary btn-sm me-2"
-                      (click)="previousSlide()"
-                      [disabled]="currentSlide === 0">
-                      <i class="ai-chevron-left"></i>
-                    </button>
-                    <button
-                      class="btn btn-outline-secondary btn-sm"
-                      (click)="nextSlide()"
-                      [disabled]="currentSlide === userPendingRequests().length - 1">
-                      <i class="ai-chevron-right"></i>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Slide Container -->
-                <div class="slide-container">
-                  <div
-                    class="slide-wrapper"
-                    [style.transform]="'translateX(-' + (currentSlide * 100) + '%)'">
-                    <div
-                      *ngFor="let square of userPendingRequests(); let i = index; trackBy: trackBySquareId"
-                      class="slide-item">
-                      <div class="card border-warning bg-light h-100">
-                        <div class="card-body p-4">
-                          <div class="d-flex align-items-center justify-content-between mb-4">
-                            <div class="d-flex align-items-center">
-                              <div
-                                *ngIf="shouldShowActualCoordinates(square)"
-                                class="square-position-badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold">
-                                [{{ getDisplayRow(square.row_idx) }}, {{ getDisplayCol(square.col_idx) }}]
+                <div class="swiper">
+                  <swiper-container
+                    [config]="swiperConfig"
+                    init="false"
+                    class="swiper-wrapper"
+                  >
+                    <ng-container *ngFor="let square of userPendingRequests(); trackBy: trackBySquareId">
+                      <swiper-slide class="swiper-slide pending-slide">
+                        <div class="card border-warning bg-light h-100">
+                          <div class="card-body p-4">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                              <div class="d-flex align-items-center">
+                                <div *ngIf="shouldShowActualCoordinates(square)" class="square-position-badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold">
+                                  [{{ getDisplayRow(square.row_idx) }}, {{ getDisplayCol(square.col_idx) }}]
+                                </div>
+                                <div *ngIf="!shouldShowActualCoordinates(square)" class="square-position-badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold">
+                                  [?, ?]
+                                </div>
                               </div>
-                              <div
-                                *ngIf="!shouldShowActualCoordinates(square)"
-                                class="square-position-badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold">
-                                [?, ?]
-                              </div>
+                              <span class="badge bg-warning text-dark fs-6">
+                                <i class="ai-clock me-1"></i>
+                                Pending
+                              </span>
                             </div>
-                            <span class="badge bg-warning text-dark fs-6">
-                              <i class="ai-clock me-1"></i>
-                              Pending
-                            </span>
-                          </div>
 
-                          <div class="game-details mb-4">
-                            <div class="row g-3">
-                              <div class="col-12">
-                                <div class="detail-item text-center">
-                                  <small class="text-muted d-block mb-2">Game</small>
-                                  <h6 class="mb-0 fw-bold">{{ getGameName(square) }}</h6>
+                            <div class="game-details mb-4">
+                              <div class="row g-3">
+                                <div class="col-12">
+                                  <div class="detail-item text-center">
+                                    <small class="text-muted d-block mb-2">Game</small>
+                                    <h6 class="mb-0 fw-bold">{{ getGameName(square) }}</h6>
+                                  </div>
                                 </div>
-                              </div>
-                              <div class="col-6">
-                                <div class="detail-item text-center">
-                                  <small class="text-muted d-block mb-1">Home Team</small>
-                                  <p class="mb-0 fw-medium">{{ getHomeTeam(square) }}</p>
+                                <div class="col-6">
+                                  <div class="detail-item text-center">
+                                    <small class="text-muted d-block mb-1">Home Team</small>
+                                    <p class="mb-0 fw-medium">{{ getHomeTeam(square) }}</p>
+                                  </div>
                                 </div>
-                              </div>
-                              <div class="col-6">
-                                <div class="detail-item text-center">
-                                  <small class="text-muted d-block mb-1">Away Team</small>
-                                  <p class="mb-0 fw-medium">{{ getAwayTeam(square) }}</p>
+                                <div class="col-6">
+                                  <div class="detail-item text-center">
+                                    <small class="text-muted d-block mb-1">Away Team</small>
+                                    <p class="mb-0 fw-medium">{{ getAwayTeam(square) }}</p>
+                                  </div>
                                 </div>
-                              </div>
-                              <div class="col-12" *ngIf="square.requestedAt">
-                                <div class="detail-item text-center">
-                                  <small class="text-muted d-block mb-1">Requested On</small>
-                                  <p class="mb-0">{{ formatDate(square.requestedAt) }}</p>
+                                <div class="col-12" *ngIf="square.requestedAt">
+                                  <div class="detail-item text-center">
+                                    <small class="text-muted d-block mb-1">Requested On</small>
+                                    <p class="mb-0">{{ formatDate(square.requestedAt) }}</p>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
 
-                          <div class="status-info p-3 bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded">
-                            <div class="d-flex align-items-center justify-content-center">
-                              <i class="ai-info-circle me-2 text-warning"></i>
-                              <small class="text-dark text-center">
-                                <strong>Status:</strong> Waiting for admin approval
-                              </small>
+                            <div class="status-info p-3 bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded">
+                              <div class="d-flex align-items-center justify-content-center">
+                                <i class="ai-info-circle me-2 text-warning"></i>
+                                <small class="text-dark text-center">
+                                  <strong>Status:</strong> Waiting for admin approval
+                                </small>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
+                      </swiper-slide>
+                    </ng-container>
+                  </swiper-container>
                 </div>
-
-                <!-- Slide Indicators -->
-                <div class="slide-indicators mt-3" *ngIf="userPendingRequests().length > 1">
-                  <div class="d-flex justify-content-center">
-                    <button
-                      *ngFor="let request of userPendingRequests(); let i = index"
-                      class="indicator"
-                      [class.active]="i === currentSlide"
-                      (click)="goToSlide(i)">
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Info Message -->
-                <div class="alert alert-info mt-4 mb-0" role="alert">
-                  <div class="d-flex align-items-start">
-                    <i class="ai-info-circle mt-1 me-2"></i>
-                    <div>
-                      <strong>About Pending Requests</strong><br>
-                      <small class="text-muted">
-                        Your square requests are being reviewed by an admin. You'll be notified once they're approved or if any changes are needed.
-                      </small>
-                    </div>
-                  </div>
-                </div>
+                <div class="swiper-pagination"></div>
               </div>
             </div>
           </div>
@@ -183,6 +139,15 @@ import { supabase } from '../../data-sources/supabase.client';
     .card {
       box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
       border: 1px solid rgba(0, 0, 0, 0.125);
+      overflow: visible !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    .card-body {
+      overflow: visible !important;
+      width: 100% !important;
+      max-width: 100% !important;
     }
 
     .card.border-warning {
@@ -200,56 +165,35 @@ import { supabase } from '../../data-sources/supabase.client';
     }
 
     /* Slide Styles */
-    .slide-container {
-      overflow: hidden;
-      position: relative;
-      width: 100%;
+    .swiper {
+      padding-bottom: 1rem;
+      width: 100% !important;
+      overflow: visible !important;
     }
-
-    .slide-wrapper {
+    .swiper-wrapper {
+      width: 100% !important;
+      overflow: visible !important;
       display: flex;
-      transition: transform 0.3s ease-in-out;
-      width: 100%;
     }
-
-    .slide-item {
-      flex: 0 0 100%;
-      width: 100%;
-      padding: 0 0.5rem;
-    }
-
-    .slide-controls .btn {
-      min-width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .slide-indicators {
+    .swiper-slide {
       display: flex;
       justify-content: center;
-      gap: 0.5rem;
+      width: 100% !important;
+      max-width: none !important;
+      min-width: 320px;
+      overflow: visible !important;
     }
-
-    .indicator {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 2px solid #dee2e6;
-      background-color: transparent;
-      cursor: pointer;
-      transition: all 0.2s ease;
+    .pending-slide {
+      flex: 1 1 320px;
+      width: 100% !important;
+      max-width: none !important;
+      min-width: 320px;
+      overflow: visible !important;
     }
-
-    .indicator.active {
-      background-color: #ffc107;
-      border-color: #ffc107;
-    }
-
-    .indicator:hover {
-      border-color: #ffc107;
-      background-color: rgba(255, 193, 7, 0.3);
+    @media (max-width: 600px) {
+      .pending-slide {
+        min-width: 90vw;
+      }
     }
 
     .detail-item {
@@ -264,27 +208,38 @@ import { supabase } from '../../data-sources/supabase.client';
     }
 
     @media (max-width: 768px) {
-      .slide-controls {
-        gap: 0.25rem;
-      }
-
-      .slide-controls .btn {
-        min-width: 35px;
-        height: 35px;
-      }
-
       .square-position-badge {
         font-size: 0.8rem;
         padding: 0.5rem 1rem !important;
       }
     }
+    /* Ensure parent containers do not restrict width */
+    .pending-requests-slide, .col-lg-10, .container {
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow: visible !important;
+    }
   `]
 })
-export class PendingRequestsComponent implements OnInit {
+export class PendingRequestsComponent implements OnInit, AfterViewInit {
   @Input() gameData: any = null; // Keep for backward compatibility but we'll fetch per square
 
   currentSlide = 0;
   gameCache = new Map<string, any>(); // Cache games by game_id
+
+  swiperConfig: SwiperOptions = {
+    spaceBetween: 24,
+    slidesPerView: 1,
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    breakpoints: {
+      '768': { slidesPerView: 2 },
+      '1200': { slidesPerView: 3 },
+      '1600': { slidesPerView: 4 },
+    },
+  };
 
   constructor(
     public boardService: BoardService,
@@ -360,6 +315,22 @@ export class PendingRequestsComponent implements OnInit {
   ngOnInit() {
     // Load squares - pending requests will update automatically via computed property
     this.boardService.loadSquares();
+  }
+
+  ngAfterViewInit() {
+    // Move badge to right: -38px
+    const badge = document.querySelector('.card-header .badge.bg-warning') as HTMLElement;
+    if (badge) {
+      badge.style.position = 'absolute';
+      badge.style.right = '-38px';
+    }
+    // Remove scroll and allow section to expand
+    const slideSection = document.querySelector('.pending-requests-slide') as HTMLElement;
+    if (slideSection) {
+      slideSection.style.overflow = 'visible';
+      slideSection.style.height = 'auto';
+      slideSection.style.maxHeight = 'none';
+    }
   }
 
   trackBySquareId(index: number, square: Square): string {

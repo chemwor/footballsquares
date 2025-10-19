@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router'
 import { AccountLayoutComponent } from './layouts/account-layout.component'
 import { AuthGuard } from './services/auth.guard'
+import { AllPendingRequestsComponent } from './pages/landings/influencer/components/all-pending-requests/all-pending-requests.component'
 
 export const routes: Routes = [
   {
@@ -107,5 +108,9 @@ export const routes: Routes = [
       import('./pages/account/pages/account.route').then(
         (mod) => mod.ACCOUNT_ROUTES
       ),
+  },
+  {
+    path: 'all-pending-requests',
+    component: AllPendingRequestsComponent,
   },
 ]

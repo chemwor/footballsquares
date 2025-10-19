@@ -1,0 +1,21 @@
+// ...existing code...
+.swiper {
+  height: auto !important;
+  min-height: unset !important;
+  max-height: unset !important;
+  overflow-y: visible !important;
+}
+.swiper-wrapper {
+  height: auto !important;
+  min-height: unset !important;
+  max-height: unset !important;
+  overflow-y: visible !important;
+}
+.pending-slide {
+  height: auto !important;
+  min-height: 420px;
+  max-height: unset !important;
+  overflow: visible !important;
+}
+// ...existing code...
+

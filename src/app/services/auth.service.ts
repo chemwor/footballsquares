@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { supabase } from '../data-sources/supabase.client';
 import { User, AuthError, AuthResponse, Provider } from '@supabase/supabase-js';
+import { BehaviorSubject } from 'rxjs';
 
 interface UserProfile {
   id: string;
@@ -23,6 +24,9 @@ export class AuthService {
   profile = this._profile.asReadonly();
   loading = this._loading.asReadonly();
 
+  // Emits true when user state is resolved
+  userResolved$ = new BehaviorSubject<boolean>(false);
+
   constructor(private router: Router) {
     this.initAuth();
   }
@@ -40,6 +44,7 @@ export class AuthService {
       if (session?.user) {
         await this.loadUserProfile(session.user.id);
       }
+      this.userResolved$.next(true); // <-- Mark as resolved after initial load
 
       // Listen for auth state changes
       supabase.auth.onAuthStateChange(async (event, session) => {
@@ -59,9 +64,10 @@ export class AuthService {
           this._profile.set(null);
           this.router.navigate(['/auth/signin']);
         }
+        this.userResolved$.next(true); // <-- Mark as resolved after state change
       });
-    } catch (error) {
-      console.error('❌ AuthService: Error initializing auth:', error);
+    } catch (e) {
+      this.userResolved$.next(true); // <-- Mark as resolved even on error
     }
   }
 

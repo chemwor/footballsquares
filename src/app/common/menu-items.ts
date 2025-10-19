@@ -100,6 +100,11 @@ export const HOST_MENU_ITEMS: MenuItemType[] = [
         label: 'Hosted History',
         url: '/blog/hosted-history',
       },
+      {
+        key: 'pending-requests',
+        label: 'Pending Requests',
+        url: '/all-pending-requests',
+      },
     ]
   },
 ]

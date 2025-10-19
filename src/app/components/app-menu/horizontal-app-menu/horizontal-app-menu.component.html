@@ -86,12 +86,7 @@
   <div class="navbar-nav ms-auto">
     <!-- Only show auth actions if NOT authenticated -->
     @if (!authService.user()) {
-      <div class="nav-item">
-        <a class="nav-link" routerLink="/auth/signin">Sign In</a>
-      </div>
-      <div class="nav-item">
-        <a class="btn btn-primary btn-sm ms-2" routerLink="/auth/signup">Sign Up</a>
-      </div>
+      <!-- Removed redundant Sign In and Sign Up buttons for a cleaner menu -->
     } @else {
       <!-- Show user actions if authenticated -->
       <div class="nav-item dropdown">
