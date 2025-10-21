@@ -87,9 +87,8 @@
                     <!-- Game Actions -->
                     <div class="game-actions">
                       <a
-                        [href]="'/services/game-page/' + game.id"
+                        [routerLink]="['/services/game-page', game.id]"
                         class="btn-view-game"
-                        target="_blank"
                       >
                         <i class="bi bi-box-arrow-up-right me-1"></i>
                         Manage Game

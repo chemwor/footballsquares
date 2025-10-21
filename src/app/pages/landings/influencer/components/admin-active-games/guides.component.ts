@@ -6,6 +6,7 @@ import { register } from 'swiper/element/bundle'
 import { Pagination } from 'swiper/modules'
 import { supabase } from '../../../../../data-sources/supabase.client'
 import { AuthService } from '../../../../../services/auth.service'
+import { RouterModule } from '@angular/router'
 
 // register Swiper custom elements
 register()
@@ -25,7 +26,7 @@ interface AdminGame {
 @Component({
   selector: 'admin-active-games',
   standalone: true,
-  imports: [CommonModule, SwiperDirective],
+  imports: [CommonModule, SwiperDirective, RouterModule],
   templateUrl: './guides.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   styles: [`

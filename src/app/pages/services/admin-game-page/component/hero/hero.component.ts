@@ -143,10 +143,6 @@ export class HeroComponent implements OnInit, OnChanges {
           iconSrc: 'assets/img/services/v3/icons/cog-white.svg',
           headingText: boardSizeDisplay,
         },
-        {
-          iconSrc: 'assets/img/services/v3/icons/monitor-white.svg',
-          headingText: statusDisplay,
-        },
         // Add existing/original items
         {
           iconSrc: 'assets/img/services/v3/icons/time-white.svg',
