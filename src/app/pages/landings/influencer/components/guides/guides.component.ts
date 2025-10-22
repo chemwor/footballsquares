@@ -7,6 +7,7 @@ import { Pagination } from 'swiper/modules'
 import { supabase } from '../../../../../data-sources/supabase.client'
 import { AuthService } from '../../../../../services/auth.service'
 import { RouterModule } from '@angular/router'
+import { filter, take } from 'rxjs/operators'
 
 // register Swiper custom elements
 register()
@@ -318,7 +319,11 @@ export class CurrentUserGamesComponent implements OnInit, OnDestroy {
   constructor(private authService: AuthService) {}
 
   async ngOnInit() {
-    await this.loadUserGames();
+    this.authService.userResolved$
+      .pipe(filter(resolved => resolved), take(1))
+      .subscribe(() => {
+        this.loadUserGames();
+      });
   }
 
   ngOnDestroy() {}

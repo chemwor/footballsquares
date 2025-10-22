@@ -6,6 +6,8 @@ import { ListBlogComponent } from './component/list-blog/list-blog.component'
 import { supabase } from '../../../data-sources/supabase.client'
 import { CommonModule } from '@angular/common'
 import { FooterComponent } from '../../landings/saas-v2/components/footer/footer.component'
+import { AuthService } from '../../../services/auth.service'
+import { filter, take } from 'rxjs/operators'
 
 export enum GameStatus {
   Open = 'open',
@@ -35,8 +37,14 @@ export class CompleteGamesComponent implements OnInit {
   loading = true
   error = ''
 
-  async ngOnInit() {
-    await this.loadHostedGames()
+  constructor(private authService: AuthService) {}
+
+  ngOnInit() {
+    this.authService.userResolved$
+      .pipe(filter((resolved) => resolved), take(1))
+      .subscribe(() => {
+        this.loadHostedGames()
+      })
   }
 
   async loadHostedGames() {

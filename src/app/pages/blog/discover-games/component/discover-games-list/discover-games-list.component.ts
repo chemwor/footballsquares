@@ -4,7 +4,8 @@ import { RouterModule, Router } from '@angular/router'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { supabase } from '../../../../../data-sources/supabase.client'
-import { AuthService } from '../../../../../services/auth.service'
+import { AuthService } from '../../../../../services/auth.service';
+import { filter, take } from 'rxjs/operators';
 
 @Component({
   selector: 'discover-games-list',
@@ -30,9 +31,13 @@ export class DiscoverGamesListComponent implements OnInit {
 
   constructor(private router: Router, private authService: AuthService) {}
 
-  async ngOnInit() {
-    await this.loadSports();
-    await this.loadDiscoverGames();
+  ngOnInit() {
+    this.authService.userResolved$
+      .pipe(filter(resolved => resolved), take(1))
+      .subscribe(() => {
+        this.loadSports();
+        this.loadDiscoverGames();
+      });
   }
 
   async loadSports() {

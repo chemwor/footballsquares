@@ -11,6 +11,8 @@ import { GameInfoComponent } from '@components/game-info/game-info.component'
 import { QuarterWinnersComponent } from '@components/quarter-winners/quarter-winners.component'
 import { UserSquaresComponent } from '@components/user-squares/user-squares.component'
 import { supabase } from 'src/app/data-sources/supabase.client'
+import { AuthService } from 'src/app/services/auth.service'
+import { filter, take } from 'rxjs/operators'
 
 @Component({
   selector: 'app-service-v3',
@@ -40,19 +42,19 @@ export class ServiceV3Component implements OnInit {
   loading: boolean = false
   error: string = ''
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, private authService: AuthService) {}
 
-  async ngOnInit() {
-    // Get game ID from route parameters
-    this.gameId = this.route.snapshot.paramMap.get('id')
-    console.log('Player Game ID from route:', this.gameId)
-
-    if (this.gameId) {
-      await this.loadGameData()
-    } else {
-      console.error('No game ID provided in route')
-      this.error = 'No game ID provided'
-    }
+  ngOnInit() {
+    this.authService.userResolved$
+      .pipe(filter(resolved => resolved), take(1))
+      .subscribe(() => {
+        this.gameId = this.route.snapshot.paramMap.get('id')
+        if (this.gameId) {
+          this.loadGameData()
+        } else {
+          this.error = 'No game ID provided'
+        }
+      })
   }
 
   async loadGameData() {

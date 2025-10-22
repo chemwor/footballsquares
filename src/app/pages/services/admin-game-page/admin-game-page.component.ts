@@ -10,6 +10,8 @@ import { AdminBoardViewComponent } from '@components/admin-board-view/admin-boar
 import { QuarterWinnersComponent } from '@components/quarter-winners/quarter-winners.component'
 import { GameActionsComponent } from '@components/game-actions/game-actions.component'
 import { supabase } from 'src/app/data-sources/supabase.client'
+import { AuthService } from 'src/app/services/auth.service'
+import { filter, take } from 'rxjs/operators'
 
 @Component({
   selector: 'admin-game-page',
@@ -40,9 +42,17 @@ export class AdminGamePageComponent implements OnInit {
   accessDenied: boolean = false
   currentUser: any = null
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, private authService: AuthService) {}
 
-  async ngOnInit() {
+  ngOnInit() {
+    this.authService.userResolved$
+      .pipe(filter(resolved => resolved), take(1))
+      .subscribe(() => {
+        this.loadCurrentUserAndGame()
+      })
+  }
+
+  async loadCurrentUserAndGame() {
     // Get current user first
     const { data: { user }, error: userError } = await supabase.auth.getUser()
 
