@@ -11,6 +11,8 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { supabase } from 'src/app/data-sources/supabase.client';
+import { AuthService } from 'src/app/services/auth.service';
+import { filter, take } from 'rxjs/operators';
 
 
 // ✅ Tell TypeScript about gtag
@@ -34,7 +36,7 @@ export class HeroComponent {
     speed: 0.6,
   }
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
 
   formSubmitted = false;
   validationMessage = '';
@@ -57,6 +59,14 @@ export class HeroComponent {
   filteredGames: any[] = [];
 
   async ngOnInit() {
+    this.authService.userResolved$
+      .pipe(filter(resolved => resolved), take(1))
+      .subscribe(() => {
+        this.loadDropdownData();
+      });
+  }
+
+  async loadDropdownData() {
     // Get current user info from Supabase on component load (use getSession for reliability)
     const {
       data: { session },

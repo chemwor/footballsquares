@@ -4,7 +4,7 @@
 <div class="d-md-none" style="height: 40px"></div>
 <h1 class="display-2 mb-4">{{ gameData?.title || 'Game Squares' }}</h1>
 <p class="text-body mb-0" style="max-width: 480px">
-  Manage your game squares below. Review pending requests, approve or decline players, and monitor the progress of your game.
+  {{ gameData?.instructions || 'No instructions provided for this game.' }}
 </p>
 
 <div class="d-none d-xxl-block" style="height: 220px"></div>

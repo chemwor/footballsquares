@@ -87,12 +87,43 @@
                     <!-- Game Actions -->
                     <div class="game-actions">
                       <a
-                        [routerLink]="['/services/game-page', game.id]"
+                        [routerLink]="['/services/admin-game-page', game.id]"
                         class="btn-view-game"
                       >
                         <i class="bi bi-box-arrow-up-right me-1"></i>
                         Manage Game
                       </a>
+                    </div>
+
+                    <!-- Instructions Input -->
+                    <div class="mt-3">
+                      <label for="instructions-{{game.id}}" class="form-label fw-bold" style="color: #764ba2;">
+                        Game Instructions
+                      </label>
+                      <textarea
+                        id="instructions-{{game.id}}"
+                        class="form-control"
+                        [(ngModel)]="game.instructions"
+                        (blur)="updateInstructions(game)"
+                        rows="3"
+                        placeholder="Enter instructions for players. This is where you tell them what they need to do to be accepted into the game."
+                      ></textarea>
+                      <div class="form-text text-muted">
+                        This is where you enter the instructions the user needs to follow to be accepted into the game.
+                      </div>
+                    </div>
+
+                    <!-- Game Description -->
+                    <div class="mt-2">
+                      <label class="form-label fw-bold" style="color: #764ba2;">
+                        Game Description
+                      </label>
+                      <div class="bg-light border rounded p-2 mb-2" style="min-height: 48px;">
+                        {{ game.instructions || 'No instructions provided for this game.' }}
+                      </div>
+                      <div class="form-text text-muted">
+                        This is the description shown to players. It uses the instructions you entered above.
+                      </div>
                     </div>
                   </div>
 

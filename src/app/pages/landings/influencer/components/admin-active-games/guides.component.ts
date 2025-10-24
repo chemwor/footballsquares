@@ -7,6 +7,7 @@ import { Pagination } from 'swiper/modules'
 import { supabase } from '../../../../../data-sources/supabase.client'
 import { AuthService } from '../../../../../services/auth.service'
 import { RouterModule } from '@angular/router'
+import { FormsModule } from '@angular/forms'
 
 // register Swiper custom elements
 register()
@@ -21,12 +22,13 @@ interface AdminGame {
   pending_squares: number;
   empty_squares: number;
   pendingSquares?: any[]; // Add this to hold pending squares for the game
+  instructions?: string; // New property for binding and updating instructions
 }
 
 @Component({
   selector: 'admin-active-games',
   standalone: true,
-  imports: [CommonModule, SwiperDirective, RouterModule],
+  imports: [CommonModule, SwiperDirective, RouterModule, FormsModule],
   templateUrl: './guides.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   styles: [`
@@ -478,6 +480,26 @@ export class AdminActiveGamesComponent implements OnInit, OnDestroy {
     } finally {
       this.loadingDecline = false;
       console.log(`[DECLINE] Finished for square ${square.id} in game ${game.id}`);
+    }
+  }
+
+  async updateInstructions(game: AdminGame) {
+    if (!game.id) return;
+    try {
+      const { error } = await supabase
+        .from('games')
+        .update({ instructions: game.instructions })
+        .eq('id', game.id);
+      if (error) {
+        console.error('Error updating instructions:', error);
+        this.error = 'Failed to update instructions.';
+      } else {
+        // Optionally show a success message or reload games
+        console.log('Instructions updated for game', game.id);
+      }
+    } catch (err) {
+      console.error('Unexpected error updating instructions:', err);
+      this.error = 'Unexpected error occurred.';
     }
   }
 

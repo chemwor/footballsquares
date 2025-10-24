@@ -23,6 +23,28 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.titleService.init()
 
+    // Extract access_token and refresh_token from URL fragment if present
+    const hash = window.location.hash
+    if (hash && hash.includes('access_token')) {
+      const params = new URLSearchParams(hash.substring(1))
+      const access_token = params.get('access_token')
+      const refresh_token = params.get('refresh_token')
+      if (access_token && refresh_token) {
+        // Set Supabase session
+        supabase.auth
+          .setSession({ access_token, refresh_token })
+          .then(({ data, error }) => {
+            if (error) {
+              console.error('Error setting Supabase session:', error)
+            } else {
+              console.log('Supabase session set:', data.session)
+            }
+          })
+        // Clean up URL
+        window.location.hash = ''
+      }
+    }
+
     // Load Supabase user/session on home screen after redirect
     supabase.auth.getSession().then(({ data: { session } }) => {
       console.log('Supabase session on home screen:', session)
