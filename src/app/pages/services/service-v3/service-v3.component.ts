@@ -13,6 +13,7 @@ import { UserSquaresComponent } from '@components/user-squares/user-squares.comp
 import { supabase } from 'src/app/data-sources/supabase.client'
 import { AuthService } from 'src/app/services/auth.service'
 import { filter, take } from 'rxjs/operators'
+import { NgStyle } from '@angular/common'
 
 @Component({
   selector: 'app-service-v3',
@@ -28,6 +29,7 @@ import { filter, take } from 'rxjs/operators'
     GameInfoComponent,
     QuarterWinnersComponent,
     UserSquaresComponent,
+    NgStyle,
   ],
   templateUrl: './service-v3.component.html',
   styles: ``,
@@ -41,12 +43,19 @@ export class ServiceV3Component implements OnInit {
   gameData: any = null
   loading: boolean = false
   error: string = ''
+  heroBgUrl: string = 'assets/img/services/v3/hero-bg.jpg'
 
-  constructor(private route: ActivatedRoute, private authService: AuthService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
     this.authService.userResolved$
-      .pipe(filter(resolved => resolved), take(1))
+      .pipe(
+        filter((resolved) => resolved),
+        take(1)
+      )
       .subscribe(() => {
         this.gameId = this.route.snapshot.paramMap.get('id')
         if (this.gameId) {
@@ -79,6 +88,20 @@ export class ServiceV3Component implements OnInit {
 
       this.gameData = data
       console.log('Player game data loaded:', this.gameData)
+
+      // Set heroBgUrl based on sport if available
+      if (this.gameData && this.gameData.sport) {
+        const sport = this.gameData.sport.toLowerCase()
+        if (sport === 'basketball') {
+          this.heroBgUrl = 'assets/img/services/v3/basketball.jpg'
+        } else if (sport === 'football') {
+          this.heroBgUrl = 'assets/img/services/v3/football.jpg'
+        } else {
+          this.heroBgUrl = 'assets/img/services/v3/hero-bg.jpg'
+        }
+      } else {
+        this.heroBgUrl = 'assets/img/services/v3/hero-bg.jpg'
+      }
     } catch (err) {
       console.error('Unexpected error loading game:', err)
       this.error = 'Unexpected error occurred'

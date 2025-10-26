@@ -12,11 +12,13 @@ import { GameActionsComponent } from '@components/game-actions/game-actions.comp
 import { supabase } from 'src/app/data-sources/supabase.client'
 import { AuthService } from 'src/app/services/auth.service'
 import { filter, take } from 'rxjs/operators'
+import { CommonModule } from '@angular/common'
 
 @Component({
   selector: 'admin-game-page',
   standalone: true,
   imports: [
+    CommonModule,
     NavigationBar2Component,
     HeroComponent,
     FooterComponent,
@@ -41,6 +43,7 @@ export class AdminGamePageComponent implements OnInit {
   error: string = ''
   accessDenied: boolean = false
   currentUser: any = null
+  heroBgUrl: string = 'assets/img/services/v3/hero-bg.jpg'
 
   constructor(private route: ActivatedRoute, private authService: AuthService) {}
 
@@ -121,6 +124,20 @@ export class AdminGamePageComponent implements OnInit {
       console.log('Status:', this.gameData?.status)
       console.log('Created at:', this.gameData?.created_at)
       console.log('Owner ID:', this.gameData?.owner_id)
+
+      // Set heroBgUrl based on sport if available
+      if (this.gameData && this.gameData.sport) {
+        const sport = this.gameData.sport.toLowerCase();
+        if (sport === 'basketball') {
+          this.heroBgUrl = 'assets/img/services/v3/basketball.jpg';
+        } else if (sport === 'football') {
+          this.heroBgUrl = 'assets/img/services/v3/football.jpg';
+        } else {
+          this.heroBgUrl = 'assets/img/services/v3/hero-bg.jpg';
+        }
+      } else {
+        this.heroBgUrl = 'assets/img/services/v3/hero-bg.jpg';
+      }
     } catch (err) {
       console.error('Unexpected error loading game:', err)
       this.error = 'Unexpected error occurred'

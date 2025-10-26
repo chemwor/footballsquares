@@ -63,6 +63,8 @@ export class HeroComponent implements OnInit, OnChanges {
     }
   ];
 
+  heroBgUrl: string = '';
+
   async ngOnInit() {
     if (this.gameData) {
       await this.loadSquareCounts();
@@ -132,28 +134,43 @@ export class HeroComponent implements OnInit, OnChanges {
         ? `Status: ${this.gameData.status.charAt(0).toUpperCase() + this.gameData.status.slice(1)}`
         : 'Status: Unknown';
 
+      // Determine sport icon and hero background
+      let sportIcon = 'assets/img/services/v3/icons/time-white.svg';
+      let heroBgUrl = '';
+      if (this.gameData.sport) {
+        const sport = this.gameData.sport.toLowerCase();
+        if (sport === 'basketball') {
+          sportIcon = 'assets/img/services/v3/icons/basketball.svg';
+          heroBgUrl = 'assets/img/services/v3/basketball.jpg';
+        } else if (sport === 'football') {
+          sportIcon = 'assets/img/services/v3/icons/football.svg';
+          heroBgUrl = 'assets/img/services/v3/football.jpg';
+        }
+      }
+      this.heroBgUrl = heroBgUrl;
+
       // Update servicesv3 with game information added to existing items
       this.servicesv3 = [
         // New game information items
         {
-          iconSrc: 'assets/img/services/v3/icons/time-white.svg',
+          iconSrc: sportIcon,
           headingText: sportDisplay,
         },
-        {
-          iconSrc: 'assets/img/services/v3/icons/cog-white.svg',
-          headingText: boardSizeDisplay,
-        },
+        // {
+        //   iconSrc: 'assets/img/services/v3/icons/cog-white.svg',
+        //   headingText: boardSizeDisplay,
+        // },
         // Add existing/original items
         {
-          iconSrc: 'assets/img/services/v3/icons/time-white.svg',
+          iconSrc: 'assets/img/services/v3/icons/check.svg',
           headingText: `${statusCounts.approved} Squares Assigned`,
         },
         {
-          iconSrc: 'assets/img/services/v3/icons/cog-white.svg',
+          iconSrc: 'assets/img/services/v3/icons/expired.svg',
           headingText: `${statusCounts.pending} Pending Approval`,
         },
         {
-          iconSrc: 'assets/img/services/v3/icons/monitor-white.svg',
+          iconSrc: 'assets/img/services/v3/icons/empty.svg',
           headingText: `${statusCounts.empty} Empty Squares`,
         },
       ];

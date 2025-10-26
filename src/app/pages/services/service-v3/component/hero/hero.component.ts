@@ -34,9 +34,20 @@ export class HeroComponent {
         ? `${this.gameData.sport.charAt(0).toUpperCase() + this.gameData.sport.slice(1)}: ${this.gameData.team1_name} vs ${this.gameData.team2_name}`
         : 'Date TBD';
 
+      // Determine sport icon
+      let sportIcon = 'assets/img/services/v3/icons/time-white.svg';
+      if (this.gameData.sport) {
+        const sport = this.gameData.sport.toLowerCase();
+        if (sport === 'basketball') {
+          sportIcon = 'assets/img/services/v3/icons/basketball.svg';
+        } else if (sport === 'football') {
+          sportIcon = 'assets/img/services/v3/icons/football.svg';
+        }
+      }
+
       return [
         {
-          iconSrc: 'assets/img/services/v3/icons/time-white.svg',
+          iconSrc: sportIcon,
           headingText: sportDisplay,
         },
         // {
@@ -44,7 +55,7 @@ export class HeroComponent {
         //   headingText: this.formatGameDate(),
         // },
         {
-          iconSrc: 'assets/img/services/v3/icons/monitor-white.svg',
+          iconSrc: 'assets/img/services/v3/icons/user.svg',
           headingText: `Host: ${this.gameData.owner_name || 'Unknown'}`,
         },
       ];

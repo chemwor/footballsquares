@@ -32,10 +32,7 @@
       ></div>
       <div
         class="jarallax-img"
-        style="
-          background-image: url(assets/img/services/v3/hero-bg.jpg);
-          background-size: cover;
-        "
+        [ngStyle]="{ 'background-image': 'url(' + heroBgUrl + ')', 'background-size': 'cover' }"
       ></div>
       <div
         class="container position-relative z-2 pt-5 pb-md-2 pb-lg-3 pb-xl-4 pb-xxl-5"
