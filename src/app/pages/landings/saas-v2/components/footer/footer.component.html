@@ -65,13 +65,13 @@
           >
             <i class="ai-instagram"></i>
           </a>
-          <a
-            class="btn btn-icon btn-sm btn-secondary btn-linkedin rounded-circle"
-            href="javascript:void(0);"
-            aria-label="LinkedIn"
-          >
-            <i class="ai-linkedin"></i>
-          </a>
+<!--          <a-->
+<!--            class="btn btn-icon btn-sm btn-secondary btn-linkedin rounded-circle"-->
+<!--            href="javascript:void(0);"-->
+<!--            aria-label="LinkedIn"-->
+<!--          >-->
+<!--            <i class="ai-linkedin"></i>-->
+<!--          </a>-->
         </div>
       </div>
       <div class="col-md-8 col-lg-7 col-xl-6 offset-lg-2 offset-xl-3">
@@ -83,7 +83,8 @@
                 <li>
                   <a
                     class="nav-link fw-normal py-1 px-0"
-                    href="javascript:void(0);"
+                    [routerLink]="'/'"
+                    [fragment]="item.toLowerCase()"
                     >{{ item }}</a
                   >
                 </li>
@@ -105,41 +106,41 @@
             </ul>
           </div>
           <div class="col">
-            <h4 class="h6 fw-bold pb-2 mb-0 mb-lg-1">Install App</h4>
-            <a
-              class="btn btn-secondary px-3 py-2 mt-3 me-3 me-md-0"
-              href="javascript:void(0);"
-            >
-              <img
-                class="mx-1 d-dark-mode-none"
-                src="assets/img/market/appstore-dark.svg"
-                width="120"
-                alt="App Store"
-              />
-              <img
-                class="mx-1 d-none d-dark-mode-block"
-                src="assets/img/market/appstore-light.svg"
-                width="120"
-                alt="App Store"
-              />
-            </a>
-            <a
-              class="btn btn-secondary px-3 py-2 mt-3 me-3 me-md-0"
-              href="javascript:void(0);"
-            >
-              <img
-                class="mx-1 d-dark-mode-none"
-                src="assets/img/market/googleplay-dark.svg"
-                width="119"
-                alt="Google Play"
-              />
-              <img
-                class="mx-1 d-none d-dark-mode-block"
-                src="assets/img/market/googleplay-light.svg"
-                width="119"
-                alt="Google Play"
-              />
-            </a>
+<!--            <h4 class="h6 fw-bold pb-2 mb-0 mb-lg-1">Install App</h4>-->
+<!--            <a-->
+<!--              class="btn btn-secondary px-3 py-2 mt-3 me-3 me-md-0"-->
+<!--              href="javascript:void(0);"-->
+<!--            >-->
+<!--              <img-->
+<!--                class="mx-1 d-dark-mode-none"-->
+<!--                src="assets/img/market/appstore-dark.svg"-->
+<!--                width="120"-->
+<!--                alt="App Store"-->
+<!--              />-->
+<!--              <img-->
+<!--                class="mx-1 d-none d-dark-mode-block"-->
+<!--                src="assets/img/market/appstore-light.svg"-->
+<!--                width="120"-->
+<!--                alt="App Store"-->
+<!--              />-->
+<!--            </a>-->
+<!--            <a-->
+<!--              class="btn btn-secondary px-3 py-2 mt-3 me-3 me-md-0"-->
+<!--              href="javascript:void(0);"-->
+<!--            >-->
+<!--              <img-->
+<!--                class="mx-1 d-dark-mode-none"-->
+<!--                src="assets/img/market/googleplay-dark.svg"-->
+<!--                width="119"-->
+<!--                alt="Google Play"-->
+<!--              />-->
+<!--              <img-->
+<!--                class="mx-1 d-none d-dark-mode-block"-->
+<!--                src="assets/img/market/googleplay-light.svg"-->
+<!--                width="119"-->
+<!--                alt="Google Play"-->
+<!--              />-->
+<!--            </a>-->
           </div>
         </div>
       </div>

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { NavigationBar2Component } from '@components/navigation-bars'
 import { HeroComponent } from './component/hero/hero.component'
-import { FooterComponent } from './component/footer/footer.component'
 import { JarallaxDirective } from '@components/jarallax-directive/jarallax-directive.component'
 import type { JarallaxOptions } from 'jarallax'
 import { RouterModule, ActivatedRoute } from '@angular/router'
@@ -13,6 +12,7 @@ import { supabase } from 'src/app/data-sources/supabase.client'
 import { AuthService } from 'src/app/services/auth.service'
 import { filter, take } from 'rxjs/operators'
 import { CommonModule } from '@angular/common'
+import { FooterComponent } from '../../landings/saas-v2/components/footer/footer.component'
 
 @Component({
   selector: 'admin-game-page',
@@ -28,6 +28,7 @@ import { CommonModule } from '@angular/common'
     AdminBoardViewComponent,
     QuarterWinnersComponent,
     GameActionsComponent,
+    FooterComponent,
   ],
   templateUrl: './admin-game-page.component.html',
   styles: ``,
@@ -45,11 +46,17 @@ export class AdminGamePageComponent implements OnInit {
   currentUser: any = null
   heroBgUrl: string = 'assets/img/services/v3/hero-bg.jpg'
 
-  constructor(private route: ActivatedRoute, private authService: AuthService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
     this.authService.userResolved$
-      .pipe(filter(resolved => resolved), take(1))
+      .pipe(
+        filter((resolved) => resolved),
+        take(1)
+      )
       .subscribe(() => {
         this.loadCurrentUserAndGame()
       })
@@ -57,7 +64,10 @@ export class AdminGamePageComponent implements OnInit {
 
   async loadCurrentUserAndGame() {
     // Get current user first
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser()
 
     if (userError) {
       console.error('Error fetching user:', userError)
@@ -111,7 +121,8 @@ export class AdminGamePageComponent implements OnInit {
         console.log('Game owner_id:', data.owner_id)
         console.log('Current user id:', this.currentUser?.id)
         this.accessDenied = true
-        this.error = 'Access denied: You are not authorized to view this admin page'
+        this.error =
+          'Access denied: You are not authorized to view this admin page'
         return
       }
 
@@ -119,7 +130,12 @@ export class AdminGamePageComponent implements OnInit {
       console.log('Game data loaded:', this.gameData)
       console.log('Game title:', this.gameData?.title)
       console.log('Game sport:', this.gameData?.sport)
-      console.log('Teams:', this.gameData?.team1_name, 'vs', this.gameData?.team2_name)
+      console.log(
+        'Teams:',
+        this.gameData?.team1_name,
+        'vs',
+        this.gameData?.team2_name
+      )
       console.log('Grid size:', this.gameData?.grid_size)
       console.log('Status:', this.gameData?.status)
       console.log('Created at:', this.gameData?.created_at)
@@ -127,16 +143,16 @@ export class AdminGamePageComponent implements OnInit {
 
       // Set heroBgUrl based on sport if available
       if (this.gameData && this.gameData.sport) {
-        const sport = this.gameData.sport.toLowerCase();
+        const sport = this.gameData.sport.toLowerCase()
         if (sport === 'basketball') {
-          this.heroBgUrl = 'assets/img/services/v3/basketball.jpg';
+          this.heroBgUrl = 'assets/img/services/v3/basketball.jpg'
         } else if (sport === 'football') {
-          this.heroBgUrl = 'assets/img/services/v3/football.jpg';
+          this.heroBgUrl = 'assets/img/services/v3/football.jpg'
         } else {
-          this.heroBgUrl = 'assets/img/services/v3/hero-bg.jpg';
+          this.heroBgUrl = 'assets/img/services/v3/hero-bg.jpg'
         }
       } else {
-        this.heroBgUrl = 'assets/img/services/v3/hero-bg.jpg';
+        this.heroBgUrl = 'assets/img/services/v3/hero-bg.jpg'
       }
     } catch (err) {
       console.error('Unexpected error loading game:', err)

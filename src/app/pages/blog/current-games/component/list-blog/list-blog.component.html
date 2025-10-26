@@ -37,11 +37,17 @@
 @for (game of paginatedGames; track game.id) {
   <article class="row g-0 border-0 mb-4">
     <a
-      class="col-sm-5 col-lg-4 bg-repeat-0 bg-size-cover bg-position-center rounded-5"
+      class="col-sm-5 col-lg-4 d-flex flex-column align-items-center justify-content-center rounded-5 shadow bg-gradient position-relative text-decoration-none"
       [routerLink]="['/services/single-v3', game.id]"
-      style="background-image: url({{ game.image }}); min-height: 16rem"
-      aria-label="Post image"
-    ></a>
+      style="min-height: 16rem; background: linear-gradient(135deg, #232526 0%, #414345 100%);"
+      aria-label="Game card"
+    >
+      <div class="d-flex align-items-center justify-content-center w-100 h-100" style="min-height: 16rem;">
+        <img *ngIf="game.team1Logo" [src]="game.team1Logo" alt="Team 1 Logo" style="height: 110px; width: 110px; object-fit: contain; background: #fff; border-radius: 16px; box-shadow: 0 2px 12px #0002;">
+        <span class="mx-4 fw-bold fs-2 game-vs text-nowrap">VS</span>
+        <img *ngIf="game.team2Logo" [src]="game.team2Logo" alt="Team 2 Logo" style="height: 110px; width: 110px; object-fit: contain; background: #fff; border-radius: 16px; box-shadow: 0 2px 12px #0002;">
+      </div>
+    </a>
     <div class="col-sm-7 col-lg-8">
       <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
         <h3>

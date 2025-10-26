@@ -123,12 +123,22 @@ export class ListBlogComponent {
       shares: g.claimed_count || 0,
       comments: g.pending_count || 0,
       date: g.created_at ? new Date(g.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '',
-      category: g.sport || ''
+      category: g.sport || '',
+      team1Logo: g.team1_name ? `assets/img/teams/${this.slugify(g.team1_name)}.png` : '',
+      team2Logo: g.team2_name ? `assets/img/teams/${this.slugify(g.team2_name)}.png` : '',
     }));
 
     this.filteredGames = [...this.games];
     this.updatePagination();
     this.loading = false;
+  }
+
+  // Helper to convert team names to safe filenames
+  slugify(name: string): string {
+    return (name || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '');
   }
 
   onSportFilterChange() {

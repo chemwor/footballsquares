@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { NavigationBar2Component } from '@components/navigation-bars'
 import { HeroComponent } from './component/hero/hero.component'
-import { FooterComponent } from './component/footer/footer.component'
 import { JarallaxDirective } from '@components/jarallax-directive/jarallax-directive.component'
 import type { JarallaxOptions } from 'jarallax'
 import { RouterModule, ActivatedRoute } from '@angular/router'
@@ -14,6 +13,7 @@ import { supabase } from 'src/app/data-sources/supabase.client'
 import { AuthService } from 'src/app/services/auth.service'
 import { filter, take } from 'rxjs/operators'
 import { NgStyle } from '@angular/common'
+import { FooterComponent } from '../../landings/saas-v2/components/footer/footer.component'
 
 @Component({
   selector: 'app-service-v3',
@@ -30,6 +30,7 @@ import { NgStyle } from '@angular/common'
     QuarterWinnersComponent,
     UserSquaresComponent,
     NgStyle,
+    FooterComponent,
   ],
   templateUrl: './service-v3.component.html',
   styles: ``,

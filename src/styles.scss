@@ -1,0 +1,12 @@
+/* ...existing code... */
+
+.dark-theme .game-vs {
+  color: #fff !important;
+  text-shadow: 0 2px 8px #0008;
+}
+.light-theme .game-vs {
+  color: #232526 !important;
+  text-shadow: 0 2px 8px #fff8;
+}
+
+/* If your app uses different theme class names, adjust accordingly. */

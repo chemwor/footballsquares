@@ -39,6 +39,7 @@
     "@popperjs/core": "^2.11.8",
     "@supabase/supabase-js": "^2.58.0",
     "aos": "^2.3.4",
+    "axios": "^1.12.2",
     "bootstrap": "^5.3.5",
     "chart.js": "^4.4.4",
     "img-comparison-slider": "^8.0.6",
