@@ -168,22 +168,22 @@ export const saasv3Testimonial: SaasV3TestimonialType = [
 export const saas3Layer: Saa3LayersType[] = [
   {
     depth: 0.1,
-    lightSrc: 'assets/img/landing/saas-3/hero/01-light.png',
-    darkSrc: 'assets/img/landing/saas-3/hero/01-dark.png',
+    lightSrc: 'assets/img/landing/saas-3/hero/Group1.png',
+    darkSrc: 'assets/img/landing/saas-3/hero/Group1.png',
   },
   {
     depth: 0.25,
-    lightSrc: 'assets/img/landing/saas-3/hero/02-light.png',
-    darkSrc: 'assets/img/landing/saas-3/hero/02-dark.png',
+    lightSrc: 'assets/img/landing/saas-3/hero/Group2.png',
+    darkSrc: 'assets/img/landing/saas-3/hero/Group2.png',
   },
   {
     depth: 0.35,
-    lightSrc: 'assets/img/landing/saas-3/hero/03-light.png',
-    darkSrc: 'assets/img/landing/saas-3/hero/03-dark.png',
+    lightSrc: 'assets/img/landing/saas-3/hero/Group3.png',
+    darkSrc: 'assets/img/landing/saas-3/hero/Group3.png',
   },
   {
     depth: 0.45,
-    lightSrc: 'assets/img/landing/saas-3/hero/04-light.png',
-    darkSrc: 'assets/img/landing/saas-3/hero/04-dark.png',
+    lightSrc: 'assets/img/landing/saas-3/hero/Group4.png',
+    darkSrc: 'assets/img/landing/saas-3/hero/Group4.png',
   },
 ]

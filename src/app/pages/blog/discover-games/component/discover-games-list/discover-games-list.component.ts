@@ -81,7 +81,7 @@ export class DiscoverGamesListComponent implements OnInit {
       // Query all open games NOT owned by current user, ordered by newest first
       const { data, error } = await supabase
         .from('games')
-        .select('id,title,sport,team1_name,team2_name,grid_size,status,claimed_count,pending_count,created_at,owner_name')
+        .select('id,title,sport,team1_name,team2_name,grid_size,status,claimed_count,pending_count,created_at,owner_name,instructions')
         .eq('status', 'open')
         .neq('owner_id', user.id) // NOT owned by current user
         .order('created_at', { ascending: false }); // Newest to oldest
@@ -106,7 +106,7 @@ export class DiscoverGamesListComponent implements OnInit {
         boardSize: `${g.grid_size}x${g.grid_size}`,
         status: g.status,
         ownerName: g.owner_name || 'Unknown Host',
-        excerpt: `Join this open squares game! Claim your spot and compete for prizes.`,
+        excerpt: g.instructions ? `${g.instructions}` : `Join this open squares game! Claim your spot and compete for prizes.`,
         shares: g.claimed_count || 0,
         comments: g.pending_count || 0,
         date: g.created_at ? new Date(g.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '',

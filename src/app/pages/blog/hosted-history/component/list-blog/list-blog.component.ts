@@ -89,7 +89,7 @@ export class ListBlogComponent implements OnInit {
     // Fetch ALL games for owner_id = user.id, status = 'closed' (remove limit for proper pagination)
     const { data, error } = await supabase
       .from('games')
-      .select('id,title,sport,team1_name,team2_name,grid_size,status,claimed_count,pending_count,created_at')
+      .select('id,title,sport,team1_name,team2_name,grid_size,status,claimed_count,pending_count,created_at,instructions')
       .eq('owner_id', user.id)
       .in('status', ['closed', 'canceled', 'complete']) // Only closed, canceled, or completed games
       .order('created_at', { ascending: false });
@@ -119,7 +119,7 @@ export class ListBlogComponent implements OnInit {
       boardSize: `${g.grid_size}x${g.grid_size}`,
       status: g.status,
       ownerName: user.email || '',
-      excerpt: `Squares for ${g.title}. Claim your spot!`,
+      excerpt: g.instructions || '',
       shares: g.claimed_count || 0,
       comments: g.pending_count || 0,
       date: g.created_at ? new Date(g.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '',

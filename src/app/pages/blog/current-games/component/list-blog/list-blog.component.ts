@@ -96,7 +96,7 @@ export class ListBlogComponent {
     // 3. Query games table for those IDs (remove limit for proper pagination)
     const { data, error } = await supabase
       .from('games')
-      .select('id,title,sport,team1_name,team2_name,grid_size,status,claimed_count,pending_count,created_at,owner_name')
+      .select('id,title,sport,team1_name,team2_name,grid_size,status,claimed_count,pending_count,created_at,owner_name,instructions')
       .eq('status', 'open')
       .neq('owner_id', user.id) // NOT owned by current user
       .order('created_at', { ascending: false });
@@ -119,7 +119,7 @@ export class ListBlogComponent {
       boardSize: `${g.grid_size}x${g.grid_size}`,
       status: g.status,
       ownerName: g.owner_name || 'Unknown Host',
-      excerpt: `Squares for ${g.title}. Claim your spot!`,
+      excerpt: g.instructions || '',
       shares: g.claimed_count || 0,
       comments: g.pending_count || 0,
       date: g.created_at ? new Date(g.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '',
