@@ -29,4 +29,13 @@ export class FooterComponent {
     })
     item.isCollapsed = !item.isCollapsed
   }
+
+  isSublinkObject(sublink: any): sublink is { label: string; route: string } {
+    return (
+      sublink &&
+      typeof sublink === 'object' &&
+      'route' in sublink &&
+      'label' in sublink
+    )
+  }
 }

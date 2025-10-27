@@ -98,6 +98,7 @@
                 <li>
                   <a
                     class="nav-link fw-normal py-1 px-0"
+                    [routerLink]="item === 'Terms of service' || item === 'Legal' ? '/terms-of-service' : item === 'Privacy policy' ? '/terms-of-service' : null"
                     href="javascript:void(0);"
                     >{{ item }}</a
                   >

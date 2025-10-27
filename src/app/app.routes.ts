@@ -113,4 +113,12 @@ export const routes: Routes = [
     path: 'all-pending-requests',
     component: AllPendingRequestsComponent,
   },
+  {
+    path: 'terms-of-service',
+    loadComponent: () =>
+      import('./pages/legal/terms-of-service.component').then(
+        (m) => m.TermsOfServiceComponent
+      ),
+    title: 'Terms of Service & Privacy Policy',
+  },
 ]

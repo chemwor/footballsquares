@@ -5,7 +5,7 @@ import { CompareTableComponent } from './component/compare-table/compare-table.c
 import { TestimonialComponent } from './component/testimonial/testimonial.component'
 import { ToolComponent } from './component/tool/tool.component'
 import { FaqComponent } from './component/faq/faq.component'
-import { FooterComponent } from './component/footer/footer.component'
+import { FooterComponent as SaasV2FooterComponent } from 'src/app/pages/landings/saas-v2/components/footer/footer.component'
 
 @Component({
   selector: 'app-pricing',
@@ -17,7 +17,7 @@ import { FooterComponent } from './component/footer/footer.component'
     TestimonialComponent,
     ToolComponent,
     FaqComponent,
-    FooterComponent,
+    SaasV2FooterComponent,
   ],
   templateUrl: './pricing.component.html',
   styles: ``,

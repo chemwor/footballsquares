@@ -64,20 +64,20 @@
               [attr.data-show-label]="item.name"
               [attr.data-hide-label]="item.name"
             ></a>
-            <div
-              [ngbCollapse]="item.isCollapsed"
-              class="collapse d-md-block"
-              id="useful"
-              data-bs-parent="#links"
-            >
-              <ul class="nav flex-column pb-2 pb-md-0">
+            <div [ngbCollapse]="item.isCollapsed" class="collapse d-md-block">
+              <ul class="nav flex-column pb-3">
                 @for (sublink of item.sublinks; track $index) {
                   <li class="nav-item">
-                    <a
-                      class="nav-link fw-normal px-0 py-1"
-                      href="javascript:void(0);"
-                      >{{ sublink }}</a
-                    >
+                    <ng-container *ngIf="isSublinkObject(sublink); else plainText">
+                      <a
+                        class="nav-link fw-normal px-0 py-1"
+                        [routerLink]="sublink.route"
+                        >{{ sublink.label }}</a
+                      >
+                    </ng-container>
+                    <ng-template #plainText>
+                      <span class="nav-link fw-normal px-0 py-1">{{ sublink }}</span>
+                    </ng-template>
                   </li>
                 }
               </ul>
@@ -126,13 +126,13 @@
         >
         <a
           class="nav-link text-body-secondary fs-sm fw-normal ps-0 pe-2 py-2 me-4"
-          href="javascript:void(0);"
-          >Privacy</a
+          [routerLink]="'/terms-of-service'"
+          >Privacy Policy</a
         >
         <a
           class="nav-link text-body-secondary fs-sm fw-normal ps-0 pe-2 py-2 me-sm-4"
-          href="javascript:void(0);"
-          >Terms of use</a
+          [routerLink]="'/terms-of-service'"
+          >Terms of Service</a
         >
       </nav>
 

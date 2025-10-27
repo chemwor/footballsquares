@@ -5,7 +5,7 @@ import { ServiceGridComponent } from './component/service-grid/service-grid.comp
 import { BenefitsComponent } from './component/benefits/benefits.component'
 import { TestimonialComponent } from './component/testimonial/testimonial.component'
 import { CTAComponent } from './component/cta/cta.component'
-import { FooterComponent } from './component/footer/footer.component'
+import { FooterComponent as SaasV2FooterComponent } from 'src/app/pages/landings/saas-v2/components/footer/footer.component'
 
 @Component({
   selector: 'app-service-v1',
@@ -17,7 +17,7 @@ import { FooterComponent } from './component/footer/footer.component'
     BenefitsComponent,
     TestimonialComponent,
     CTAComponent,
-    FooterComponent,
+    SaasV2FooterComponent,
   ],
   templateUrl: './service-v1.component.html',
   styles: ``,

@@ -14,5 +14,5 @@ export class FooterComponent {
   developBy = developedByLink
   company = ['Features', 'Reviews', 'How it works', 'Pricing']
 
-  support = ['Help center', 'Terms of service', 'Legal', 'Privacy policy']
+  support = ['Terms of service', 'Legal', 'Privacy policy']
 }
