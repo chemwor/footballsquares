@@ -37,16 +37,16 @@ export const PRE_SIGNIN_MENU_ITEMS: MenuItemType[] = [
     label: 'Contact',
     url: '/contacts/v2',
   },
-  {
-    key: 'terms',
-    label: 'Terms of Service',
-    url: '/terms-of-service',
-  },
-  {
-    key: 'privacy',
-    label: 'Privacy Policy',
-    url: '/terms-of-service',
-  },
+  // {
+  //   key: 'terms',
+  //   label: 'Terms of Service',
+  //   url: '/terms-of-service',
+  // },
+  // {
+  //   key: 'privacy',
+  //   label: 'Privacy Policy',
+  //   url: '/terms-of-service',
+  // },
 ]
 
 // Menu for users who ARE signed in
@@ -92,16 +92,16 @@ export const SIGNED_IN_MENU_ITEMS: MenuItemType[] = [
     label: 'Contact',
     url: '/contacts/v2',
   },
-  {
-    key: 'terms',
-    label: 'Terms of Service',
-    url: '/terms-of-service',
-  },
-  {
-    key: 'privacy',
-    label: 'Privacy Policy',
-    url: '/terms-of-service',
-  },
+  // {
+  //   key: 'terms',
+  //   label: 'Terms of Service',
+  //   url: '/terms-of-service',
+  // },
+  // {
+  //   key: 'privacy',
+  //   label: 'Privacy Policy',
+  //   url: '/terms-of-service',
+  // },
 ]
 
 // Host menu items (shown conditionally for non-free members or users with played squares)
