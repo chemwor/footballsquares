@@ -42,6 +42,13 @@ export class SupabaseBoardRepository implements BoardRepository {
   }
 
   async updateSquare(square: Square, gameId: string): Promise<void> {
+    console.log('updateSquare called with id:', square.id, 'payload:', {
+      status: square.status,
+      name: square.name,
+      email: square.email,
+      user_id: square.user_id,
+      requested_at: square.requestedAt,
+    });
     const { error, data } = await supabase
       .from('squares')
       .update({
@@ -114,11 +121,6 @@ export class SupabaseBoardRepository implements BoardRepository {
    * Fetch a game by ID from the games_with_owner view, including owner_email and owner_name.
    */
   async getGameById(gameId: string): Promise<any> {
-    // @ts-ignore
-    const supabase = this.supabase || (window as any).supabase;
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
     const { data, error } = await supabase
       .from('games_with_owner')
       .select('*')
