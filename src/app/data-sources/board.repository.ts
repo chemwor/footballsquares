@@ -42,7 +42,7 @@ export class SupabaseBoardRepository implements BoardRepository {
   }
 
   async updateSquare(square: Square, gameId: string): Promise<void> {
-    await supabase
+    const { error, data } = await supabase
       .from('squares')
       .update({
         status: square.status,
@@ -51,8 +51,12 @@ export class SupabaseBoardRepository implements BoardRepository {
         user_id: square.user_id, // Include user_id in updates
         requested_at: square.requestedAt,
       })
-      .eq('id', square.id)
-      .eq('game_id', gameId);
+      .eq('id', square.id); // Only filter by id, since id is unique
+    if (error) {
+      console.error('Supabase updateSquare error:', error, 'Square:', square);
+      throw error;
+    }
+    console.log('Supabase updateSquare result:', data);
   }
 
   async updateSquareByAdmin(square: Square, gameId: string): Promise<void> {
@@ -68,8 +72,7 @@ export class SupabaseBoardRepository implements BoardRepository {
         requested_at: square.requestedAt,
         // admin_id removed, use RLS policy to check game ownership
       })
-      .eq('id', square.id)
-      .eq('game_id', gameId);
+      .eq('id', square.id); // Only filter by id, since id is unique
     if (error) {
       console.error('Supabase admin update error:', error, 'Square:', square);
       throw error;
@@ -126,6 +129,45 @@ export class SupabaseBoardRepository implements BoardRepository {
       return null;
     }
     return data;
+  }
+
+  async getSquareById(squareId: string): Promise<Square | null> {
+    const { data, error } = await supabase
+      .from('squares')
+      .select('*')
+      .eq('id', squareId)
+      .single();
+    if (error) {
+      console.error('Error fetching square by id:', error, 'SquareId:', squareId);
+      return null;
+    }
+    return data || null;
+  }
+
+  async enqueueEmail(
+    type: string,
+    recipient: string,
+    recipient_name: string | undefined,
+    game_id: string,
+    square_id: string,
+    payload: any
+  ): Promise<void> {
+    const { error, data } = await supabase.from('email_queue').insert([
+      {
+        type,
+        recipient,
+        recipient_name: recipient_name || 'Player',
+        game_id,
+        square_id,
+        payload,
+        event_type: type
+      }
+    ]);
+    if (error) {
+      console.error('Failed to enqueue email:', error);
+      throw error;
+    }
+    console.log('Email enqueued successfully:', data);
   }
 }
 

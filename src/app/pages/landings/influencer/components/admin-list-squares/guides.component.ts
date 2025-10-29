@@ -7,6 +7,7 @@ import { Pagination, Navigation } from 'swiper/modules'
 import { supabase } from '../../../../../data-sources/supabase.client'
 import { AuthService } from '../../../../../services/auth.service'
 import { Router } from '@angular/router'
+import { BoardService } from 'src/app/services/board.service'
 
 // register Swiper custom elements
 register()
@@ -438,7 +439,8 @@ export class PendingApprovalsComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private boardService: BoardService
   ) {}
 
   async ngOnInit() {
@@ -526,25 +528,11 @@ export class PendingApprovalsComponent implements OnInit, OnDestroy {
     this.processingSquareId = square.id;
 
     try {
-      const { error } = await supabase
-        .from('squares')
-        .update({
-          status: 'approved',
-          approved_at: new Date().toISOString()
-        })
-        .eq('id', square.id);
-
-      if (error) {
-        console.error('Error approving square:', error);
-        alert('Failed to approve square. Please try again.');
-        return;
-      }
-
+      await this.boardService.approve(square.id);
       // Refresh the data
       await this.loadPendingApprovals();
 
     } catch (err) {
-      console.error('Error approving square:', err);
       alert('An unexpected error occurred. Please try again.');
     } finally {
       this.processingSquareId = null;
@@ -560,28 +548,11 @@ export class PendingApprovalsComponent implements OnInit, OnDestroy {
     this.processingSquareId = square.id;
 
     try {
-      const { error } = await supabase
-        .from('squares')
-        .update({
-          status: 'empty',
-          name: null,
-          email: null,
-          requested_at: null,
-          user_id: null
-        })
-        .eq('id', square.id);
-
-      if (error) {
-        console.error('Error declining square:', error);
-        alert('Failed to decline square. Please try again.');
-        return;
-      }
-
+      await this.boardService.decline(square.id);
       // Refresh the data
       await this.loadPendingApprovals();
 
     } catch (err) {
-      console.error('Error declining square:', err);
       alert('An unexpected error occurred. Please try again.');
     } finally {
       this.processingSquareId = null;

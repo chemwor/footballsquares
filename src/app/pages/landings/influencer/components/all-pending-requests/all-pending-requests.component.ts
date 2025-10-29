@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { supabase } from '../../../../../data-sources/supabase.client';
 import { NavigationBar2Component } from 'src/app/components/navigation-bars/navigation-bar-2/navigation-bar-2.component';
+import { BoardService } from 'src/app/services/board.service';
 
 interface PendingSquare {
   id: string;
@@ -28,6 +29,10 @@ export class AllPendingRequestsComponent implements OnInit {
   loading = true;
   error: string | null = null;
   processingSquareId: string | null = null;
+
+  constructor(
+    private boardService: BoardService
+  ) {}
 
   async ngOnInit() {
     try {
@@ -70,17 +75,7 @@ export class AllPendingRequestsComponent implements OnInit {
     if (this.processingSquareId === square.id) return;
     this.processingSquareId = square.id;
     try {
-      const { error } = await supabase
-        .from('squares')
-        .update({
-          status: 'approved',
-          approved_at: new Date().toISOString()
-        })
-        .eq('id', square.id);
-      if (error) {
-        alert('Failed to approve square. Please try again.');
-        return;
-      }
+      await this.boardService.approve(square.id);
       await this.ngOnInit(); // Refresh the list
     } catch (err) {
       alert('An unexpected error occurred. Please try again.');
@@ -95,20 +90,7 @@ export class AllPendingRequestsComponent implements OnInit {
     if (!confirmed) return;
     this.processingSquareId = square.id;
     try {
-      const { error } = await supabase
-        .from('squares')
-        .update({
-          status: 'empty',
-          name: null,
-          email: null,
-          requested_at: null,
-          user_id: null
-        })
-        .eq('id', square.id);
-      if (error) {
-        alert('Failed to decline square. Please try again.');
-        return;
-      }
+      await this.boardService.decline(square.id);
       await this.ngOnInit(); // Refresh the list
     } catch (err) {
       alert('An unexpected error occurred. Please try again.');

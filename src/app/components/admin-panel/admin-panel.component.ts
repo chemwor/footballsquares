@@ -296,24 +296,10 @@ export class AdminPanelComponent implements OnInit, OnChanges {
 
   async approve(squareId: string) {
     try {
-      const { error } = await supabase
-        .from('squares')
-        .update({
-          status: 'approved',
-          approved_at: new Date().toISOString()
-        })
-        .eq('id', squareId)
-        .eq('game_id', this.gameData.id);
-
-      if (error) {
-        console.error('Error approving square:', error);
-        return;
-      }
-
+      await this.board.approve(squareId);
       this.actionConfirmed.set('Square approved successfully!');
       await this.loadSquares(); // Refresh the lists
       this.hideConfirmationAfterDelay();
-
     } catch (err) {
       console.error('Error approving square:', err);
     }
@@ -321,27 +307,10 @@ export class AdminPanelComponent implements OnInit, OnChanges {
 
   async decline(squareId: string) {
     try {
-      const { error } = await supabase
-        .from('squares')
-        .update({
-          status: 'empty',
-          name: null,
-          email: null,
-          requested_at: null,
-          approved_at: null
-        })
-        .eq('id', squareId)
-        .eq('game_id', this.gameData.id);
-
-      if (error) {
-        console.error('Error declining square:', error);
-        return;
-      }
-
+      await this.board.decline(squareId);
       this.actionConfirmed.set('Square declined successfully!');
       await this.loadSquares(); // Refresh the lists
       this.hideConfirmationAfterDelay();
-
     } catch (err) {
       console.error('Error declining square:', err);
     }
