@@ -61,20 +61,31 @@ export class BoardService {
       await this.repo.updateSquare(updated, this.gameId);
       // Fetch game info (with owner_email and owner_name from games_with_owner view)
       const game = await this.repo.getGameById(this.gameId); // Should now return owner_email and owner_name
+      console.log('[requestSquare] getGameById result:', game);
       const adminEmail = game?.owner_email;
       const adminName = game?.owner_name || 'Admin';
+      console.log('[requestSquare] adminEmail:', adminEmail, 'adminName:', adminName);
       // Enqueue email to admin if available
       if (adminEmail) {
-        await this.enqueueEmail(
-          'square_requested_ack',
-          adminEmail,
-          adminName,
-          this.gameId,
-          square.id,
-          { row_idx: square.row_idx, col_idx: square.col_idx, player_name: name, player_email: email }
-        );
+        try {
+          await this.enqueueEmail(
+            'square_requested_ack',
+            adminEmail,
+            adminName,
+            this.gameId,
+            square.id,
+            { row_idx: square.row_idx, col_idx: square.col_idx, player_name: name, player_email: email }
+          );
+          console.log('[requestSquare] Email enqueued successfully');
+        } catch (err) {
+          console.error('[requestSquare] Failed to enqueue email:', err);
+        }
+      } else {
+        console.warn('[requestSquare] No adminEmail found, not sending request email.');
       }
       await this.loadSquares();
+    } else {
+      console.warn('[requestSquare] Square not found or not empty:', square);
     }
   }
 

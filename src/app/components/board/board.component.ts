@@ -674,7 +674,15 @@ export class BoardComponent implements OnInit {
   }
 
   async request({ name, email, userId }: { name: string; email: string; userId?: string }) {
+    console.log('[BoardComponent] Calling requestSquare with:', {
+      row: this.modalRow(),
+      col: this.modalCol(),
+      name,
+      email,
+      userId
+    });
     await this.board.requestSquare(this.modalRow(), this.modalCol(), name, email, userId);
+    console.log('[BoardComponent] requestSquare call finished');
     this.closeModal();
   }
 
