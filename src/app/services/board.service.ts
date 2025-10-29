@@ -55,7 +55,47 @@ export class BoardService {
         requestedAt: new Date().toISOString(),
       };
       await this.repo.updateSquare(updated, this.gameId);
+      // Fetch game info (with owner_email and owner_name from games_with_owner view)
+      const game = await this.repo.getGameById(this.gameId); // Should now return owner_email and owner_name
+      const adminEmail = game?.owner_email;
+      const adminName = game?.owner_name || 'Admin';
+      // Enqueue email to admin if available
+      if (adminEmail) {
+        await this.enqueueEmail(
+          'square_requested_ack',
+          adminEmail,
+          adminName,
+          this.gameId,
+          square.id,
+          { row_idx: square.row_idx, col_idx: square.col_idx, player_name: name, player_email: email }
+        );
+      }
       await this.loadSquares();
+    }
+  }
+
+  // Helper to enqueue email notification
+  private async enqueueEmail(type: string, recipient: string, recipient_name: string | undefined, game_id: string, square_id: string, payload: any) {
+    // Use Supabase JS client directly for the insert
+    // @ts-ignore
+    const supabase = this.repo.supabase || (window as any).supabase; // fallback if repo exposes supabase
+    if (!supabase) {
+      console.error('Supabase client not available for email_queue insert');
+      return;
+    }
+    const { error } = await supabase.from('email_queue').insert([
+      {
+        type,
+        recipient,
+        recipient_name: recipient_name || 'Player',
+        game_id,
+        square_id,
+        payload,
+        event_type: type
+      }
+    ]);
+    if (error) {
+      console.error('Failed to enqueue email:', error);
     }
   }
 
@@ -73,6 +113,17 @@ export class BoardService {
         await (this.repo as any).updateSquareByAdmin(updated, this.gameId);
       } else {
         await this.repo.updateSquare(updated, this.gameId);
+      }
+      // Enqueue approval email
+      if (square.email) {
+        await this.enqueueEmail(
+          'request_approved',
+          square.email,
+          square.name,
+          this.gameId,
+          square.id,
+          { row_idx: square.row_idx, col_idx: square.col_idx }
+        );
       }
       await this.loadSquares();
     }
@@ -96,6 +147,17 @@ export class BoardService {
         await (this.repo as any).updateSquareByAdmin(updated, this.gameId);
       } else {
         await this.repo.updateSquare(updated, this.gameId);
+      }
+      // Enqueue decline email
+      if (square.email) {
+        await this.enqueueEmail(
+          'request_denied',
+          square.email,
+          square.name,
+          this.gameId,
+          square.id,
+          { row_idx: square.row_idx, col_idx: square.col_idx }
+        );
       }
       await this.loadSquares();
     }

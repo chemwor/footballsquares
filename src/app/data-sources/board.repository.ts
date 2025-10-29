@@ -106,6 +106,27 @@ export class SupabaseBoardRepository implements BoardRepository {
       throw err;
     }
   }
+
+  /**
+   * Fetch a game by ID from the games_with_owner view, including owner_email and owner_name.
+   */
+  async getGameById(gameId: string): Promise<any> {
+    // @ts-ignore
+    const supabase = this.supabase || (window as any).supabase;
+    if (!supabase) {
+      throw new Error('Supabase client not available');
+    }
+    const { data, error } = await supabase
+      .from('games_with_owner')
+      .select('*')
+      .eq('id', gameId)
+      .single();
+    if (error) {
+      console.error('Error fetching game by ID:', error);
+      return null;
+    }
+    return data;
+  }
 }
 
 export function uid(): string {
