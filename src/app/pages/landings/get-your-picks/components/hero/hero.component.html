@@ -17,7 +17,7 @@
         <div class="card border-0 bg-primary py-4 px-xxl-4">
           <form class="card-body" #bjjForm="ngForm" (ngSubmit)="submitForm()" [ngClass]="{ 'was-validated': formSubmitted }" novalidate>
             <h2 class="h3 card-title text-white text-center pb-2 pb-xxl-3">
-              Get Your Personalized BJJ Gameplan
+              Create Your Board
             </h2>
 
             <!-- Step 1 Only: Game Board Details -->
@@ -69,6 +69,15 @@
               <div class="mb-3">
                 <label class="form-label fs-base text-white" for="boardName">Board Name / Title</label>
                 <input class="form-control form-control-lg text-white" type="text" [(ngModel)]="formData['boardName']" name="boardName" id="boardName" required placeholder="e.g., Sunday Night Game">
+              </div>
+
+              <!-- Instructions Textarea -->
+              <div class="mb-3">
+                <label class="form-label fs-base text-white" for="instructions">Instructions (optional)</label>
+                <textarea class="form-control form-control-lg text-white" [(ngModel)]="formData['instructions']" name="instructions" id="instructions" rows="3" maxlength="500" placeholder="Add instructions for your board participants, including how players can get their square accepted (e.g., payment, approval, etc.)"></textarea>
+                <div class="form-text text-white-50 small mt-1">
+                  You can provide instructions or rules for your board, such as how players can get their square accepted (e.g., payment method, approval process, etc.). (Max 500 characters)
+                </div>
               </div>
 
               <!-- Reverse Squares Option -->
