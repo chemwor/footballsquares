@@ -7,11 +7,11 @@ import { LogosComponent } from './components/logos/logos.component'
 import { TestimonialComponent } from './components/testimonial/testimonial.component'
 import { FaqComponent } from './components/faq/faq.component'
 import { CtaComponent } from './components/cta/cta.component'
-import { FooterComponent } from './components/footer/footer.component'
 import { HeroComponent } from '../insurance/components/hero/hero.component'
 import { BenefitsComponent } from '../insurance/components/benefits/benefits.component'
 import { CarServicesComponent } from '../insurance/components/car-services/car-services.component'
 import { FeturesComponent } from '../saas-v3/components/fetures/fetures.component'
+import { FooterComponent } from '../saas-v2/components/footer/footer.component'
 
 @Component({
   selector: 'landings-mobile-showcase',
@@ -21,16 +21,12 @@ import { FeturesComponent } from '../saas-v3/components/fetures/fetures.componen
     HeroComponent,
     StatsComponent,
     FeaturesComponent,
-    InfoComponent,
-    LogosComponent,
     TestimonialComponent,
     FaqComponent,
     CtaComponent,
-    FooterComponent,
     HeroComponent,
-    BenefitsComponent,
-    CarServicesComponent,
     FeturesComponent,
+    FooterComponent,
   ],
   templateUrl: './mobile-showcase.component.html',
   styles: ``,
