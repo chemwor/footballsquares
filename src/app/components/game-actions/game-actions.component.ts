@@ -366,6 +366,7 @@ export class GameActionsComponent implements OnInit, OnDestroy, OnChanges {
 
   async copyShareLink() {
     let shareMessage = '';
+    const banner = 'Dun and competitive football games on BlitzSquares!';
     // Try to build a rich share message if gameData has the info
     if (this.gameData && (this.gameData.boardName || this.gameData.homeTeam || this.gameData.awayTeam)) {
       const boardName = this.gameData.boardName || this.gameData.name || 'Game Board';
@@ -373,7 +374,7 @@ export class GameActionsComponent implements OnInit, OnDestroy, OnChanges {
       const awayTeam = this.gameData.awayTeam || this.gameData.away_team || 'Away Team';
       const homeLogo = this.gameData.homeLogo || this.gameData.home_logo || '';
       const awayLogo = this.gameData.awayLogo || this.gameData.away_logo || '';
-      shareMessage = `${boardName}\n${homeTeam} vs ${awayTeam}`;
+      shareMessage = `${banner}\n${boardName}\n${homeTeam} vs ${awayTeam}`;
       if (homeLogo || awayLogo) {
         shareMessage += `\n${homeLogo ? '[Home]' + homeLogo : ''}${homeLogo && awayLogo ? ' vs ' : ''}${awayLogo ? '[Away]' + awayLogo : ''}`;
       }

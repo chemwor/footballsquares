@@ -14,6 +14,8 @@ import { AuthService } from 'src/app/services/auth.service'
 import { filter, take } from 'rxjs/operators'
 import { NgStyle } from '@angular/common'
 import { FooterComponent } from '../../landings/saas-v2/components/footer/footer.component'
+import { Title } from '@angular/platform-browser'
+import { Meta } from '@angular/platform-browser'
 
 @Component({
   selector: 'app-service-v3',
@@ -48,7 +50,9 @@ export class ServiceV3Component implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private titleService: Title,
+    private metaService: Meta
   ) {}
 
   ngOnInit() {
@@ -103,9 +107,34 @@ export class ServiceV3Component implements OnInit {
       } else {
         this.heroBgUrl = 'assets/img/services/v3/hero-bg.jpg'
       }
+
+      // --- Set meta tags dynamically ---
+      const boardName =
+        this.gameData.boardName || this.gameData.name || 'Game Board'
+      const homeTeam =
+        this.gameData.homeTeam || this.gameData.home_team || 'Home Team'
+      const awayTeam =
+        this.gameData.awayTeam || this.gameData.away_team || 'Away Team'
+      const banner = 'Fun and competitive football games on BlitzSquares!'
+      const description = `${banner} ${boardName}: ${homeTeam} vs ${awayTeam}`
+      const ogImage =
+        this.gameData.boardImage ||
+        this.gameData.board_image ||
+        this.gameData.homeLogo ||
+        this.gameData.home_logo ||
+        this.heroBgUrl ||
+        'https://footballsquare.netlify.app/assets/img/card.png'
+      this.titleService.setTitle(`${boardName} | ${banner}`)
+      this.metaService.updateTag({ name: 'description', content: description })
+      this.metaService.updateTag({
+        property: 'og:description',
+        content: description,
+      })
+      this.metaService.updateTag({ property: 'og:image', content: ogImage })
+      // --- End meta tags ---
     } catch (err) {
-      console.error('Unexpected error loading game:', err)
-      this.error = 'Unexpected error occurred'
+      console.error('Error loading game data:', err)
+      this.error = 'Error loading game data'
     } finally {
       this.loading = false
     }
