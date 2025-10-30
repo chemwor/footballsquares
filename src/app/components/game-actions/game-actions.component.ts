@@ -365,18 +365,35 @@ export class GameActionsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   async copyShareLink() {
+    let shareMessage = '';
+    // Try to build a rich share message if gameData has the info
+    if (this.gameData && (this.gameData.boardName || this.gameData.homeTeam || this.gameData.awayTeam)) {
+      const boardName = this.gameData.boardName || this.gameData.name || 'Game Board';
+      const homeTeam = this.gameData.homeTeam || this.gameData.home_team || 'Home Team';
+      const awayTeam = this.gameData.awayTeam || this.gameData.away_team || 'Away Team';
+      const homeLogo = this.gameData.homeLogo || this.gameData.home_logo || '';
+      const awayLogo = this.gameData.awayLogo || this.gameData.away_logo || '';
+      shareMessage = `${boardName}\n${homeTeam} vs ${awayTeam}`;
+      if (homeLogo || awayLogo) {
+        shareMessage += `\n${homeLogo ? '[Home]' + homeLogo : ''}${homeLogo && awayLogo ? ' vs ' : ''}${awayLogo ? '[Away]' + awayLogo : ''}`;
+      }
+      shareMessage += `\nJoin here: ${this.gameShareUrl}`;
+    } else {
+      // Fallback: just the link
+      shareMessage = this.gameShareUrl;
+    }
     try {
-      await navigator.clipboard.writeText(this.gameShareUrl);
-      this.showConfirmationMessage('Share link copied to clipboard!');
+      await navigator.clipboard.writeText(shareMessage);
+      this.showConfirmationMessage('Share info copied to clipboard!');
     } catch (err) {
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
-      textArea.value = this.gameShareUrl;
+      textArea.value = shareMessage;
       document.body.appendChild(textArea);
       textArea.select();
       document.execCommand('copy');
       document.body.removeChild(textArea);
-      this.showConfirmationMessage('Share link copied to clipboard!');
+      this.showConfirmationMessage('Share info copied to clipboard!');
     }
   }
 
