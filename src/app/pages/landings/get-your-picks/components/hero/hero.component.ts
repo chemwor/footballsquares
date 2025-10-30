@@ -207,6 +207,7 @@ export class HeroComponent {
       y_axis_numbers: yAxisNumbers,
       axes_randomized_at: new Date().toISOString(),
       random_seed: Math.random().toString(36).substring(2, 15),
+      instructions: this.formData['instructions'] || null,
     };
 
     try {
