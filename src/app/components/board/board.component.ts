@@ -20,19 +20,27 @@ export enum GameStatus {
   imports: [CommonModule, FormsModule, RequestModalComponent],
   template: `
     <!-- Winner Banner - Shows when game is closed and winners exist -->
-<!--    <div *ngIf="shouldShowWinnerBanner()" class="winner-banner">-->
-<!--      <div class="banner-content">-->
-<!--        <h2>🎉 Congratulations to the winner! This game is now complete. 🎉</h2>-->
-<!--        <div *ngIf="getWinnerNames().length > 0" class="winner-names">-->
-<!--          <strong>Winners:</strong> {{ getWinnerNames().join(', ') }}-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
+    <!--    <div *ngIf="shouldShowWinnerBanner()" class="winner-banner">-->
+    <!--      <div class="banner-content">-->
+    <!--        <h2>🎉 Congratulations to the winner! This game is now complete. 🎉</h2>-->
+    <!--        <div *ngIf="getWinnerNames().length > 0" class="winner-names">-->
+    <!--          <strong>Winners:</strong> {{ getWinnerNames().join(', ') }}-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
 
     <div class="board-wrapper">
-      <div class="axis-label x-axis">{{ gameData?.team1_name || 'Home Team' }}</div>
-      <div class="axis-label y-axis">{{ gameData?.team2_name || 'Away Team' }}</div>
-
+      <!-- Legend above the board -->
+      <div class="legend">
+        <span class="legend-item">
+          <span class="legend-color" [style.background]="team1Color"></span>
+          <span class="legend-name">{{ gameData?.team1_name || 'Home' }}</span>
+        </span>
+        <span class="legend-item">
+          <span class="legend-color" [style.background]="team2Color"></span>
+          <span class="legend-name">{{ gameData?.team2_name || 'Away' }}</span>
+        </span>
+      </div>
       <div class="table-container">
         <!-- Fixed corner -->
         <div class="corner-header"></div>
@@ -42,14 +50,14 @@ export enum GameStatus {
           <!-- Row headers (sticky) -->
           <div class="row-headers">
             <div class="row-header-spacer"></div> <!-- Spacer for column headers -->
-            <div *ngFor="let row of getDisplayRows()" class="row-header">{{ shouldShowAxisNumbers() ? row : '?' }}</div>
+            <div *ngFor="let row of getDisplayRows()" class="row-header" [style.color]="team2Color">{{ shouldShowAxisNumbers() ? row : '?' }}</div>
           </div>
 
           <!-- Content area with column headers and grid -->
           <div class="content-area">
             <!-- Column headers -->
             <div class="column-headers">
-              <div *ngFor="let col of getDisplayCols()" class="col-header">{{ shouldShowAxisNumbers() ? col : '?' }}</div>
+              <div *ngFor="let col of getDisplayCols()" class="col-header" [style.color]="team1Color">{{ shouldShowAxisNumbers() ? col : '?' }}</div>
             </div>
 
             <!-- Grid content -->
@@ -112,7 +120,8 @@ export enum GameStatus {
       </div>
     </div>
   `,
-  styles: [`
+  styles: [
+    `
     :host { display: block; background: #181a1b; color: #eee; font-family: system-ui, sans-serif; padding: 2rem 0 2rem 2rem; }
 
     .board-wrapper {
@@ -121,30 +130,42 @@ export enum GameStatus {
       margin: 0 0 0 2rem;
     }
 
-    .axis-label {
-      position: absolute;
-      color: #f7c873;
+    .legend {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.1rem;
       font-weight: bold;
-      font-size: 1.4rem;
+    }
+    .legend-color {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      min-height: 18px;
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      margin-right: 0.3rem;
+      vertical-align: middle;
+      box-sizing: border-box;
+    }
+    .legend-name {
       text-transform: uppercase;
       letter-spacing: 1px;
-      z-index: 25;
     }
 
-    .x-axis {
-      top: -2.5rem;
-      left: 58%;
-      transform: translateX(-50%);
-      text-align: center;
-    }
-
-    .y-axis {
-      left: 0;
-      top: 75%;
-      transform: rotate(-90deg) translateY(-50%);
-      transform-origin: left center;
-      text-align: center;
-      width: max-content;
+    .board-wrapper {
+      padding-top: 2rem;
     }
 
     .table-container {
@@ -402,6 +423,19 @@ export enum GameStatus {
         font-size: 1.2rem;
       }
 
+      .legend {
+        gap: 1rem;
+        font-size: 0.95rem;
+      }
+      .legend-color {
+        width: 16px;
+        height: 16px;
+        min-width: 16px;
+        min-height: 16px;
+        aspect-ratio: 1/1;
+        margin-right: 0.2rem;
+      }
+
       .table-container {
         max-height: 70vh;
       }
@@ -504,6 +538,9 @@ export class BoardComponent implements OnInit {
   modalRow = signal<number>(0);
   modalCol = signal<number>(0);
 
+  team1Color = '#3498db'; // Default blue
+  team2Color = '#e74c3c'; // Default red
+
   constructor(public board: BoardService) {}
 
   async ngOnInit() {
@@ -521,6 +558,12 @@ export class BoardComponent implements OnInit {
 
     // Set up display rows and cols from game data
     this.initializeAxisNumbers();
+    this.setTeamColors();
+  }
+
+  setTeamColors() {
+    this.team1Color = this.gameData?.team1_color || '#3498db';
+    this.team2Color = this.gameData?.team2_color || '#e74c3c';
   }
 
   async loadWinningSquares() {

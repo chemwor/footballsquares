@@ -8,29 +8,28 @@ import { supabase } from '../../data-sources/supabase.client';
   imports: [CommonModule],
   template: `
     <div class="board-wrapper">
-      <div class="axis-label x-axis">{{ gameData?.team1_name || 'Home' }}</div>
-      <div class="axis-label y-axis">{{ gameData?.team2_name || 'Away' }}</div>
-
+      <!-- Legend above the board -->
+      <div class="legend">
+        <span class="legend-item">
+          <span class="legend-color" [style.background]="team1Color"></span>
+          <span class="legend-name">{{ gameData?.team1_name || 'Home' }}</span>
+        </span>
+        <span class="legend-item">
+          <span class="legend-color" [style.background]="team2Color"></span>
+          <span class="legend-name">{{ gameData?.team2_name || 'Away' }}</span>
+        </span>
+      </div>
       <div class="table-container">
-        <!-- Fixed corner -->
         <div class="corner-header"></div>
-
-        <!-- Scrollable content area that includes both headers and grid -->
         <div class="scrollable-area">
-          <!-- Row headers (sticky) -->
           <div class="row-headers">
-            <div class="row-header-spacer"></div> <!-- Spacer for column headers -->
-            <div *ngFor="let row of rows" class="row-header">{{ shouldShowAxisNumbers() ? row : '?' }}</div>
+            <div class="row-header-spacer"></div>
+            <div *ngFor="let row of rows" class="row-header" [style.color]="team2Color">{{ row }}</div>
           </div>
-
-          <!-- Content area with column headers and grid -->
           <div class="content-area">
-            <!-- Column headers -->
             <div class="column-headers">
-              <div *ngFor="let col of cols" class="col-header">{{ shouldShowAxisNumbers() ? col : '?' }}</div>
+              <div *ngFor="let col of cols" class="col-header" [style.color]="team1Color">{{ col }}</div>
             </div>
-
-            <!-- Grid content -->
             <div class="grid-content" [style.--cols]="gridSize">
               <ng-container *ngFor="let row of rows">
                 <ng-container *ngFor="let col of cols">
@@ -66,41 +65,41 @@ import { supabase } from '../../data-sources/supabase.client';
       background: #181a1b;
       color: #eee;
       font-family: system-ui, sans-serif;
-      padding: 1rem 0; /* Reduced padding and removed left padding */
+      padding: 1rem 0;
     }
-
-    .board-wrapper {
-      position: relative;
-      padding: 3rem 1rem 1rem 0; /* Added padding top/bottom/left, removed left padding */
-      margin: 0; /* Removed margins */
+    .legend {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
     }
-
-    .axis-label {
-      position: absolute;
-      color: #f7c873;
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.1rem;
       font-weight: bold;
-      font-size: 1.4rem;
+    }
+    .legend-color {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      min-height: 18px;
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      margin-right: 0.3rem;
+      vertical-align: middle;
+      box-sizing: border-box;
+    }
+    .legend-name {
       text-transform: uppercase;
       letter-spacing: 1px;
-      z-index: 25;
     }
-
-    .x-axis {
-      top: -2.5rem;
-      left: 58%;
-      transform: translateX(-50%);
-      text-align: center;
-    }
-
-    .y-axis {
-      left: -1rem; /* Adjusted to account for removed padding */
-      top: 75%;
-      transform: rotate(-90deg) translateY(-50%);
-      transform-origin: left center;
-      text-align: center;
-      width: max-content;
-    }
-
     .table-container {
       display: grid;
       grid-template-columns: 50px 1fr;
@@ -109,9 +108,8 @@ import { supabase } from '../../data-sources/supabase.client';
       border-radius: 12px;
       overflow: hidden;
       max-height: 80vh;
-      border: 1px solid #333; /* Added border for better definition */
+      border: 1px solid #333;
     }
-
     .corner-header {
       background: #1a1a1a;
       border-right: 2px solid #333;
@@ -121,7 +119,6 @@ import { supabase } from '../../data-sources/supabase.client';
       grid-row: 1;
       height: 50px;
     }
-
     .scrollable-area {
       grid-column: 1 / -1;
       grid-row: 1;
@@ -130,7 +127,6 @@ import { supabase } from '../../data-sources/supabase.client';
       overflow: auto;
       -webkit-overflow-scrolling: touch;
     }
-
     .row-headers {
       background: #2a2a2a;
       border-right: 2px solid #333;
@@ -138,30 +134,27 @@ import { supabase } from '../../data-sources/supabase.client';
       left: 0;
       z-index: 15;
       display: grid;
-      grid-template-rows: 50px repeat(var(--cols, 10), 60px); /* Increased to match cell height exactly */
+      grid-template-rows: 50px repeat(var(--cols, 10), 60px);
     }
-
     .row-header-spacer {
       background: #1a1a1a;
       border-bottom: 2px solid #333;
       height: 50px;
     }
-
     .row-header {
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      color: #aaa;
-      height: 60px; /* Match exact cell height */
+      height: 60px;
       border-bottom: 1px solid #333;
+      font-size: 1.1rem;
+      transition: color 0.2s;
     }
-
     .content-area {
       display: grid;
       grid-template-rows: 50px 1fr;
     }
-
     .column-headers {
       display: grid;
       grid-template-columns: repeat(var(--cols, 10), 60px);
@@ -170,29 +163,27 @@ import { supabase } from '../../data-sources/supabase.client';
       position: sticky;
       top: 0;
       z-index: 10;
-      padding: 0; /* Removed padding */
+      padding: 0;
     }
-
     .col-header {
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      color: #aaa;
       width: 60px;
       height: 50px;
       border-right: 1px solid #333;
       box-sizing: border-box;
+      font-size: 1.1rem;
+      transition: color 0.2s;
     }
-
     .grid-content {
       display: grid;
       grid-template-columns: repeat(var(--cols, 10), 60px);
-      grid-template-rows: repeat(var(--cols, 10), 60px); /* Match row header height exactly */
+      grid-template-rows: repeat(var(--cols, 10), 60px);
       background: #222;
-      padding: 0; /* Removed padding */
+      padding: 0;
     }
-
     .cell {
       background: #23272a;
       display: flex;
@@ -206,13 +197,12 @@ import { supabase } from '../../data-sources/supabase.client';
       padding: 0.5rem;
       cursor: default;
       position: relative;
-      border-radius: 0; /* Removed border radius for perfect alignment */
+      border-radius: 0;
       box-sizing: border-box;
       width: 60px;
-      height: 60px; /* Match row header height exactly */
-      border: 1px solid #333; /* Added consistent border */
+      height: 60px;
+      border: 1px solid #333;
     }
-
     .cell.empty {
       background: #23272a;
       color: #666;
@@ -228,7 +218,6 @@ import { supabase } from '../../data-sources/supabase.client';
       color: #fff;
       font-weight: bold;
     }
-
     .user-info {
       display: flex;
       flex-direction: column;
@@ -262,58 +251,59 @@ import { supabase } from '../../data-sources/supabase.client';
       color: #000;
       font-weight: bold;
     }
-
     @media (max-width: 768px) {
       .board-wrapper {
         padding: 2rem 0.5rem 0.5rem;
         margin: 0 0.5rem;
       }
-
+      .legend {
+        gap: 1rem;
+        font-size: 0.95rem;
+      }
       .axis-label {
         font-size: 1.2rem;
       }
-
       .table-container {
         max-height: 70vh;
       }
-
       .column-headers {
-        grid-template-columns: repeat(var(--cols, 10), 50px); /* Match mobile cell width */
+        grid-template-columns: repeat(var(--cols, 10), 50px);
       }
-
       .grid-content {
         grid-template-columns: repeat(var(--cols, 10), 50px);
-        grid-template-rows: repeat(var(--cols, 10), 48px); /* Adjust row height for mobile */
+        grid-template-rows: repeat(var(--cols, 10), 48px);
       }
-
       .col-header {
-        width: 50px; /* Match mobile cell width */
+        width: 50px;
         font-size: 0.9rem;
       }
-
       .row-headers {
-        grid-template-rows: 50px repeat(var(--cols, 10), 50px); /* Match mobile cell height + gap */
+        grid-template-rows: 50px repeat(var(--cols, 10), 50px);
       }
-
       .row-header {
-        height: 50px; /* Match mobile cell height + gap */
+        height: 50px;
         font-size: 0.9rem;
       }
-
       .cell {
         font-size: 0.8rem;
-        width: 50px; /* Mobile cell width */
-        height: 48px; /* Mobile cell height */
-        padding: 0.25rem; /* Smaller padding for mobile */
+        width: 50px;
+        height: 48px;
+        padding: 0.25rem;
       }
-
       .name {
         font-size: 0.6rem;
       }
-
       .pill {
         font-size: 0.5rem;
         padding: 0.1em 0.4em;
+      }
+      .legend-color {
+        width: 16px;
+        height: 16px;
+        min-width: 16px;
+        min-height: 16px;
+        aspect-ratio: 1/1;
+        margin-right: 0.2rem;
       }
     }
   `]
@@ -326,6 +316,10 @@ export class AdminBoardViewComponent implements OnInit, OnChanges {
   rows: number[] = [];
   cols: number[] = [];
 
+  // Team colors for legend and headers
+  team1Color = '#3498db'; // Default blue
+  team2Color = '#e74c3c'; // Default red
+
   // Store winning squares data
   winningSquares: Array<{
     row_idx: number;
@@ -335,7 +329,7 @@ export class AdminBoardViewComponent implements OnInit, OnChanges {
   }> = [];
 
   async ngOnInit() {
-    console.log('AdminBoardView ngOnInit - gameData:', this.gameData);
+    this.setTeamColors();
     if (this.gameData) {
       this.initializeBoard();
       await this.loadSquares();
@@ -344,12 +338,18 @@ export class AdminBoardViewComponent implements OnInit, OnChanges {
   }
 
   async ngOnChanges(changes: SimpleChanges) {
-    console.log('AdminBoardView ngOnChanges - gameData changed:', changes['gameData']);
     if (changes['gameData'] && this.gameData) {
+      this.setTeamColors();
       this.initializeBoard();
       await this.loadSquares();
       await this.loadWinningSquares();
     }
+  }
+
+  setTeamColors() {
+    // Use colors from gameData if available, otherwise fallback
+    this.team1Color = this.gameData?.team1_color || '#3498db';
+    this.team2Color = this.gameData?.team2_color || '#e74c3c';
   }
 
   initializeBoard() {
