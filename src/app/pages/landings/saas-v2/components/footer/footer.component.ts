@@ -12,7 +12,12 @@ import { createdBy, developedByLink } from 'src/app/states/constants'
 export class FooterComponent {
   author = createdBy
   developBy = developedByLink
-  company = ['Features', 'Reviews', 'How it works', 'Pricing']
+  company = [
+    { label: 'Features', fragment: 'features' },
+    { label: 'Reviews', fragment: 'reviews' },
+    { label: 'How it works', fragment: 'howitworks' },
+    { label: 'Pricing', fragment: 'pricing' },
+  ]
 
   support = ['Terms of service', 'Legal', 'Privacy policy']
 }
