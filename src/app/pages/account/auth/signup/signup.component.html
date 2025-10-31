@@ -1,4 +1,9 @@
 <auth-layout>
+  <!-- Loader overlay -->
+  <div *ngIf="isLoading" class="loader-overlay">
+    <div class="loader-spinner"></div>
+  </div>
+
   <div
     class="d-flex flex-column align-items-center w-lg-50 h-100 px-3 px-lg-5 pt-5"
   >
@@ -31,9 +36,9 @@
           <div class="col mb-4">
             <input
               class="form-control form-control-lg"
-              formControlName="fname"
+              formControlName="displayName"
               type="text"
-              placeholder="Your name"
+              placeholder="Display name"
               required
             />
           </div>

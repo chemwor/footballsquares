@@ -149,13 +149,14 @@ export class AuthService {
         return { success: false, error: error.message };
       }
 
-      // Save display name to profiles table if provided and user exists
-      if (data.user && displayName) {
-        await supabase.from('profiles').upsert({
-          id: data.user.id,
-          email,
-          display_name: displayName,
+      // Save user to profiles table if user exists
+      if (data.user) {
+        const { error: upsertError } = await supabase.from('profiles').upsert({
+          id: data.user.id
         });
+        if (upsertError) {
+          return { success: false, error: upsertError.message };
+        }
       }
 
       return { success: true };

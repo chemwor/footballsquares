@@ -11,6 +11,7 @@ import {
 import { createdBy, developedByLink } from 'src/app/states/constants'
 import { AuthService } from 'src/app/services/auth.service'
 import { Router } from '@angular/router'
+import { CommonModule } from '@angular/common'
 
 @Component({
   selector: 'app-signup',
@@ -20,6 +21,7 @@ import { Router } from '@angular/router'
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
+    CommonModule,
   ],
   templateUrl: './signup.component.html',
   styles: [`
@@ -53,6 +55,30 @@ import { Router } from '@angular/router'
     .modal-content button {
       margin-top: 1.5rem;
     }
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255,255,255,0.7);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .loader-spinner {
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #B1202A;
+      border-radius: 50%;
+      width: 64px;
+      height: 64px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   `],
 })
 export class SignupComponent {
@@ -66,6 +92,7 @@ export class SignupComponent {
   errorMessage = ''
   successMessage = ''
   showVerifyModal = false
+  isLoading = false;
 
   public fb = inject(UntypedFormBuilder)
   private renderer = inject(Renderer2)
@@ -74,7 +101,7 @@ export class SignupComponent {
 
   constructor() {
     this.signupForm = this.fb.group({
-      fname: ['', [Validators.required]],
+      displayName: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
       confirmpwd: ['', [Validators.required]],
@@ -82,18 +109,21 @@ export class SignupComponent {
   }
   async signup() {
     if (this.signupForm.valid) {
+      this.isLoading = true;
       this.submit = true
       this.errorMessage = ''
       this.successMessage = ''
       const email = this.signupForm.value.email
       const password = this.signupForm.value.password
       const confirmpwd = this.signupForm.value.confirmpwd
-      const fname = this.signupForm.value.fname
+      const displayName = this.signupForm.value.displayName
       if (password !== confirmpwd) {
         this.errorMessage = 'Passwords do not match.'
+        this.isLoading = false;
         return
       }
-      const result = await this.authService.signUp(email, password, fname)
+      const result = await this.authService.signUp(email, password, displayName)
+      this.isLoading = false;
       if (result.success) {
         this.successMessage =
           'Sign up successful! Please check your email to confirm your account.'
@@ -107,6 +137,7 @@ export class SignupComponent {
         document.querySelector('.needs-validation'),
         'was-validated'
       )
+      this.isLoading = false;
     }
   }
 
