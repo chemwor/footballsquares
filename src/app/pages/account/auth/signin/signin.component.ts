@@ -79,6 +79,8 @@ export class SigninComponent implements OnInit {
    * Sign in with Google
    */
   async signInWithGoogle() {
+    this.errorMessage = ''
+    this.successMessage = ''
     try {
       const { error } = await this.authService.signInWithOAuth({
         provider: 'google',
@@ -86,9 +88,13 @@ export class SigninComponent implements OnInit {
           redirectTo: window.location.origin, // Ensure this matches your Supabase dashboard setting
         },
       })
+
       if (error) {
         this.errorMessage = error.message
         console.error('Google sign-in error:', error)
+      } else {
+        this.successMessage = 'Successfully signed in with Google! Redirecting...'
+        // Optionally, trigger a UI update or redirect here
       }
     } catch (err) {
       this.errorMessage = 'An unexpected error occurred during Google sign-in.'
