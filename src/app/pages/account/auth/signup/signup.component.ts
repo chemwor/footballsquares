@@ -10,6 +10,7 @@ import {
 } from '@angular/forms'
 import { createdBy, developedByLink } from 'src/app/states/constants'
 import { AuthService } from 'src/app/services/auth.service'
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'app-signup',
@@ -33,10 +34,12 @@ export class SignupComponent {
   confirmpasswordType: string = 'password'
   errorMessage = ''
   successMessage = ''
+  showVerifyModal = false
 
   public fb = inject(UntypedFormBuilder)
   private renderer = inject(Renderer2)
   private authService = inject(AuthService)
+  private router = inject(Router)
 
   constructor() {
     this.signupForm = this.fb.group({
@@ -54,15 +57,17 @@ export class SignupComponent {
       const email = this.signupForm.value.email
       const password = this.signupForm.value.password
       const confirmpwd = this.signupForm.value.confirmpwd
+      const fname = this.signupForm.value.fname
       if (password !== confirmpwd) {
         this.errorMessage = 'Passwords do not match.'
         return
       }
-      const result = await this.authService.signUp(email, password)
+      const result = await this.authService.signUp(email, password, fname)
       if (result.success) {
         this.successMessage =
           'Sign up successful! Please check your email to confirm your account.'
         this.signupForm.reset()
+        this.showVerifyModal = true
       } else {
         this.errorMessage = result.error || 'An error occurred during sign up.'
       }
@@ -72,6 +77,11 @@ export class SignupComponent {
         'was-validated'
       )
     }
+  }
+
+  closeVerifyModal() {
+    this.showVerifyModal = false
+    this.router.navigate(['/'])
   }
 
   changePasswordType(event: any) {

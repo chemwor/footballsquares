@@ -2,6 +2,18 @@
   <div
     class="d-flex flex-column align-items-center w-lg-50 h-100 px-3 px-lg-5 pt-5"
   >
+    <!-- Modal for email verification -->
+    <div *ngIf="showVerifyModal" class="modal-backdrop">
+      <div class="modal-content">
+        <h2>Verify Your Email</h2>
+        <p>
+          Please check your email and follow the link to verify your account
+          before signing in.
+        </p>
+        <button class="btn btn-primary" (click)="closeVerifyModal()">OK</button>
+      </div>
+    </div>
+
     <div class="w-100 mt-auto" style="max-width: 526px">
       <h1>No account? Sign up</h1>
       <p class="pb-3 mb-3 mb-lg-4">

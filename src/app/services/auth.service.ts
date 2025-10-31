@@ -57,6 +57,7 @@ export class AuthService {
 
         if (event === 'SIGNED_IN' && session?.user) {
           console.log('🎉 AuthService: User signed in, loading profile...')
+          await this.upsertProfileFromOAuth(session.user);
           await this.loadUserProfile(session.user.id);
           this.router.navigate(['/']);
         } else if (event === 'SIGNED_OUT') {
@@ -135,7 +136,7 @@ export class AuthService {
     }
   }
 
-  async signUp(email: string, password: string): Promise<{ success: boolean; error?: string }> {
+  async signUp(email: string, password: string, displayName?: string): Promise<{ success: boolean; error?: string }> {
     try {
       this._loading.set(true);
 
@@ -146,6 +147,15 @@ export class AuthService {
 
       if (error) {
         return { success: false, error: error.message };
+      }
+
+      // Save display name to profiles table if provided and user exists
+      if (data.user && displayName) {
+        await supabase.from('profiles').upsert({
+          id: data.user.id,
+          email,
+          display_name: displayName,
+        });
       }
 
       return { success: true };
@@ -159,9 +169,29 @@ export class AuthService {
   async signInWithOAuth(options: { provider: Provider; options?: any }): Promise<{ error?: any }> {
     try {
       const { error } = await supabase.auth.signInWithOAuth(options);
+      // After redirect, onAuthStateChange will fire and we can update the profile there
       return { error };
     } catch (error) {
       return { error };
+    }
+  }
+
+  // Call this after OAuth sign-in to upsert display name from provider metadata
+  async upsertProfileFromOAuth(user: User) {
+    const displayName = user.user_metadata?.['full_name'] || user.user_metadata?.['name'] || user.email;
+    // Fetch current profile
+    const { data: existingProfile } = await supabase
+      .from('profiles')
+      .select('display_name')
+      .eq('id', user.id)
+      .single();
+    // Only update if displayName is non-empty and different from current
+    if (displayName && (!existingProfile || existingProfile.display_name !== displayName)) {
+      await supabase.from('profiles').upsert({
+        id: user.id,
+        email: user.email,
+        display_name: displayName,
+      });
     }
   }
 
