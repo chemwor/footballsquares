@@ -22,7 +22,38 @@ import { Router } from '@angular/router'
     ReactiveFormsModule,
   ],
   templateUrl: './signup.component.html',
-  styles: ``,
+  styles: [`
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: #fff;
+      color: #222;
+      border-radius: 12px;
+      padding: 2rem 2.5rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      max-width: 90vw;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      z-index: 10000;
+    }
+    .modal-content h2 {
+      margin-bottom: 1rem;
+    }
+    .modal-content button {
+      margin-top: 1.5rem;
+    }
+  `],
 })
 export class SignupComponent {
   author = createdBy
