@@ -25,7 +25,7 @@
       Create, share, and track game boards in minutes.
       From kickoff to final whistle, we handle the rules and winners so you can focus on the fun.
     </p>
-    <a class="btn btn-lg btn-primary" href="javascript:void(0);"
+    <a class="btn btn-lg btn-primary" (click)="onCreateBoardClick()"
       >Create a Free Board</a
     >
   </div>
@@ -50,4 +50,63 @@
       }
     </div>
   </div>
+
+  <!-- Auth Modal -->
+  <div *ngIf="showAuthModal" class="modal-backdrop-custom">
+    <div class="modal-custom">
+      <h3>Please Sign In or Sign Up</h3>
+      <p>You need to be signed in to create a board.</p>
+      <div class="modal-actions">
+        <a class="btn btn-primary me-2" routerLink="/auth/signin">Sign In</a>
+        <a class="btn btn-primary" routerLink="/auth/signup">Sign Up</a>
+      </div>
+      <button class="btn btn-link mt-3" (click)="closeAuthModal()">Close</button>
+    </div>
+  </div>
+
+  <style>
+    .modal-backdrop-custom {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1050;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-custom {
+      background: #fff;
+      border-radius: 8px;
+      padding: 2rem 2.5rem;
+      box-shadow: 0 2px 24px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      min-width: 300px;
+    }
+
+    .modal-custom h3 {
+      color: #333;
+      margin-bottom: 1rem;
+    }
+
+    .modal-custom p {
+      color: #666;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .modal-actions .btn {
+      min-width: 100px;
+      flex: 0 0 auto;
+    }
+  </style>
 </section>
