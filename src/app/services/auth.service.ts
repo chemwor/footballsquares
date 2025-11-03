@@ -140,15 +140,15 @@ export class AuthService {
     try {
       this._loading.set(true);
 
-      // Prepare signup data with user metadata
-      const signUpData: any = {
+      // Prepare signup data with user metadata in correct format
+      const signUpOptions: any = {
         email,
         password,
       };
 
       // Add display name to user metadata if provided
       if (displayName) {
-        signUpData.options = {
+        signUpOptions.options = {
           data: {
             display_name: displayName,
             full_name: displayName
@@ -156,17 +156,18 @@ export class AuthService {
         };
       }
 
-      const { data, error }: AuthResponse = await supabase.auth.signUp(signUpData);
+      const { data, error }: AuthResponse = await supabase.auth.signUp(signUpOptions);
 
       if (error) {
         return { success: false, error: error.message };
       }
 
-      // Save user to profiles table if user exists
+      // Save user to profiles table if user exists - use insert with conflict handling
       if (data.user) {
         const profileData: any = {
           id: data.user.id,
-          email: data.user.email
+          email: data.user.email,
+          membership: 'free' // Set default membership
         };
 
         // Add display_name if provided
@@ -174,9 +175,28 @@ export class AuthService {
           profileData.display_name = displayName;
         }
 
-        const { error: upsertError } = await supabase.from('profiles').upsert(profileData);
-        if (upsertError) {
-          return { success: false, error: upsertError.message };
+        // Use insert with onConflict to handle existing profiles
+        const { error: insertError } = await supabase
+          .from('profiles')
+          .insert(profileData)
+          .select();
+
+        if (insertError) {
+          // If conflict (user already exists), try to update instead
+          if (insertError.code === '23505') { // PostgreSQL unique violation
+            const { error: updateError } = await supabase
+              .from('profiles')
+              .update(profileData)
+              .eq('id', data.user.id);
+
+            if (updateError) {
+              console.error('Error updating profile:', updateError);
+              // Don't fail signup if profile update fails
+            }
+          } else {
+            console.error('Error creating profile:', insertError);
+            // Don't fail signup if profile creation fails
+          }
         }
       }
 
