@@ -166,14 +166,8 @@ export class AuthService {
       if (data.user) {
         const profileData: any = {
           id: data.user.id,
-          email: data.user.email,
           membership: 'free' // Set default membership
         };
-
-        // Add display_name if provided
-        if (displayName) {
-          profileData.display_name = displayName;
-        }
 
         // Use insert with onConflict to handle existing profiles
         const { error: insertError } = await supabase
@@ -220,19 +214,18 @@ export class AuthService {
 
   // Call this after OAuth sign-in to upsert display name from provider metadata
   async upsertProfileFromOAuth(user: User) {
-    const displayName = user.user_metadata?.['full_name'] || user.user_metadata?.['name'] || user.email;
-    // Fetch current profile
+    // Just ensure the profile exists with basic info
     const { data: existingProfile } = await supabase
       .from('profiles')
-      .select('display_name')
+      .select('id')
       .eq('id', user.id)
       .single();
-    // Only update if displayName is non-empty and different from current
-    if (displayName && (!existingProfile || existingProfile.display_name !== displayName)) {
+
+    // If profile doesn't exist, create it
+    if (!existingProfile) {
       await supabase.from('profiles').upsert({
         id: user.id,
-        email: user.email,
-        display_name: displayName,
+        membership: 'free'
       });
     }
   }
