@@ -140,10 +140,23 @@ export class AuthService {
     try {
       this._loading.set(true);
 
-      const { data, error }: AuthResponse = await supabase.auth.signUp({
+      // Prepare signup data with user metadata
+      const signUpData: any = {
         email,
         password,
-      });
+      };
+
+      // Add display name to user metadata if provided
+      if (displayName) {
+        signUpData.options = {
+          data: {
+            display_name: displayName,
+            full_name: displayName
+          }
+        };
+      }
+
+      const { data, error }: AuthResponse = await supabase.auth.signUp(signUpData);
 
       if (error) {
         return { success: false, error: error.message };
@@ -151,9 +164,17 @@ export class AuthService {
 
       // Save user to profiles table if user exists
       if (data.user) {
-        const { error: upsertError } = await supabase.from('profiles').upsert({
-          id: data.user.id
-        });
+        const profileData: any = {
+          id: data.user.id,
+          email: data.user.email
+        };
+
+        // Add display_name if provided
+        if (displayName) {
+          profileData.display_name = displayName;
+        }
+
+        const { error: upsertError } = await supabase.from('profiles').upsert(profileData);
         if (upsertError) {
           return { success: false, error: upsertError.message };
         }
