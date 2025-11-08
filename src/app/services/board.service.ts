@@ -48,6 +48,7 @@ export class BoardService {
   }
 
   async requestSquare(row: number, col: number, name: string, email: string, userId?: string) {
+    // Original method - unchanged for backward compatibility
     const square = this.squares().find((s: Square) => Number(s.row_idx) === row && Number(s.col_idx) === col);
     if (square && square.status === 'empty') {
       const updated: Square = {
@@ -55,16 +56,17 @@ export class BoardService {
         status: 'pending',
         name,
         email,
-        user_id: userId, // Include the user ID if provided
+        user_id: userId,
         requestedAt: new Date().toISOString(),
       };
       await this.repo.updateSquare(updated, this.gameId);
-      // Fetch game info (with owner_email and owner_name from games_with_owner view)
-      const game = await this.repo.getGameById(this.gameId); // Should now return owner_email and owner_name
+
+      // Fetch game info for admin notification
+      const game = await this.repo.getGameById(this.gameId);
       console.log('[requestSquare] getGameById result:', game);
       const adminEmail = game?.owner_email;
       const adminName = game?.owner_name || 'Admin';
-      console.log('[requestSquare] adminEmail:', adminEmail, 'adminName:', adminName);
+
       // Enqueue email to admin if available
       if (adminEmail) {
         try {
@@ -76,16 +78,100 @@ export class BoardService {
             square.id,
             { row_idx: square.row_idx, col_idx: square.col_idx, player_name: name, player_email: email }
           );
-          console.log('[requestSquare] Email enqueued successfully');
+          console.log('[requestSquare] Admin notification email enqueued successfully');
         } catch (err) {
-          console.error('[requestSquare] Failed to enqueue email:', err);
+          console.error('[requestSquare] Failed to enqueue admin email:', err);
         }
-      } else {
-        console.warn('[requestSquare] No adminEmail found, not sending request email.');
       }
+
       await this.loadSquares();
     } else {
       console.warn('[requestSquare] Square not found or not empty:', square);
+    }
+  }
+
+  async requestGrowthSquare(row: number, col: number, name: string, email: string, userId?: string, friendEmail?: string) {
+    // Growth mode method - requires authentication and handles referrals
+    if (!userId) {
+      console.warn('[requestGrowthSquare] Growth mode requires authenticated user');
+      return;
+    }
+
+    const square = this.squares().find((s: Square) => Number(s.row_idx) === row && Number(s.col_idx) === col);
+    if (square && square.status === 'empty') {
+      const updated: Square = {
+        ...square,
+        status: 'pending',
+        name,
+        email,
+        user_id: userId,
+        requestedAt: new Date().toISOString(),
+      };
+      await this.repo.updateSquare(updated, this.gameId);
+
+      // Fetch game info for admin notification
+      const game = await this.repo.getGameById(this.gameId);
+      console.log('[requestGrowthSquare] getGameById result:', game);
+      const adminEmail = game?.owner_email;
+      const adminName = game?.owner_name || 'Admin';
+
+      // Enqueue email to admin if available
+      if (adminEmail) {
+        try {
+          await this.enqueueEmail(
+            'square_requested_ack',
+            adminEmail,
+            adminName,
+            this.gameId,
+            square.id,
+            { row_idx: square.row_idx, col_idx: square.col_idx, player_name: name, player_email: email, mode: 'growth' }
+          );
+          console.log('[requestGrowthSquare] Admin notification email enqueued successfully');
+        } catch (err) {
+          console.error('[requestGrowthSquare] Failed to enqueue admin email:', err);
+        }
+      }
+
+      // Handle referral if friendEmail provided
+      if (friendEmail) {
+        try {
+          // Ensure row_idx and col_idx are defined
+          if (square.row_idx == null || square.col_idx == null) {
+            console.error('[requestGrowthSquare] Square missing coordinates:', square);
+            return;
+          }
+
+          await this.repo.createReferral({
+            game_id: this.gameId,
+            square_id: square.id,
+            row_idx: square.row_idx,
+            col_idx: square.col_idx,
+            inviter_user_id: userId,
+            inviter_email: email,
+            inviter_name: name,
+            invite_email: friendEmail,
+            reward_type: 'free_square'
+          });
+
+          // Also enqueue the invitation email
+          await this.enqueueEmail(
+            'growth_referral',
+            friendEmail,
+            undefined,
+            this.gameId,
+            square.id,
+            { inviter_name: name, inviter_email: email, game_id: this.gameId, row_idx: square.row_idx, col_idx: square.col_idx }
+          );
+
+          console.log('[requestGrowthSquare] Growth referral created and invitation email enqueued for', friendEmail);
+        } catch (err) {
+          console.error('[requestGrowthSquare] Failed to create referral:', err);
+        }
+      }
+
+      await this.loadSquares();
+    } else {
+      console.warn('[requestGrowthSquare] Square not found or not empty:', square);
     }
   }
 

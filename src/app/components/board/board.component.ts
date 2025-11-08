@@ -716,17 +716,41 @@ export class BoardComponent implements OnInit {
     this.modalOpen.set(false);
   }
 
-  async request({ name, email, userId }: { name: string; email: string; userId?: string }) {
-    console.log('[BoardComponent] Calling requestSquare with:', {
+  async request({ name, email, userId, friendEmail }: { name: string; email: string; userId?: string; friendEmail?: string }) {
+    const isGrowth = (this.gameData?.game_mode === 'growth');
+
+    if (isGrowth) {
+      await this.requestGrowthSquare({ name, email, userId, friendEmail });
+    } else {
+      await this.requestRegularSquare({ name, email, userId });
+    }
+
+    this.closeModal();
+  }
+
+  async requestRegularSquare({ name, email, userId }: { name: string; email: string; userId?: string }) {
+    console.log('[BoardComponent] Requesting regular square with:', {
       row: this.modalRow(),
       col: this.modalCol(),
       name,
       email,
-      userId
+      userId,
+      gameMode: this.gameData?.game_mode
     });
     await this.board.requestSquare(this.modalRow(), this.modalCol(), name, email, userId);
-    console.log('[BoardComponent] requestSquare call finished');
-    this.closeModal();
+  }
+
+  async requestGrowthSquare({ name, email, userId, friendEmail }: { name: string; email: string; userId?: string; friendEmail?: string }) {
+    console.log('[BoardComponent] Requesting growth square with:', {
+      row: this.modalRow(),
+      col: this.modalCol(),
+      name,
+      email,
+      userId,
+      friendEmail,
+      gameMode: this.gameData?.game_mode
+    });
+    await this.board.requestGrowthSquare(this.modalRow(), this.modalCol(), name, email, userId, friendEmail);
   }
 
   async approve(id: string) {

@@ -52,6 +52,24 @@ import { supabase } from '../../data-sources/supabase.client';
             </div>
           </div>
 
+          <!-- Friend's email for growth mode -->
+          <div class="form-group" *ngIf="isGrowthMode()">
+            <label for="friendEmail">Friend's Email (optional)</label>
+            <input
+              type="email"
+              id="friendEmail"
+              name="friendEmail"
+              [(ngModel)]="friendEmail"
+              email
+              #friendEmailInput="ngModel"
+              placeholder="friend@example.com"
+            />
+            <div class="hint">If your friend signs up using this invite, you'll earn a free square.</div>
+            <div class="error" *ngIf="friendEmailInput.invalid && friendEmailInput.touched">
+              Must be a valid email if provided
+            </div>
+          </div>
+
           <div class="actions">
             <button type="button" (click)="close()">Cancel</button>
             <button
@@ -66,8 +84,42 @@ import { supabase } from '../../data-sources/supabase.client';
       </div>
     </div>
 
-    <!-- Signup Prompt Modal -->
-    <div *ngIf="showSignupPrompt" class="modal-backdrop debug-modal" (click)="onSignupBackdrop($event)" tabindex="-1">
+    <!-- Growth Mode Signup Prompt - Requires Account -->
+    <div *ngIf="showSignupPrompt && isGrowthMode()" class="modal-backdrop debug-modal" (click)="onSignupBackdrop($event)" tabindex="-1">
+      <div class="modal signup-modal" role="dialog" aria-modal="true" (keydown.escape)="declineSignup()"
+        (click)="$event.stopPropagation()">
+        <h2>🎯 Invite Play - Account Required</h2>
+        <div class="signup-content">
+          <p>Invite Play squares require an account to claim. Please sign in or create a free account to continue.</p>
+
+          <div class="benefits">
+            <h3>Invite Play benefits:</h3>
+            <ul>
+              <li>✓ Earn rewards when friends join</li>
+              <li>✓ Track your referral progress</li>
+              <li>✓ Manage all your squares</li>
+              <li>✓ Get notified of game updates</li>
+            </ul>
+          </div>
+
+          <div class="signup-note">
+            <small>Signing up is free — you'll be returned to claim your square after authentication.</small>
+          </div>
+        </div>
+
+        <div class="actions signup-actions">
+          <button type="button" (click)="goToSignIn()" class="secondary">
+            Sign In
+          </button>
+          <button type="button" (click)="goToSignUp()" class="primary">
+            Sign Up
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Regular Mode Signup Prompt - Square Claimed, Account Suggested -->
+    <div *ngIf="showSignupPrompt && !isGrowthMode()" class="modal-backdrop debug-modal" (click)="onSignupBackdrop($event)" tabindex="-1">
       <div class="modal signup-modal" role="dialog" aria-modal="true" (keydown.escape)="declineSignup()"
         (click)="$event.stopPropagation()">
         <h2>🎉 Square Claimed Successfully!</h2>
@@ -89,11 +141,11 @@ import { supabase } from '../../data-sources/supabase.client';
           </div>
         </div>
 
-        <div class="actions">
+        <div class="actions signup-actions">
           <button type="button" (click)="declineSignup()" class="secondary">
             No Thanks, Continue
           </button>
-          <button type="button" (click)="acceptSignup()" class="primary">
+          <button type="button" (click)="goToSignUp()" class="primary">
             Create Account
           </button>
         </div>
@@ -120,8 +172,11 @@ import { supabase } from '../../data-sources/supabase.client';
       box-shadow: 0 2px 16px #0008;
       z-index: 100000;
     }
+    /* Make signup modal lighter so text is readable and buttons stand out */
     .signup-modal {
-      max-width: 500px;
+      max-width: 520px;
+      background: #fff;
+      color: #111;
     }
     h2 {
       margin: 0 0 1.5rem;
@@ -129,107 +184,46 @@ import { supabase } from '../../data-sources/supabase.client';
       color: #f7c873;
     }
     .signup-content {
-      margin-bottom: 2rem;
+      margin-bottom: 1.25rem;
     }
     .signup-content p {
-      margin-bottom: 1.5rem;
-      color: #eee;
-      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      color: #333;
+      font-size: 1.05rem;
     }
     .benefits {
-      background: #1a1d20;
-      padding: 1.5rem;
+      background: #f4f4f6;
+      padding: 1rem;
       border-radius: 8px;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
     }
     .benefits h3 {
-      margin: 0 0 1rem;
+      margin: 0 0 0.75rem;
       color: #f7c873;
-      font-size: 1.1rem;
-    }
-    .benefits ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .benefits li {
-      padding: 0.5rem 0;
-      color: #ddd;
-      font-size: 0.95rem;
-    }
-    .signup-note {
-      text-align: center;
-      margin-top: 1rem;
-    }
-    .signup-note small {
-      color: #999;
-      font-style: italic;
-    }
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      color: #eee;
-    }
-    input {
-      width: 100%;
-      padding: 0.75rem;
-      border-radius: 6px;
-      border: 1px solid #444;
-      background: #1a1d20;
-      color: #fff;
       font-size: 1rem;
     }
-    input:focus {
-      outline: none;
-      border-color: #f7c873;
-    }
-    .error {
-      color: #ff4444;
-      font-size: 0.9rem;
-      margin-top: 0.25rem;
-    }
-    .actions {
-      display: flex;
-      gap: 1rem;
-      justify-content: flex-end;
-      margin-top: 2rem;
-    }
-    button {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 6px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    button[type="button"] {
-      background: #444;
-      color: #fff;
-    }
-    button[type="button"]:hover {
-      background: #555;
-    }
-    button.secondary {
-      background: #444;
-      color: #fff;
-    }
-    button.secondary:hover {
-      background: #555;
-    }
-    button.primary {
-      background: #f7c873;
-      color: #000;
-    }
-    button.primary:hover {
-      background: #f9d48f;
-    }
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+    .benefits ul { list-style: none; padding: 0; margin: 0; }
+    .benefits li { padding: 0.25rem 0; color: #444; font-size: 0.95rem; }
+    .signup-note { text-align: center; margin-top: 0.5rem; }
+    .signup-note small { color: #666; font-style: italic; }
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; margin-bottom: 0.5rem; color: #eee; }
+    input { width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid #444; background: #1a1d20; color: #fff; font-size: 1rem; }
+    /* Special styling when signup-modal is active to ensure inputs are readable */
+    .signup-modal input { background: #fff; color: #111; border: 1px solid #ddd; }
+    input:focus { outline: none; border-color: #f7c873; }
+    .hint { font-size: 0.85rem; color: #999; margin-top: 0.25rem; }
+    .error { color: #ff4444; font-size: 0.9rem; margin-top: 0.25rem; }
+    .actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.25rem; }
+    .signup-actions { justify-content: center; }
+    button { padding: 0.6rem 1.2rem; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; transition: background 0.2s; }
+    button[type="button"] { background: #444; color: #fff; }
+    button[type="button"]:hover { background: #555; }
+    button.secondary { background: transparent; border: 1px solid #ccc; color: #333; }
+    button.secondary:hover { background: #f6f6f6; }
+    button.primary { background: #f7c873; color: #000; }
+    button.primary:hover { background: #f9d48f; }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
   `]
 })
 export class RequestModalComponent implements OnChanges, OnInit {
@@ -238,12 +232,13 @@ export class RequestModalComponent implements OnChanges, OnInit {
   @Input() col!: number;
   @Input() gameData: any = null;
   @Output() closed = new EventEmitter<void>();
-  @Output() requested = new EventEmitter<{ name: string; email: string; userId?: string }>();
+  @Output() requested = new EventEmitter<{ name: string; email: string; userId?: string; friendEmail?: string }>();
   @Output() signupRequested = new EventEmitter<{ name: string; email: string }>();
 
   name = '';
   email = '';
-  userId?: string; // Store the current user's ID
+  friendEmail = '';
+  userId?: string;
   showSignupPrompt = false;
 
   @ViewChild('nameField') nameField!: ElementRef;
@@ -256,20 +251,32 @@ export class RequestModalComponent implements OnChanges, OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['open'] && this.open) {
-      this.showSignupPrompt = false; // Reset signup prompt when modal opens
-      this.loadUserInfo(); // Reload user info when modal opens
-      setTimeout(() => {
-        this.nameField?.nativeElement?.focus();
-      }, 0);
+      this.showSignupPrompt = false;
+      // Reload user info and decide whether to show signup prompt for growth mode
+      this.loadUserInfo().then(() => {
+        if (this.isGrowthMode() && !this.userId) {
+          // Immediately prompt the user to sign in for growth-mode squares
+          this.showSignupPrompt = true;
+        } else {
+          this.showSignupPrompt = false;
+          // Focus the name field when the form is visible
+          setTimeout(() => {
+            this.nameField?.nativeElement?.focus();
+          }, 0);
+        }
+      });
     }
   }
 
   shouldShowCoordinates(): boolean {
-    // Hide coordinates if hide_axes is true, unless game is closed
     if (this.gameData?.status === 'closed') {
-      return true; // Always show coordinates when game is closed
+      return true;
     }
     return !this.gameData?.hide_axes;
+  }
+
+  isGrowthMode(): boolean {
+    return (this.gameData?.game_mode === 'growth');
   }
 
   async loadUserInfo() {
@@ -282,19 +289,15 @@ export class RequestModalComponent implements OnChanges, OnInit {
       }
 
       if (user) {
-        // Store the user ID
         this.userId = user.id;
-
-        // Auto-populate with user's information
         this.name =
           user.user_metadata?.['full_name'] ||
           user.user_metadata?.['display_name'] ||
           user.user_metadata?.['name'] ||
-          this.name; // Keep existing value if no metadata
-        this.email = user.email || this.email; // Keep existing value if no email
+          this.name;
+        this.email = user.email || this.email;
         console.log('Auto-populated user info:', { name: this.name, email: this.email, userId: this.userId });
       } else {
-        // Clear user ID if no user is logged in
         this.userId = undefined;
       }
     } catch (err) {
@@ -305,15 +308,25 @@ export class RequestModalComponent implements OnChanges, OnInit {
   close() {
     this.showSignupPrompt = false;
     this.closed.emit();
-    // Don't clear the fields immediately - they might want to reopen
   }
 
   submit(event: Event) {
     event.preventDefault();
     if (this.name && this.email) {
-      this.requested.emit({ name: this.name, email: this.email, userId: this.userId });
+      // If growth mode, require user to be signed in
+      if (this.isGrowthMode() && !this.userId) {
+        this.showSignupPrompt = true;
+        return;
+      }
 
-      // If user is not logged in, show signup prompt after successful submission
+      this.requested.emit({
+        name: this.name,
+        email: this.email,
+        userId: this.userId,
+        friendEmail: this.isGrowthMode() ? this.friendEmail : undefined
+      });
+
+      // If user is not logged in for non-growth mode, show signup prompt after successful submission
       if (!this.userId) {
         this.showSignupPrompt = true;
       } else {
@@ -322,13 +335,15 @@ export class RequestModalComponent implements OnChanges, OnInit {
     }
   }
 
-  acceptSignup() {
-    // Navigate to the signup page
+  goToSignUp() {
     this.router.navigate(['/auth/signup']);
   }
 
+  goToSignIn() {
+    this.router.navigate(['/auth/signin']);
+  }
+
   declineSignup() {
-    // User declined signup, just close the modal
     this.close();
   }
 
