@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { supabase } from '../../data-sources/supabase.client';
+import { BoardService } from '../../services/board.service';
 
 @Component({
   selector: 'sq-request-modal',
@@ -54,7 +55,7 @@ import { supabase } from '../../data-sources/supabase.client';
 
           <!-- Friend's email for growth mode -->
           <div class="form-group" *ngIf="isGrowthMode()">
-            <label for="friendEmail">Friend's Email (optional)</label>
+            <label for="friendEmail">Friend's Email</label>
             <input
               type="email"
               id="friendEmail"
@@ -64,20 +65,26 @@ import { supabase } from '../../data-sources/supabase.client';
               #friendEmailInput="ngModel"
               placeholder="friend@example.com"
             />
-            <div class="hint">If your friend signs up using this invite, you'll earn a free square.</div>
+            <div class="hint">When your friend signs up using this invite, you'll be automatically approved for this square.</div>
             <div class="error" *ngIf="friendEmailInput.invalid && friendEmailInput.touched">
               Must be a valid email if provided
             </div>
+          </div>
+
+          <!-- Validation error message -->
+          <div class="validation-error" *ngIf="validationError">
+            {{ validationError }}
           </div>
 
           <div class="actions">
             <button type="button" (click)="close()">Cancel</button>
             <button
               type="submit"
-              [disabled]="form.invalid"
+              [disabled]="form.invalid || isValidating"
               class="primary"
             >
-              Request Square
+              <span *ngIf="isValidating">Validating...</span>
+              <span *ngIf="!isValidating">Request Square</span>
             </button>
           </div>
         </form>
@@ -224,6 +231,12 @@ import { supabase } from '../../data-sources/supabase.client';
     button.primary { background: #f7c873; color: #000; }
     button.primary:hover { background: #f9d48f; }
     button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .validation-error {
+      color: #ff4444;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      text-align: center;
+    }
   `]
 })
 export class RequestModalComponent implements OnChanges, OnInit {
@@ -240,10 +253,12 @@ export class RequestModalComponent implements OnChanges, OnInit {
   friendEmail = '';
   userId?: string;
   showSignupPrompt = false;
+  validationError = '';
+  isValidating = false;
 
   @ViewChild('nameField') nameField!: ElementRef;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private boardService: BoardService) {}
 
   async ngOnInit() {
     await this.loadUserInfo();
@@ -310,13 +325,41 @@ export class RequestModalComponent implements OnChanges, OnInit {
     this.closed.emit();
   }
 
-  submit(event: Event) {
+  async submit(event: Event) {
     event.preventDefault();
+
+    // Clear previous validation errors
+    this.validationError = '';
+
     if (this.name && this.email) {
       // If growth mode, require user to be signed in
       if (this.isGrowthMode() && !this.userId) {
         this.showSignupPrompt = true;
         return;
+      }
+
+      // If growth mode with friend email, validate invite play requirements
+      if (this.isGrowthMode() && this.friendEmail && this.userId) {
+        this.isValidating = true;
+        try {
+          const validationResult = await this.boardService.validateInvitePlay(
+            this.friendEmail,
+            this.userId,
+            this.gameData?.id
+          );
+
+          if (!validationResult.isValid) {
+            this.validationError = validationResult.message;
+            this.isValidating = false;
+            return;
+          }
+        } catch (error) {
+          this.validationError = 'Unable to validate invitation. Please try again.';
+          this.isValidating = false;
+          return;
+        } finally {
+          this.isValidating = false;
+        }
       }
 
       this.requested.emit({

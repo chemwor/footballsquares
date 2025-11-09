@@ -1,6 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { Square } from '../models/square.model';
 import { SupabaseBoardRepository } from '../data-sources/board.repository';
+import { supabase } from '../data-sources/supabase.client';
 
 @Injectable({ providedIn: 'root' })
 export class BoardService {
@@ -95,6 +96,14 @@ export class BoardService {
     if (!userId) {
       console.warn('[requestGrowthSquare] Growth mode requires authenticated user');
       return;
+    }
+
+    // Validate invite play requirements if friendEmail is provided
+    if (friendEmail) {
+      const validationResult = await this.validateInvitePlay(friendEmail, userId, this.gameId);
+      if (!validationResult.isValid) {
+        throw new Error(validationResult.message);
+      }
     }
 
     const square = this.squares().find((s: Square) => Number(s.row_idx) === row && Number(s.col_idx) === col);
@@ -302,5 +311,77 @@ export class BoardService {
 
   async resetBoard() {
     await this.loadSquares();
+  }
+
+  /**
+   * Validates invite play requirements
+   * Returns validation result with isValid flag and error message
+   */
+  async validateInvitePlay(friendEmail: string, userId: string, gameId: string): Promise<{isValid: boolean, message: string}> {
+    try {
+      // Check 1: Verify the invited email is not tied to an existing user in profiles table
+      const { data: existingProfile, error: profileError } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('email', friendEmail)
+        .limit(1);
+
+      if (profileError) {
+        console.error('Error checking existing user profiles:', profileError);
+        return { isValid: false, message: 'Unable to validate invitation. Please try again.' };
+      }
+
+      if (existingProfile && existingProfile.length > 0) {
+        return {
+          isValid: false,
+          message: 'This email is already registered. Please invite someone who hasn\'t joined yet.'
+        };
+      }
+
+      // Check 2: Verify the invited email doesn't have a pending referral
+      const { data: pendingReferral, error: referralError } = await supabase
+        .from('referrals')
+        .select('*')
+        .eq('invite_email', friendEmail)
+        .eq('status', 'pending')
+        .limit(1);
+
+      if (referralError && referralError.code !== 'PGRST116') { // PGRST116 = no rows found
+        console.error('Error checking pending referrals:', referralError);
+        return { isValid: false, message: 'Unable to validate invitation. Please try again.' };
+      }
+
+      if (pendingReferral && pendingReferral.length > 0) {
+        return {
+          isValid: false,
+          message: 'This person already has a pending invitation. Please try inviting someone else.'
+        };
+      }
+
+      // Check 3: Verify the inviting user doesn't already have 3 pending or approved squares for this game
+      const { data: userSquares, error: squareError } = await supabase
+        .from('squares')
+        .select('*')
+        .eq('game_id', gameId)
+        .eq('user_id', userId)
+        .in('status', ['pending', 'approved']);
+
+      if (squareError) {
+        console.error('Error checking user squares:', squareError);
+        return { isValid: false, message: 'Unable to validate square limit. Please try again.' };
+      }
+
+      if (userSquares && userSquares.length >= 3) {
+        return {
+          isValid: false,
+          message: 'You\'ve reached the limit of 3 squares per game. Please join another game to continue playing.'
+        };
+      }
+
+      return { isValid: true, message: '' };
+    } catch (error) {
+      console.error('Unexpected error during invite play validation:', error);
+      return { isValid: false, message: 'Unable to validate invitation. Please try again.' };
+    }
   }
 }
