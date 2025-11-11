@@ -198,16 +198,6 @@ import { BoardService } from '../../services/board.service';
         <div class="referral-content">
           <p>Refer friends to join the game and earn rewards! Enter your friend's details below:</p>
 
-          <div class="form-group">
-            <label for="referralName">Friend's Name</label>
-            <input
-              type="text"
-              id="referralName"
-              name="referralName"
-              [(ngModel)]="referralFriendName"
-              placeholder="Your friend's name"
-            />
-          </div>
 
           <div class="form-group">
             <label for="referralEmail">Friend's Email</label>
@@ -342,6 +332,33 @@ import { BoardService } from '../../services/board.service';
       max-width: 480px;
       background: #fff;
       color: #111;
+    }
+    .referral-modal h2 {
+      color: #f7c873;
+    }
+    .referral-modal p {
+      color: #333;
+      margin-bottom: 1rem;
+    }
+    .referral-modal label {
+      color: #333;
+      font-weight: 500;
+    }
+    .referral-modal input {
+      background: #fff;
+      color: #111;
+      border: 1px solid #ddd;
+    }
+    .referral-modal .error {
+      color: #ff4444;
+    }
+    .referral-modal .referral-message {
+      color: #333;
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: #f8f9fa;
+      border-radius: 6px;
+      border-left: 4px solid #f7c873;
     }
     .referral-content {
       text-align: center;
@@ -603,8 +620,14 @@ export class RequestModalComponent implements OnChanges, OnInit {
     this.confirmationMessage = '';
 
     try {
-      // Call the service to confirm and assign the invite square
-      const result = await this.boardService.confirmInviteSquare(this.pendingInvite.id, this.userId);
+      // Instead of using the existing referral square, assign the currently selected square
+      const result = await this.boardService.assignSelectedSquareToInvitedUser(
+        this.pendingInvite.id,
+        this.userId,
+        this.row,
+        this.col,
+        this.gameData?.id
+      );
 
       if (!result.success) {
         this.confirmationMessage = result.message;

@@ -386,67 +386,59 @@ export class BoardService {
   }
 
   /**
-   * Checks if the current user has a rewarded invite for the current game
-   * Returns the referral record if found
+   * Checks if the current user has a claimable invite for the current game
+   * Returns the referral record if found (excludes completed referrals)
    */
   async checkUserPendingInvite(userEmail: string, gameId: string): Promise<any> {
     try {
       console.log('[checkUserPendingInvite] Checking for user:', userEmail, 'in game:', gameId);
 
-      // First, let's check what referrals exist for this email in any status
+      // Check current user authentication status
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      console.log('[checkUserPendingInvite] Current auth user:', user?.email, 'User ID:', user?.id);
+
+      if (authError) {
+        console.error('[checkUserPendingInvite] Auth error:', authError);
+      }
+
+      // Check for claimable referrals (exclude completed status to prevent multiple claims)
+      const { data: claimableReferrals, error: claimableError } = await supabase
+        .from('referrals')
+        .select('*')
+        .eq('invite_email', userEmail)
+        .eq('game_id', gameId)
+        .in('status', ['rewarded', 'signed_up'])
+        .limit(1);
+
+      console.log('[checkUserPendingInvite] Claimable referrals found:', claimableReferrals);
+      console.log('[checkUserPendingInvite] Query error:', claimableError);
+
+      if (claimableError) {
+        console.error('Error checking claimable referrals:', claimableError);
+        return null;
+      }
+
+      // Return the first claimable referral found
+      if (claimableReferrals && claimableReferrals.length > 0) {
+        console.log('[checkUserPendingInvite] Found claimable referral:', claimableReferrals[0]);
+        return claimableReferrals[0];
+      }
+
+      // If no claimable referrals found, log for debugging
+      console.log('[checkUserPendingInvite] No claimable referrals found for user');
+
+      // Try a broader query to see what referrals exist (for debugging)
       const { data: allReferrals, error: allError } = await supabase
         .from('referrals')
         .select('*')
         .eq('invite_email', userEmail)
         .eq('game_id', gameId);
 
-      console.log('[checkUserPendingInvite] All referrals for email:', allReferrals);
+      console.log('[checkUserPendingInvite] All referrals for email (debugging):', allReferrals);
 
-      if (allError) {
-        console.error('Error checking all referrals:', allError);
-      }
-
-      // Check specifically for rewarded status
-      const { data: rewardedInvite, error } = await supabase
-        .from('referrals')
-        .select('*')
-        .eq('invite_email', userEmail)
-        .eq('game_id', gameId)
-        .eq('status', 'rewarded')
-        .limit(1);
-
-      console.log('[checkUserPendingInvite] Rewarded invite found:', rewardedInvite);
-
-      if (error) {
-        console.error('Error checking user rewarded invite:', error);
-        return null;
-      }
-
-      // Also check for signed_up status as backup
-      if (!rewardedInvite || rewardedInvite.length === 0) {
-        console.log('[checkUserPendingInvite] No rewarded invite found, checking for signed_up status...');
-
-        const { data: signedUpInvite, error: signedUpError } = await supabase
-          .from('referrals')
-          .select('*')
-          .eq('invite_email', userEmail)
-          .eq('game_id', gameId)
-          .eq('status', 'signed_up')
-          .limit(1);
-
-        console.log('[checkUserPendingInvite] Signed up invite found:', signedUpInvite);
-
-        if (signedUpError) {
-          console.error('Error checking signed up invite:', signedUpError);
-          return null;
-        }
-
-        return signedUpInvite && signedUpInvite.length > 0 ? signedUpInvite[0] : null;
-      }
-
-      return rewardedInvite && rewardedInvite.length > 0 ? rewardedInvite[0] : null;
+      return null;
     } catch (error) {
-      console.error('Unexpected error checking rewarded invite:', error);
+      console.error('Unexpected error checking claimable invite:', error);
       return null;
     }
   }
@@ -634,6 +626,116 @@ export class BoardService {
       return { success: true, message: `Invitation sent to ${friendEmail}! You'll get a free square when they sign up.` };
     } catch (error) {
       console.error('Unexpected error creating referral:', error);
+      return { success: false, message: 'An unexpected error occurred.' };
+    }
+  }
+
+  /**
+   * Assigns the currently selected square to an invited user
+   * Updates the referral status and assigns the selected square
+   */
+  async assignSelectedSquareToInvitedUser(referralId: string, userId: string, row: number, col: number, gameId: string): Promise<{success: boolean, message: string}> {
+    try {
+      // Get the referral record
+      const { data: referral, error: referralError } = await supabase
+        .from('referrals')
+        .select('*')
+        .eq('id', referralId)
+        .limit(1);
+
+      if (referralError || !referral || referral.length === 0) {
+        return { success: false, message: 'Referral record not found.' };
+      }
+
+      const referralRecord = referral[0];
+
+      // Get the selected square
+      const { data: selectedSquare, error: squareError } = await supabase
+        .from('squares')
+        .select('*')
+        .eq('game_id', gameId)
+        .eq('row_idx', row)
+        .eq('col_idx', col)
+        .limit(1);
+
+      if (squareError || !selectedSquare || selectedSquare.length === 0) {
+        return { success: false, message: 'Selected square not found.' };
+      }
+
+      const square = selectedSquare[0];
+
+      // Check if the selected square is available
+      if (square.status !== 'empty') {
+        return { success: false, message: 'This square is no longer available. Please select another square.' };
+      }
+
+      // Get user info
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+      const userName = user?.user_metadata?.['full_name'] ||
+                      user?.user_metadata?.['display_name'] ||
+                      user?.user_metadata?.['name'] ||
+                      'User';
+      const userEmail = user?.email || '';
+
+      // Update the selected square to approved with user's info
+      const { error: updateSquareError } = await supabase
+        .from('squares')
+        .update({
+          status: 'approved',
+          name: userName,
+          email: userEmail,
+          user_id: userId,
+          approved_at: new Date().toISOString()
+        })
+        .eq('id', square.id);
+
+      if (updateSquareError) {
+        console.error('Error updating selected square:', updateSquareError);
+        return { success: false, message: 'Failed to assign selected square.' };
+      }
+
+      // Update the referral status to completed to prevent multiple claims
+      const { error: updateReferralError } = await supabase
+        .from('referrals')
+        .update({
+          status: 'completed',
+          invited_user_id: userId,
+          signed_up_at: new Date().toISOString(),
+          reward_granted_at: new Date().toISOString()
+        })
+        .eq('id', referralId);
+
+      if (updateReferralError) {
+        console.error('Error updating referral:', updateReferralError);
+        return { success: false, message: 'Failed to update referral status.' };
+      }
+
+      // Send confirmation email to the user
+      try {
+        await this.enqueueEmail(
+          'invite_square_assigned',
+          userEmail,
+          userName,
+          gameId,
+          square.id,
+          {
+            row_idx: row,
+            col_idx: col,
+            inviter_name: referralRecord.inviter_name
+          }
+        );
+      } catch (emailError) {
+        console.error('Failed to send confirmation email:', emailError);
+        // Don't fail the whole process for email issues
+      }
+
+      // Reload squares to reflect changes
+      await this.loadSquares();
+
+      return { success: true, message: `Square [${row}, ${col}] successfully assigned to you!` };
+    } catch (error) {
+      console.error('Unexpected error assigning selected square:', error);
       return { success: false, message: 'An unexpected error occurred.' };
     }
   }
