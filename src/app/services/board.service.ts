@@ -386,27 +386,27 @@ export class BoardService {
   }
 
   /**
-   * Checks if the current user has a pending invite for the current game
+   * Checks if the current user has a rewarded invite for the current game
    * Returns the referral record if found
    */
   async checkUserPendingInvite(userEmail: string, gameId: string): Promise<any> {
     try {
-      const { data: pendingInvite, error } = await supabase
+      const { data: rewardedInvite, error } = await supabase
         .from('referrals')
         .select('*')
         .eq('invite_email', userEmail)
         .eq('game_id', gameId)
-        .eq('status', 'pending')
+        .eq('status', 'rewarded')
         .limit(1);
 
       if (error) {
-        console.error('Error checking user pending invite:', error);
+        console.error('Error checking user rewarded invite:', error);
         return null;
       }
 
-      return pendingInvite && pendingInvite.length > 0 ? pendingInvite[0] : null;
+      return rewardedInvite && rewardedInvite.length > 0 ? rewardedInvite[0] : null;
     } catch (error) {
-      console.error('Unexpected error checking pending invite:', error);
+      console.error('Unexpected error checking rewarded invite:', error);
       return null;
     }
   }
