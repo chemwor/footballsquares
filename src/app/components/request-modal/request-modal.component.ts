@@ -11,7 +11,7 @@ import { BoardService } from '../../services/board.service';
   imports: [CommonModule, FormsModule],
   template: `
     <!-- Main Request Modal -->
-    <div *ngIf="open && !showSignupPrompt" class="modal-backdrop debug-modal" (click)="onBackdrop($event)" tabindex="-1">
+    <div *ngIf="open && !showSignupPrompt && !showInviteConfirmation" class="modal-backdrop debug-modal" (click)="onBackdrop($event)" tabindex="-1">
       <div class="modal" role="dialog" aria-modal="true" (keydown.escape)="close()"
         (click)="$event.stopPropagation()">
         <h2>
@@ -158,6 +158,94 @@ import { BoardService } from '../../services/board.service';
         </div>
       </div>
     </div>
+
+    <!-- Invite Confirmation Modal - Shown when user has a pending invite for this game -->
+    <div *ngIf="showInviteConfirmation" class="modal-backdrop debug-modal" (click)="onInviteBackdrop($event)" tabindex="-1">
+      <div class="modal invite-modal" role="dialog" aria-modal="true" (keydown.escape)="closeInviteConfirmation()"
+        (click)="$event.stopPropagation()">
+        <h2>🎉 You've Been Invited!</h2>
+        <div class="invite-content">
+          <p>{{ pendingInvite?.inviter_name }} invited you to join this game!</p>
+          <p>Your square at position [{{ pendingInvite?.row_idx }}, {{ pendingInvite?.col_idx }}] is ready to be claimed.</p>
+
+          <div class="confirmation-message" *ngIf="confirmationMessage">
+            {{ confirmationMessage }}
+          </div>
+
+          <div class="actions invite-actions">
+            <button type="button" (click)="closeInviteConfirmation()" class="secondary">
+              Maybe Later
+            </button>
+            <button
+              type="button"
+              (click)="acceptInviteSquare()"
+              [disabled]="isProcessingInvite"
+              class="primary"
+            >
+              <span *ngIf="isProcessingInvite">Accepting...</span>
+              <span *ngIf="!isProcessingInvite">Accept Square</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Referral Call-to-Action - Shown after a square is claimed, inviting users to refer friends -->
+    <div *ngIf="showReferralCTA" class="modal-backdrop debug-modal" (click)="onReferralBackdrop($event)" tabindex="-1">
+      <div class="modal referral-modal" role="dialog" aria-modal="true" (keydown.escape)="closeReferralCTA()"
+        (click)="$event.stopPropagation()">
+        <h2>🚀 Refer & Earn!</h2>
+        <div class="referral-content">
+          <p>Refer friends to join the game and earn rewards! Enter your friend's details below:</p>
+
+          <div class="form-group">
+            <label for="referralName">Friend's Name</label>
+            <input
+              type="text"
+              id="referralName"
+              name="referralName"
+              [(ngModel)]="referralFriendName"
+              placeholder="Your friend's name"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="referralEmail">Friend's Email</label>
+            <input
+              type="email"
+              id="referralEmail"
+              name="referralEmail"
+              [(ngModel)]="referralFriendEmail"
+              email
+              placeholder="friend@example.com"
+            />
+          </div>
+
+          <div class="error" *ngIf="!isValidEmail(referralFriendEmail) && referralFriendEmail">
+            Must be a valid email address
+          </div>
+
+          <div class="actions referral-actions">
+            <button type="button" (click)="closeReferralCTA()" class="secondary">
+              Maybe Later
+            </button>
+            <button
+              type="button"
+              (click)="sendReferral()"
+              [disabled]="!isValidEmail(referralFriendEmail) || isProcessingReferral"
+              class="primary"
+            >
+              <span *ngIf="isProcessingReferral">Sending...</span>
+              <span *ngIf="!isProcessingReferral">Send Referral</span>
+            </button>
+          </div>
+
+          <div class="referral-message" *ngIf="referralMessage">
+            {{ referralMessage }}
+          </div>
+        </div>
+      </div>
+    </div>
   `,
   styles: [`
     .modal-backdrop {
@@ -237,6 +325,30 @@ import { BoardService } from '../../services/board.service';
       margin-top: 0.5rem;
       text-align: center;
     }
+    /* Invite modal specific styles */
+    .invite-modal {
+      max-width: 480px;
+      background: #fff;
+      color: #111;
+    }
+    .invite-content {
+      text-align: center;
+    }
+    .invite-actions {
+      justify-content: center;
+    }
+    /* Referral modal specific styles */
+    .referral-modal {
+      max-width: 480px;
+      background: #fff;
+      color: #111;
+    }
+    .referral-content {
+      text-align: center;
+    }
+    .referral-actions {
+      justify-content: center;
+    }
   `]
 })
 export class RequestModalComponent implements OnChanges, OnInit {
@@ -256,6 +368,17 @@ export class RequestModalComponent implements OnChanges, OnInit {
   validationError = '';
   isValidating = false;
 
+  // New properties for invite confirmation flow
+  showInviteConfirmation = false;
+  showReferralCTA = false;
+  pendingInvite: any = null;
+  referralFriendName = '';
+  referralFriendEmail = '';
+  isProcessingInvite = false;
+  isProcessingReferral = false;
+  confirmationMessage = '';
+  referralMessage = '';
+
   @ViewChild('nameField') nameField!: ElementRef;
 
   constructor(private router: Router, private boardService: BoardService) {}
@@ -267,8 +390,24 @@ export class RequestModalComponent implements OnChanges, OnInit {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['open'] && this.open) {
       this.showSignupPrompt = false;
-      // Reload user info and decide whether to show signup prompt for growth mode
-      this.loadUserInfo().then(() => {
+      this.showInviteConfirmation = false;
+      this.showReferralCTA = false;
+      this.validationError = '';
+      this.confirmationMessage = '';
+
+      // Reload user info and check for pending invites
+      this.loadUserInfo().then(async () => {
+        // Check if this user has a pending invite for this game
+        if (this.userId && this.email && this.gameData?.id) {
+          const pendingInvite = await this.boardService.checkUserPendingInvite(this.email, this.gameData.id);
+          if (pendingInvite) {
+            this.pendingInvite = pendingInvite;
+            // Show invite confirmation instead of regular request form
+            this.showInviteConfirmation = true;
+            return;
+          }
+        }
+
         if (this.isGrowthMode() && !this.userId) {
           // Immediately prompt the user to sign in for growth-mode squares
           this.showSignupPrompt = true;
@@ -396,5 +535,91 @@ export class RequestModalComponent implements OnChanges, OnInit {
 
   onSignupBackdrop(event: MouseEvent) {
     if (event.target === event.currentTarget) this.declineSignup();
+  }
+
+  onInviteBackdrop(event: MouseEvent) {
+    if (event.target === event.currentTarget) this.closeInviteConfirmation();
+  }
+
+  onReferralBackdrop(event: MouseEvent) {
+    if (event.target === event.currentTarget) this.closeReferralCTA();
+  }
+
+  closeInviteConfirmation() {
+    this.showInviteConfirmation = false;
+  }
+
+  closeReferralCTA() {
+    this.showReferralCTA = false;
+  }
+
+  async sendReferral() {
+    if (!this.isValidEmail(this.referralFriendEmail) || !this.userId) {
+      this.referralMessage = 'Please enter a valid email address.';
+      return;
+    }
+
+    this.isProcessingReferral = true;
+    this.referralMessage = '';
+
+    try {
+      // Use the actual board service method to create referral
+      const result = await this.boardService.createReferralForNewUser(
+        this.userId,
+        this.gameData?.id,
+        this.name,
+        this.email,
+        this.referralFriendEmail
+      );
+
+      if (!result.success) {
+        this.referralMessage = result.message;
+      } else {
+        this.referralMessage = result.message;
+        this.referralFriendName = '';
+        this.referralFriendEmail = '';
+
+        // Close referral CTA after successful referral
+        setTimeout(() => {
+          this.showReferralCTA = false;
+        }, 3000);
+      }
+    } catch (error) {
+      this.referralMessage = 'Failed to send referral. Please try again.';
+    } finally {
+      this.isProcessingReferral = false;
+    }
+  }
+
+  isValidEmail(email: string) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+  }
+
+  async acceptInviteSquare() {
+    if (!this.pendingInvite?.id || !this.userId) return;
+
+    this.isProcessingInvite = true;
+    this.confirmationMessage = '';
+
+    try {
+      // Call the service to confirm and assign the invite square
+      const result = await this.boardService.confirmInviteSquare(this.pendingInvite.id, this.userId);
+
+      if (!result.success) {
+        this.confirmationMessage = result.message;
+      } else {
+        this.confirmationMessage = result.message;
+        // Show referral CTA after successfully accepting invite
+        setTimeout(() => {
+          this.showInviteConfirmation = false;
+          this.showReferralCTA = true;
+        }, 2000);
+      }
+    } catch (error) {
+      this.confirmationMessage = 'An error occurred while accepting the invite. Please try again.';
+    } finally {
+      this.isProcessingInvite = false;
+    }
   }
 }

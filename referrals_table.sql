@@ -170,7 +170,19 @@ BEGIN
     -- Only process when status changes to 'signed_up'
     IF OLD.status != 'signed_up' AND NEW.status = 'signed_up' THEN
 
-        -- For free_square reward type, find an available square in the same game
+        -- First, approve the original square that was claimed with this invite
+        UPDATE squares
+        SET
+            status = 'approved',
+            approved_at = now()
+        WHERE id = NEW.square_id
+            AND game_id = NEW.game_id
+            AND status = 'pending';
+
+        -- Log the approval
+        RAISE NOTICE 'Auto-approved original invited square % for referral % (invited user signed up)', NEW.square_id, NEW.id;
+
+        -- For free_square reward type, find an available square in the same game as reward for inviter
         IF NEW.reward_type = 'free_square' THEN
             -- Find a random empty square in the same game
             SELECT id INTO available_square_id

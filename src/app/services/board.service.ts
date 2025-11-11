@@ -384,4 +384,217 @@ export class BoardService {
       return { isValid: false, message: 'Unable to validate invitation. Please try again.' };
     }
   }
+
+  /**
+   * Checks if the current user has a pending invite for the current game
+   * Returns the referral record if found
+   */
+  async checkUserPendingInvite(userEmail: string, gameId: string): Promise<any> {
+    try {
+      const { data: pendingInvite, error } = await supabase
+        .from('referrals')
+        .select('*')
+        .eq('invite_email', userEmail)
+        .eq('game_id', gameId)
+        .eq('status', 'pending')
+        .limit(1);
+
+      if (error) {
+        console.error('Error checking user pending invite:', error);
+        return null;
+      }
+
+      return pendingInvite && pendingInvite.length > 0 ? pendingInvite[0] : null;
+    } catch (error) {
+      console.error('Unexpected error checking pending invite:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Confirms and assigns an invite square to the user
+   * Updates the square to approved and the referral to signed_up
+   */
+  async confirmInviteSquare(referralId: string, userId: string): Promise<{success: boolean, message: string}> {
+    try {
+      // Get the referral record
+      const { data: referral, error: referralError } = await supabase
+        .from('referrals')
+        .select('*')
+        .eq('id', referralId)
+        .limit(1);
+
+      if (referralError || !referral || referral.length === 0) {
+        return { success: false, message: 'Referral record not found.' };
+      }
+
+      const referralRecord = referral[0];
+
+      // Update the referral status to signed_up and link the user
+      const { error: updateReferralError } = await supabase
+        .from('referrals')
+        .update({
+          status: 'signed_up',
+          invited_user_id: userId,
+          signed_up_at: new Date().toISOString()
+        })
+        .eq('id', referralId);
+
+      if (updateReferralError) {
+        console.error('Error updating referral:', updateReferralError);
+        return { success: false, message: 'Failed to update referral status.' };
+      }
+
+      // Get the square and update it to approved with the user's info
+      const { data: square, error: squareError } = await supabase
+        .from('squares')
+        .select('*')
+        .eq('id', referralRecord.square_id)
+        .limit(1);
+
+      if (squareError || !square || square.length === 0) {
+        return { success: false, message: 'Square not found.' };
+      }
+
+      const squareRecord = square[0];
+
+      // Get user profile for name and email
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', userId)
+        .limit(1);
+
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+      const userName = user?.user_metadata?.['full_name'] ||
+                      user?.user_metadata?.['display_name'] ||
+                      user?.user_metadata?.['name'] ||
+                      'User';
+      const userEmail = user?.email || (profile && profile.length > 0 ? profile[0].email : '');
+
+      // Update square to approved
+      const { error: updateSquareError } = await supabase
+        .from('squares')
+        .update({
+          status: 'approved',
+          name: userName,
+          email: userEmail,
+          user_id: userId,
+          approved_at: new Date().toISOString()
+        })
+        .eq('id', referralRecord.square_id);
+
+      if (updateSquareError) {
+        console.error('Error updating square:', updateSquareError);
+        return { success: false, message: 'Failed to assign square.' };
+      }
+
+      // Send confirmation email to the user
+      try {
+        await this.enqueueEmail(
+          'invite_square_assigned',
+          userEmail,
+          userName,
+          referralRecord.game_id,
+          referralRecord.square_id,
+          {
+            row_idx: referralRecord.row_idx,
+            col_idx: referralRecord.col_idx,
+            inviter_name: referralRecord.inviter_name
+          }
+        );
+      } catch (emailError) {
+        console.error('Failed to send confirmation email:', emailError);
+        // Don't fail the whole process for email issues
+      }
+
+      // Reload squares to reflect changes
+      await this.loadSquares();
+
+      return { success: true, message: 'Square successfully assigned!' };
+    } catch (error) {
+      console.error('Unexpected error confirming invite square:', error);
+      return { success: false, message: 'An unexpected error occurred.' };
+    }
+  }
+
+  /**
+   * Creates a new referral for the user who just claimed their invite square
+   * This allows them to get another free square by inviting a friend
+   */
+  async createReferralForNewUser(userId: string, gameId: string, userName: string, userEmail: string, friendEmail: string): Promise<{success: boolean, message: string}> {
+    try {
+      // Validate the friend's email using existing validation
+      const validationResult = await this.validateInvitePlay(friendEmail, userId, gameId);
+      if (!validationResult.isValid) {
+        return { success: false, message: validationResult.message };
+      }
+
+      // Find an available empty square for the referral reward
+      const { data: emptySquares, error: squareError } = await supabase
+        .from('squares')
+        .select('*')
+        .eq('game_id', gameId)
+        .eq('status', 'empty')
+        .limit(1);
+
+      if (squareError) {
+        console.error('Error finding empty square:', squareError);
+        return { success: false, message: 'Unable to find available squares.' };
+      }
+
+      if (!emptySquares || emptySquares.length === 0) {
+        return { success: false, message: 'No available squares left in this game.' };
+      }
+
+      const rewardSquare = emptySquares[0];
+
+      // Create the referral record
+      const { error: referralError } = await supabase
+        .from('referrals')
+        .insert({
+          game_id: gameId,
+          square_id: rewardSquare.id,
+          row_idx: rewardSquare.row_idx,
+          col_idx: rewardSquare.col_idx,
+          inviter_user_id: userId,
+          inviter_email: userEmail,
+          inviter_name: userName,
+          invite_email: friendEmail,
+          reward_type: 'free_square'
+        });
+
+      if (referralError) {
+        console.error('Error creating referral:', referralError);
+        return { success: false, message: 'Failed to create referral.' };
+      }
+
+      // Send invitation email to the friend
+      try {
+        await this.enqueueEmail(
+          'growth_referral',
+          friendEmail,
+          undefined,
+          gameId,
+          rewardSquare.id,
+          {
+            inviter_name: userName,
+            inviter_email: userEmail,
+            game_id: gameId,
+            row_idx: rewardSquare.row_idx,
+            col_idx: rewardSquare.col_idx
+          }
+        );
+      } catch (emailError) {
+        console.error('Failed to send invitation email:', emailError);
+        // Don't fail the whole process for email issues
+      }
+
+      return { success: true, message: `Invitation sent to ${friendEmail}! You'll get a free square when they sign up.` };
+    } catch (error) {
+      console.error('Unexpected error creating referral:', error);
+      return { success: false, message: 'An unexpected error occurred.' };
+    }
+  }
 }
