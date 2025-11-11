@@ -632,43 +632,10 @@ export class BoardService {
 
   /**
    * Assigns the currently selected square to an invited user
-   * Updates the referral status and assigns the selected square
+   * Uses a database function with elevated permissions to bypass RLS
    */
   async assignSelectedSquareToInvitedUser(referralId: string, userId: string, row: number, col: number, gameId: string): Promise<{success: boolean, message: string}> {
     try {
-      // Get the referral record
-      const { data: referral, error: referralError } = await supabase
-        .from('referrals')
-        .select('*')
-        .eq('id', referralId)
-        .limit(1);
-
-      if (referralError || !referral || referral.length === 0) {
-        return { success: false, message: 'Referral record not found.' };
-      }
-
-      const referralRecord = referral[0];
-
-      // Get the selected square
-      const { data: selectedSquare, error: squareError } = await supabase
-        .from('squares')
-        .select('*')
-        .eq('game_id', gameId)
-        .eq('row_idx', row)
-        .eq('col_idx', col)
-        .limit(1);
-
-      if (squareError || !selectedSquare || selectedSquare.length === 0) {
-        return { success: false, message: 'Selected square not found.' };
-      }
-
-      const square = selectedSquare[0];
-
-      // Check if the selected square is available
-      if (square.status !== 'empty') {
-        return { success: false, message: 'This square is no longer available. Please select another square.' };
-      }
-
       // Get user info
       const { data: { user }, error: userError } = await supabase.auth.getUser();
 
@@ -678,37 +645,27 @@ export class BoardService {
                       'User';
       const userEmail = user?.email || '';
 
-      // Update the selected square to approved with user's info
-      const { error: updateSquareError } = await supabase
-        .from('squares')
-        .update({
-          status: 'approved',
-          name: userName,
-          email: userEmail,
-          user_id: userId,
-          approved_at: new Date().toISOString()
-        })
-        .eq('id', square.id);
+      // Call the database function that handles the assignment with elevated permissions
+      const { data, error } = await supabase.rpc('assign_invite_square', {
+        p_referral_id: referralId,
+        p_user_id: userId,
+        p_game_id: gameId,
+        p_row_idx: row,
+        p_col_idx: col,
+        p_user_name: userName,
+        p_user_email: userEmail
+      });
 
-      if (updateSquareError) {
-        console.error('Error updating selected square:', updateSquareError);
-        return { success: false, message: 'Failed to assign selected square.' };
+      if (error) {
+        console.error('Error calling assign_invite_square function:', error);
+        return { success: false, message: 'Failed to assign square due to database error.' };
       }
 
-      // Update the referral status to completed to prevent multiple claims
-      const { error: updateReferralError } = await supabase
-        .from('referrals')
-        .update({
-          status: 'completed',
-          invited_user_id: userId,
-          signed_up_at: new Date().toISOString(),
-          reward_granted_at: new Date().toISOString()
-        })
-        .eq('id', referralId);
+      // The function returns JSON with success/message
+      const result = data;
 
-      if (updateReferralError) {
-        console.error('Error updating referral:', updateReferralError);
-        return { success: false, message: 'Failed to update referral status.' };
+      if (!result.success) {
+        return { success: false, message: result.message };
       }
 
       // Send confirmation email to the user
@@ -718,11 +675,11 @@ export class BoardService {
           userEmail,
           userName,
           gameId,
-          square.id,
+          result.square_id,
           {
             row_idx: row,
             col_idx: col,
-            inviter_name: referralRecord.inviter_name
+            inviter_name: 'Friend' // We don't have the inviter name in the function result
           }
         );
       } catch (emailError) {
@@ -733,7 +690,7 @@ export class BoardService {
       // Reload squares to reflect changes
       await this.loadSquares();
 
-      return { success: true, message: `Square [${row}, ${col}] successfully assigned to you!` };
+      return { success: true, message: result.message };
     } catch (error) {
       console.error('Unexpected error assigning selected square:', error);
       return { success: false, message: 'An unexpected error occurred.' };
