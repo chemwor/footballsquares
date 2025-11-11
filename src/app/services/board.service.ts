@@ -391,6 +391,22 @@ export class BoardService {
    */
   async checkUserPendingInvite(userEmail: string, gameId: string): Promise<any> {
     try {
+      console.log('[checkUserPendingInvite] Checking for user:', userEmail, 'in game:', gameId);
+
+      // First, let's check what referrals exist for this email in any status
+      const { data: allReferrals, error: allError } = await supabase
+        .from('referrals')
+        .select('*')
+        .eq('invite_email', userEmail)
+        .eq('game_id', gameId);
+
+      console.log('[checkUserPendingInvite] All referrals for email:', allReferrals);
+
+      if (allError) {
+        console.error('Error checking all referrals:', allError);
+      }
+
+      // Check specifically for rewarded status
       const { data: rewardedInvite, error } = await supabase
         .from('referrals')
         .select('*')
@@ -399,9 +415,33 @@ export class BoardService {
         .eq('status', 'rewarded')
         .limit(1);
 
+      console.log('[checkUserPendingInvite] Rewarded invite found:', rewardedInvite);
+
       if (error) {
         console.error('Error checking user rewarded invite:', error);
         return null;
+      }
+
+      // Also check for signed_up status as backup
+      if (!rewardedInvite || rewardedInvite.length === 0) {
+        console.log('[checkUserPendingInvite] No rewarded invite found, checking for signed_up status...');
+
+        const { data: signedUpInvite, error: signedUpError } = await supabase
+          .from('referrals')
+          .select('*')
+          .eq('invite_email', userEmail)
+          .eq('game_id', gameId)
+          .eq('status', 'signed_up')
+          .limit(1);
+
+        console.log('[checkUserPendingInvite] Signed up invite found:', signedUpInvite);
+
+        if (signedUpError) {
+          console.error('Error checking signed up invite:', signedUpError);
+          return null;
+        }
+
+        return signedUpInvite && signedUpInvite.length > 0 ? signedUpInvite[0] : null;
       }
 
       return rewardedInvite && rewardedInvite.length > 0 ? rewardedInvite[0] : null;
