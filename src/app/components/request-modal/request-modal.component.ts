@@ -166,7 +166,7 @@ import { BoardService } from '../../services/board.service';
         <h2>🎉 You've Been Invited!</h2>
         <div class="invite-content">
           <p>{{ pendingInvite?.inviter_name }} invited you to join this game!</p>
-          <p>Your square at position [{{ pendingInvite?.row_idx }}, {{ pendingInvite?.col_idx }}] is ready to be claimed.</p>
+          <p>You can claim square [{{ row }}, {{ col }}] that you selected.</p>
 
           <div class="confirmation-message" *ngIf="confirmationMessage">
             {{ confirmationMessage }}
