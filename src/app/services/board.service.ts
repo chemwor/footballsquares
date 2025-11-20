@@ -11,6 +11,7 @@ export class BoardService {
   gridSize = signal<number>(10);
   squares = signal<Square[]>([]);
   adminMode = signal<boolean>(false);
+  gameData = signal<any>(null);
 
   rows = computed(() => Array.from({ length: this.gridSize() }, (_, i) => i));
   cols = computed(() => Array.from({ length: this.gridSize() }, (_, i) => i));
@@ -30,6 +31,159 @@ export class BoardService {
     return approved;
   });
 
+  // Computed for grouped pending requests with intelligent grouping based on game type
+  groupedPendingRequests = computed(() => {
+    const pending = this.pendingRequests();
+    console.log('Grouping pending requests:', pending);
+
+    if (pending.length === 0) {
+      return [];
+    }
+
+    // Use actual total_squares from game data instead of calculating from grid_size
+    const gameData = this.gameData();
+    const totalSquares = gameData?.total_squares || (this.gridSize() * this.gridSize());
+    console.log('Game has', totalSquares, 'total squares (from gameData.total_squares), gridSize:', this.gridSize());
+
+    // Determine expected squares per request based on actual total squares
+    let expectedSquaresPerRequest = 1;
+    if (totalSquares >= 100) {
+      expectedSquaresPerRequest = 1; // 100 squares = individual squares
+    } else if (totalSquares >= 64) {
+      expectedSquaresPerRequest = 2; // 64 squares = pairs
+    } else if (totalSquares >= 25) {
+      expectedSquaresPerRequest = 4; // 25 squares = quads
+    } else {
+      expectedSquaresPerRequest = Math.max(1, Math.floor(totalSquares / 10)); // Smaller games = more squares per request
+    }
+
+    console.log('Expected squares per request for this game size:', expectedSquaresPerRequest);
+
+    // Group by email + name combination with time-based batching
+    const groupMap = new Map<string, {
+      groupId: string;
+      playerName: string;
+      playerEmail: string;
+      squares: Square[];
+      coordinates: string;
+      isGroup: boolean;
+      requestTime: string;
+      expectedCount: number;
+    }>();
+
+    // Sort squares by request time to help with grouping
+    const sortedPending = [...pending].sort((a, b) => {
+      const timeA = new Date(a.requestedAt || 0).getTime();
+      const timeB = new Date(b.requestedAt || 0).getTime();
+      return timeA - timeB;
+    });
+
+    sortedPending.forEach(square => {
+      const playerKey = `${square.email}_${square.name}`;
+      const requestTime = square.requestedAt || '';
+
+      // For games where individual squares are expected (like 10x10), don't group
+      if (expectedSquaresPerRequest === 1) {
+        // Each square gets its own group for individual play games (100 squares)
+        const individualGroupId = `${playerKey}_${square.id}`;
+        groupMap.set(individualGroupId, {
+          groupId: individualGroupId,
+          playerName: square.name || 'Unknown',
+          playerEmail: square.email || 'unknown@email.com',
+          squares: [square],
+          coordinates: '',
+          isGroup: false,
+          requestTime: requestTime,
+          expectedCount: expectedSquaresPerRequest
+        });
+      } else {
+        // For games expecting multiple squares (25, 64, etc.), group aggressively by player
+        // Find existing groups for this player
+        const existingGroups = Array.from(groupMap.values()).filter(group =>
+          group.playerEmail === square.email && group.playerName === square.name
+        );
+
+        // Check if this square should be grouped with an existing request
+        let assignedToGroup = false;
+
+        for (const existingGroup of existingGroups) {
+          // For multi-square games, group squares more aggressively
+          // Group if: 1) Haven't reached expected count, OR 2) Within reasonable time window
+          const groupTime = new Date(existingGroup.requestTime).getTime();
+          const squareTime = new Date(requestTime).getTime();
+          const timeDifference = Math.abs(groupTime - squareTime);
+
+          // More aggressive grouping for multi-square games:
+          // - Always group if under expected count
+          // - Group within 5 minutes if under 2x expected count
+          const underExpectedCount = existingGroup.squares.length < expectedSquaresPerRequest;
+          const withinTimeWindow = timeDifference <= 300000; // 5 minutes
+          const underMaxCount = existingGroup.squares.length < expectedSquaresPerRequest * 2;
+
+          if (underExpectedCount || (withinTimeWindow && underMaxCount)) {
+            existingGroup.squares.push(square);
+            assignedToGroup = true;
+            break;
+          }
+        }
+
+        // If not assigned to existing group, create new group
+        if (!assignedToGroup) {
+          const newGroupId = `${playerKey}_${requestTime}`;
+          groupMap.set(newGroupId, {
+            groupId: newGroupId,
+            playerName: square.name || 'Unknown',
+            playerEmail: square.email || 'unknown@email.com',
+            squares: [square],
+            coordinates: '',
+            isGroup: false,
+            requestTime: requestTime,
+            expectedCount: expectedSquaresPerRequest
+          });
+        }
+      }
+    });
+
+    // Format coordinates and determine if it's a group based on game expectations
+    const groups = Array.from(groupMap.values()).map(group => {
+      const squareCount = group.squares.length;
+
+      // Determine if this should be considered a "group" based on expected square counts for this game size
+      group.isGroup = squareCount >= group.expectedCount || squareCount > 1;
+
+      if (group.isGroup) {
+        // Sort squares by coordinates for consistent display
+        const sortedSquares = group.squares.sort((a, b) => {
+          const aRowIdx = a.row_idx ?? 0;
+          const bRowIdx = b.row_idx ?? 0;
+          const aColIdx = a.col_idx ?? 0;
+          const bColIdx = b.col_idx ?? 0;
+
+          if (aRowIdx !== bRowIdx) return aRowIdx - bRowIdx;
+          return aColIdx - bColIdx;
+        });
+        const coords = sortedSquares.map(s => `[${s.row_idx ?? 0},${s.col_idx ?? 0}]`).join(', ');
+        group.coordinates = coords;
+      } else {
+        // Single square
+        const square = group.squares[0];
+        group.coordinates = `[${square.row_idx ?? 0},${square.col_idx ?? 0}]`;
+      }
+
+      return group;
+    });
+
+    // Sort groups by request time (newest first)
+    groups.sort((a, b) => {
+      const timeA = new Date(a.requestTime).getTime();
+      const timeB = new Date(b.requestTime).getTime();
+      return timeB - timeA;
+    });
+
+    console.log('Grouped pending requests:', groups);
+    return groups;
+  });
+
   async loadSquares() {
     const squares = await this.repo.listSquares(this.gameId);
     console.log('Loaded squares:', squares);
@@ -46,6 +200,10 @@ export class BoardService {
 
   setGameId(gameId: string) {
     this.gameId = gameId;
+  }
+
+  setGameData(gameData: any) {
+    this.gameData.set(gameData);
   }
 
   async requestSquare(row: number, col: number, name: string, email: string, userId?: string) {
@@ -352,6 +510,39 @@ export class BoardService {
       } else {
         console.warn('[BoardService.decline] Square not pending/approved:', square);
       }
+    }
+  }
+
+  // Methods for handling grouped admin actions
+  async approveGroup(groupId: string, squares: Square[]) {
+    console.log('[BoardService.approveGroup] Approving group:', groupId, 'with squares:', squares);
+
+    try {
+      // Approve all squares in the group
+      for (const square of squares) {
+        await this.approve(square.id);
+      }
+
+      console.log('[BoardService.approveGroup] Successfully approved all squares in group:', groupId);
+    } catch (error) {
+      console.error('[BoardService.approveGroup] Error approving group:', error);
+      throw error;
+    }
+  }
+
+  async declineGroup(groupId: string, squares: Square[]) {
+    console.log('[BoardService.declineGroup] Declining group:', groupId, 'with squares:', squares);
+
+    try {
+      // Decline all squares in the group
+      for (const square of squares) {
+        await this.decline(square.id);
+      }
+
+      console.log('[BoardService.declineGroup] Successfully declined all squares in group:', groupId);
+    } catch (error) {
+      console.error('[BoardService.declineGroup] Error declining group:', error);
+      throw error;
     }
   }
 

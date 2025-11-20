@@ -469,3 +469,4 @@ export class AdminBoardViewComponent implements OnInit, OnChanges {
     return isInWinnersTable;
   }
 }
+
