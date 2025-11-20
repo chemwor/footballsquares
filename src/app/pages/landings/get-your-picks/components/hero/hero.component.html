@@ -61,11 +61,12 @@
                 <label class="form-label fs-base text-white" for="totalPlayers">Total Players</label>
                 <select class="form-select form-select-lg text-white" required [(ngModel)]="formData['totalPlayers']" name="totalPlayers" id="totalPlayers">
                   <option value="100">100 Players (10×10 grid)</option>
+                  <option value="50">50 Players (5×10 grid)</option>
                   <option value="25">25 Players (5×5 grid)</option>
                   <option value="10">10 Players (2×5 grid)</option>
                 </select>
                 <div class="form-text text-white-50 small mt-1">
-                  Choose how many squares will be available for players. 100 players shows all individual numbers, 25 players groups numbers together, and 10 players creates a 2×5 grid.
+                  Choose how many squares will be available for players. 100 players shows all individual numbers, 50 players creates a 5×10 grid, 25 players groups numbers together, and 10 players creates a 2×5 grid.
                 </div>
               </div>
 

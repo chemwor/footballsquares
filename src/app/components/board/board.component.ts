@@ -973,6 +973,7 @@ export class BoardComponent implements OnInit {
     // Define grid configurations for different square counts
     const gridConfigs: Record<number, { rows: number; cols: number }> = {
       100: { rows: 10, cols: 10 },  // 10x10
+      50: { rows: 5, cols: 10 },    // 5x10 (1x2 squares)
       25: { rows: 5, cols: 5 },     // 5x5
       10: { rows: 2, cols: 5 },     // 2x5
       4: { rows: 2, cols: 2 },      // 2x2
@@ -986,6 +987,7 @@ export class BoardComponent implements OnInit {
     // Define size mappings based on total_squares directly
     const sizeConfigBySquares: Record<number, { cellSize: number; fontSize: number; pillSize: number; nameSize: number }> = {
       100: { cellSize: 60, fontSize: 1.2, pillSize: 0.6, nameSize: 0.7 },    // 10x10 = 100 squares
+      50: { cellSize: 80, fontSize: 1.25, pillSize: 0.7, nameSize: 0.8 },   // 5x10 = 50 squares
       25: { cellSize: 150, fontSize: 1.4, pillSize: 0.9, nameSize: 1.0 },   // 5x5 = 25 squares
       10: { cellSize: 120, fontSize: 1.3, pillSize: 0.8, nameSize: 0.9 },   // 2x5 = 10 squares
       4: { cellSize: 300, fontSize: 2.5, pillSize: 1.2, nameSize: 1.3 },    // 2x2 = 4 squares
@@ -994,6 +996,7 @@ export class BoardComponent implements OnInit {
     // Mobile size configuration
     const mobileSizeConfigBySquares: Record<number, { cellSize: number; fontSize: number; pillSize: number; nameSize: number }> = {
       100: { cellSize: 50, fontSize: 0.8, pillSize: 0.5, nameSize: 0.6 },   // 10x10 = 100 squares
+      50: { cellSize: 65, fontSize: 0.85, pillSize: 0.55, nameSize: 0.65 }, // 5x10 = 50 squares
       25: { cellSize: 100, fontSize: 1.0, pillSize: 0.7, nameSize: 0.8 },   // 5x5 = 25 squares
       10: { cellSize: 90, fontSize: 0.9, pillSize: 0.65, nameSize: 0.75 },  // 2x5 = 10 squares
       4: { cellSize: 150, fontSize: 1.8, pillSize: 0.9, nameSize: 1.0 },    // 2x2 = 4 squares
@@ -1043,6 +1046,7 @@ export class BoardComponent implements OnInit {
     // Define grid configurations for different square counts
     const gridConfigs: Record<number, { rows: number; cols: number }> = {
       100: { rows: 10, cols: 10 },  // 10x10
+      50: { rows: 5, cols: 10 },    // 5x10 (1x2 squares)
       25: { rows: 5, cols: 5 },     // 5x5
       10: { rows: 2, cols: 5 },     // 2x5
       4: { rows: 2, cols: 2 },      // 2x2
