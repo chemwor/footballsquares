@@ -16,8 +16,24 @@ import { BoardService } from '../../services/board.service';
         (click)="$event.stopPropagation()">
         <h2>
           Request Square
-          <span *ngIf="shouldShowCoordinates()"> [{{row}},{{col}}]</span>
+          <span *ngIf="shouldShowCoordinates() && coordinates && coordinates.length > 0">
+            <span *ngIf="coordinates.length === 1"> [{{coordinates[0].row}},{{coordinates[0].col}}]</span>
+            <span *ngIf="coordinates.length > 1" class="multiple-coords">
+              ({{ coordinates.length }} squares)
+            </span>
+          </span>
         </h2>
+
+        <!-- Show all coordinates for grouped squares -->
+        <div *ngIf="shouldShowCoordinates() && coordinates && coordinates.length > 1" class="coordinates-list">
+          <p class="coordinates-label">This will assign the following squares:</p>
+          <div class="coordinates-grid">
+            <span *ngFor="let coord of coordinates" class="coordinate-item">
+              [{{coord.row}},{{coord.col}}]
+            </span>
+          </div>
+        </div>
+
         <form (submit)="submit($event)" #form="ngForm">
           <div class="form-group">
             <label for="name">Name</label>
@@ -372,6 +388,7 @@ export class RequestModalComponent implements OnChanges, OnInit {
   @Input() open = false;
   @Input() row!: number;
   @Input() col!: number;
+  @Input() coordinates: { row: number; col: number }[] = [];
   @Input() gameData: any = null;
   @Output() closed = new EventEmitter<void>();
   @Output() requested = new EventEmitter<{ name: string; email: string; userId?: string; friendEmail?: string }>();

@@ -91,6 +91,65 @@ export class BoardService {
     }
   }
 
+  async requestMultipleSquares(coordinates: { row: number; col: number }[], name: string, email: string, userId?: string) {
+    // New method to request multiple squares at once (for logical square grouping)
+    console.log('[requestMultipleSquares] Requesting squares:', coordinates, 'for', name, email);
+
+    // Check if all squares are available
+    const squaresToUpdate: Square[] = [];
+    for (const coord of coordinates) {
+      const square = this.squares().find((s: Square) => Number(s.row_idx) === coord.row && Number(s.col_idx) === coord.col);
+      if (!square || square.status !== 'empty') {
+        console.warn('[requestMultipleSquares] Square not available:', coord);
+        throw new Error(`Square at [${coord.row}, ${coord.col}] is not available`);
+      }
+      squaresToUpdate.push(square);
+    }
+
+    // Update all squares
+    for (const square of squaresToUpdate) {
+      const updated: Square = {
+        ...square,
+        status: 'pending',
+        name,
+        email,
+        user_id: userId,
+        requestedAt: new Date().toISOString(),
+      };
+      await this.repo.updateSquare(updated, this.gameId);
+    }
+
+    // Fetch game info for admin notification
+    const game = await this.repo.getGameById(this.gameId);
+    console.log('[requestMultipleSquares] getGameById result:', game);
+    const adminEmail = game?.owner_email;
+    const adminName = game?.owner_name || 'Admin';
+
+    // Enqueue ONE email to admin with all square coordinates
+    if (adminEmail) {
+      try {
+        await this.enqueueEmail(
+          'square_requested_ack',
+          adminEmail,
+          adminName,
+          this.gameId,
+          squaresToUpdate[0].id, // Use first square ID as reference
+          {
+            coordinates: coordinates,
+            player_name: name,
+            player_email: email,
+            multiple_squares: true
+          }
+        );
+        console.log('[requestMultipleSquares] Admin notification email enqueued successfully');
+      } catch (err) {
+        console.error('[requestMultipleSquares] Failed to enqueue admin email:', err);
+      }
+    }
+
+    await this.loadSquares();
+  }
+
   async requestGrowthSquare(row: number, col: number, name: string, email: string, userId?: string, friendEmail?: string) {
     // Growth mode method - requires authentication and handles referrals
     if (!userId) {
