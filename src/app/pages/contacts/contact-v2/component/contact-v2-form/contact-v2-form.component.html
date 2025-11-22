@@ -6,6 +6,39 @@
     </p>
   </div>
   <div class="col-lg-8 col-xl-7 offset-xl-1">
+    <!-- Success Message -->
+    <div
+      *ngIf="submitSuccess"
+      class="alert alert-success alert-dismissible fade show mb-4"
+      role="alert"
+    >
+      <i class="bi bi-check-circle me-2"></i>
+      <strong>Message sent successfully!</strong> We've received your inquiry and
+      will get back to you shortly.
+      <button
+        type="button"
+        class="btn-close"
+        (click)="submitSuccess = false"
+        aria-label="Close"
+      ></button>
+    </div>
+
+    <!-- Error Message -->
+    <div
+      *ngIf="submitError"
+      class="alert alert-danger alert-dismissible fade show mb-4"
+      role="alert"
+    >
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      <strong>Error:</strong> {{ submitError }}
+      <button
+        type="button"
+        class="btn-close"
+        (click)="submitError = ''"
+        aria-label="Close"
+      ></button>
+    </div>
+
     <form
       class="row g-4 needs-validation"
       novalidate
@@ -13,7 +46,7 @@
       (ngSubmit)="submitForm()"
     >
       <div class="col-sm-6">
-        <label class="form-label fs-base" for="name">Name</label>
+        <label class="form-label fs-base" for="name">Name *</label>
         <input
           class="form-control form-control-lg"
           formControlName="name"
@@ -23,11 +56,11 @@
           id="name"
         />
         @if (formGroup && formControl['name'].errors) {
-          <div class="invalid-feedback d-block">Please enter your name!</div>
+        <div class="invalid-feedback d-block">Please enter your name!</div>
         }
       </div>
       <div class="col-sm-6">
-        <label class="form-label fs-base" for="email">Email</label>
+        <label class="form-label fs-base" for="email">Email *</label>
         <input
           class="form-control form-control-lg"
           type="email"
@@ -37,9 +70,9 @@
           id="email"
         />
         @if (formGroup && formControl['email'].errors) {
-          <div class="invalid-feedback d-block">
-            Please provide a valid email address!
-          </div>
+        <div class="invalid-feedback d-block">
+          Please provide a valid email address!
+        </div>
         }
       </div>
       <div class="col-sm-6">
@@ -48,12 +81,9 @@
           class="form-control form-control-lg"
           type="text"
           formControlName="phone"
-          placeholder="Phone number"
+          placeholder="Phone number (optional)"
           id="phone"
         />
-        @if (formGroup && formControl['phone'].errors) {
-          <div class="invalid-feedback d-block">Please enter your number</div>
-        }
       </div>
       <div class="col-sm-6">
         <label class="form-label fs-base" for="topic">Topic</label>
@@ -62,9 +92,7 @@
           id="topic"
           formControlName="topic"
         >
-          <option value="Other" [defaultSelected]="'Other'">
-            Choose a topic
-          </option>
+          <option value="Other">Choose a topic</option>
           <option value="Billing">Billing</option>
           <option value="Technical Support">Technical Support</option>
           <option value="General Inquiry">General Inquiry</option>
@@ -73,7 +101,7 @@
         </select>
       </div>
       <div class="col-sm-12">
-        <label class="form-label fs-base" for="message">How can we help?</label>
+        <label class="form-label fs-base" for="message">How can we help? *</label>
         <textarea
           class="form-control form-control-lg"
           rows="5"
@@ -83,7 +111,7 @@
           id="message"
         ></textarea>
         @if (formGroup && formControl['message'].errors) {
-          <div class="invalid-feedback d-block">Please enter your message!</div>
+        <div class="invalid-feedback d-block">Please enter your message!</div>
         }
       </div>
       <div class="col-sm-12">
@@ -100,8 +128,18 @@
         </div>
       </div>
       <div class="col-sm-12 pt-2">
-        <button type="submit" class="btn btn-lg btn-primary" type="submit">
-          Send a request
+        <button
+          type="submit"
+          class="btn btn-lg btn-primary"
+          [disabled]="isSubmitting"
+        >
+          <span
+            *ngIf="isSubmitting"
+            class="spinner-border spinner-border-sm me-2"
+            role="status"
+            aria-hidden="true"
+          ></span>
+          {{ isSubmitting ? 'Sending...' : 'Send a request' }}
         </button>
       </div>
     </form>
