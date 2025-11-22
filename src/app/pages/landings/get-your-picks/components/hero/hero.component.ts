@@ -46,7 +46,7 @@ export class HeroComponent {
     sport: '',
     league: '',
     match: '',
-    boardSize: '10x10',
+    totalPlayers: '100', // Default to 100 players
     boardName: '',
     reverseSquares: false,
     hideAxes: false
@@ -142,7 +142,7 @@ export class HeroComponent {
 
   async submitForm() {
     this.formSubmitted = true;
-    if (!this.formData['sport'] || !this.formData['league'] || !this.formData['match'] || !this.formData['boardSize'] || !this.formData['boardName']) {
+    if (!this.formData['sport'] || !this.formData['league'] || !this.formData['match'] || !this.formData['totalPlayers'] || !this.formData['boardName']) {
       this.validationMessage = 'Please fill in all required fields.';
       return;
     }
@@ -159,7 +159,7 @@ export class HeroComponent {
     console.log('Current Supabase user:', user);
 
     const selectedGame = this.games.find(g => g.id == this.formData['match']);
-    const boardSizeNumber = parseInt(this.formData['boardSize'], 10);
+    const boardSizeNumber = 10; // Always use 10 for grid_size
 
     // Find the league for the selected game to get the sport
     const selectedLeague = this.leagues.find(l => l.id == selectedGame?.league_id);
@@ -208,6 +208,7 @@ export class HeroComponent {
       axes_randomized_at: new Date().toISOString(),
       random_seed: Math.random().toString(36).substring(2, 15),
       instructions: this.formData['instructions'] || null,
+      total_squares: parseInt(this.formData['totalPlayers'], 10) // Save total players to total_squares
     };
 
     try {

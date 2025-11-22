@@ -171,6 +171,41 @@ export class SupabaseBoardRepository implements BoardRepository {
     }
     console.log('Email enqueued successfully:', data);
   }
+
+  async createReferral(referralData: {
+    game_id: string;
+    square_id: string;
+    row_idx: number;
+    col_idx: number;
+    inviter_user_id: string;
+    inviter_email: string;
+    inviter_name: string;
+    invite_email: string;
+    reward_type: string;
+  }): Promise<void> {
+    const { error, data } = await supabase.from('referrals').insert([
+      {
+        game_id: referralData.game_id,
+        square_id: referralData.square_id,
+        row_idx: referralData.row_idx,
+        col_idx: referralData.col_idx,
+        inviter_user_id: referralData.inviter_user_id,
+        inviter_email: referralData.inviter_email,
+        inviter_name: referralData.inviter_name,
+        invite_email: referralData.invite_email,
+        reward_type: referralData.reward_type,
+        status: 'pending',
+        created_at: new Date().toISOString()
+      }
+    ]);
+
+    if (error) {
+      console.error('Failed to create referral:', error);
+      throw error;
+    }
+
+    console.log('Referral created successfully:', data);
+  }
 }
 
 export function uid(): string {

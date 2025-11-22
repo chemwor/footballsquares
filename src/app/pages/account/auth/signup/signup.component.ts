@@ -146,6 +146,32 @@ export class SignupComponent {
     this.router.navigate(['/'])
   }
 
+  /**
+   * Sign up with Google
+   */
+  async signUpWithGoogle() {
+    this.errorMessage = ''
+    this.successMessage = ''
+    try {
+      const { error } = await this.authService.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin, // Ensure this matches your Supabase dashboard setting
+        },
+      })
+
+      if (error) {
+        this.errorMessage = error.message
+        console.error('Google sign-up error:', error)
+      } else {
+        this.successMessage = 'Successfully signed up with Google! Redirecting...'
+        // Optionally, trigger a UI update or redirect here
+      }
+    } catch (err) {
+      this.errorMessage = 'An unexpected error occurred during Google sign-up.'
+    }
+  }
+
   changePasswordType(event: any) {
     this.passwordType = event.target.checked ? 'text' : 'password'
   }
